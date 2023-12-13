@@ -89,4 +89,4 @@ def run_analysis(video_filepath, window_size, signal_to_noise_ratio):
     ax.xaxis.set_major_locator(MultipleLocator(window_size))
     ax.yaxis.set_major_locator(MultipleLocator(window_size))
     plt.savefig('overview.png')
-    plt.close()
+    plt.show()
