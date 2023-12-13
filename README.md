@@ -6,5 +6,5 @@ In order to use this tool you'll need to run the jupyter notebook.
 
 If you want to use a free online option to run the notebook, you can use [MyBinder](https://mybinder.org/):
 ```
-https://mybinder.org/v2/gh/Indoc-Research/NeuralActivityCubic/HEAD
+https://mybinder.org/v2/gh/Indoc-Research/NeuralActivityCubic/HEAD?urlpath=lab/tree/NeuralActivityCubic_demo.ipynb
 ```
