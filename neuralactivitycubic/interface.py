@@ -1,3 +1,4 @@
+import time
 import ipywidgets as w
 from IPython.display import display
 from .core import run_analysis
@@ -95,6 +96,7 @@ def show():
     display(widget)
 
 def on_process_button_clicked(b):
+    start = time.time()
     process_button.description = 'Analysis running ...'
     process_button.disabled = True
     run_analysis(video_filepath = video_filepath.value, 
@@ -102,7 +104,9 @@ def on_process_button_clicked(b):
                  signal_to_noise_ratio = snr_slider.value)
     process_button.description = 'Process Image Stack'
     process_button.disabled = False
-    
+    end = time.time()
+    print(f"Analysis took {end - start} seconds")
+   
 
 # Attach the callback function to the load button
 process_button.on_click(on_process_button_clicked)
