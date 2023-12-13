@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import signal
 from matplotlib.ticker import MultipleLocator
+import ray
 
 from typing import Tuple
 
@@ -62,10 +63,20 @@ def run_analysis(video_filepath, window_size, signal_to_noise_ratio):
         square_x_coords_slice = slice(upper_left_x, upper_left_x + window_size)
         selected_square = gray_scale_frames[:, square_y_coords_slice, square_x_coords_slice]
         all_squares.append(Square(upper_left_corner_coords = (upper_left_y, upper_left_x), cropped_image_stack = selected_square))
-    
-    for square in all_squares:
+
+
+
+
+    @ray.remote
+    def calc_peaks(square, signal_to_noise_ratio):
         square.compute_mean_intensity_timeseries()
-        square.detect_peaks(signal_to_noise_ratio = signal_to_noise_ratio)
+        square.detect_peaks(signal_to_noise_ratio)
+        return square
+    ids = []
+    for square in all_squares:
+        ids.append(calc_peaks.remote(square, signal_to_noise_ratio))
+    
+    all_squares = ray.get(ids)
 
 
     sizes = [square.peaks_count for square in all_squares]
@@ -87,5 +98,5 @@ def run_analysis(video_filepath, window_size, signal_to_noise_ratio):
     # setting the grid size to the square size
     ax.xaxis.set_major_locator(MultipleLocator(window_size))
     ax.yaxis.set_major_locator(MultipleLocator(window_size))
-    plt.savefig('overview2.png')
+    plt.savefig('overview.png')
     plt.close()
