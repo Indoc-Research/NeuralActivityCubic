@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import signal
 from matplotlib.ticker import MultipleLocator
+import multiprocessing
 
 from typing import Tuple
 
@@ -41,46 +42,66 @@ class Square:
         return (self.upper_left_corner_coords[0] + int(square_height/2), self.upper_left_corner_coords[1] + int(square_width/2))
 
 
-def run_analysis(video_filepath, window_size, signal_to_noise_ratio):
+def create_and_process_squares(upper_left_y, upper_left_x, window_size, original_image_stack, signal_to_noise_ratio) -> Square:
+    square_y_coords_slice = slice(upper_left_y, upper_left_y + window_size)
+    square_x_coords_slice = slice(upper_left_x, upper_left_x + window_size)
+    selected_square = original_image_stack[:, square_y_coords_slice, square_x_coords_slice]
+    square = Square(upper_left_corner_coords = (upper_left_y, upper_left_x), cropped_image_stack = selected_square)
+    square.compute_mean_intensity_timeseries()
+    square.detect_peaks(signal_to_noise_ratio=signal_to_noise_ratio)
+    return square
+    
+
+def create_squares(upper_left_y, upper_left_x, window_size, original_image_stack) -> Square:
+    square_y_coords_slice = slice(upper_left_y, upper_left_y + window_size)
+    square_x_coords_slice = slice(upper_left_x, upper_left_x + window_size)
+    selected_square = original_image_stack[:, square_y_coords_slice, square_x_coords_slice]
+    return Square(upper_left_corner_coords = (upper_left_y, upper_left_x), cropped_image_stack = selected_square)
+
+def process_squares(square: Square, signal_to_noise_ratio) -> Square:
+    square.compute_mean_intensity_timeseries()
+    square.detect_peaks(signal_to_noise_ratio=signal_to_noise_ratio)
+    return square
+
+
+def run_analysis(video_filepath, window_size, signal_to_noise_ratio):       
+    # Load data:
     frames = iio.imread(video_filepath)
-    gray_scale_frames = frames[:, :, :, 0].copy()
-    
-    
-    grid_rows = np.arange(start = 0, stop = gray_scale_frames.shape[1], step = window_size)
-    grid_cols = np.arange(start = 0, stop = gray_scale_frames.shape[2], step = window_size)
-    
+    original_image_stack = frames[:, :, :, 0].copy()
+
+    # Create grid
+    grid_rows = np.arange(start = 0, stop = original_image_stack.shape[1], step = window_size)
+    grid_cols = np.arange(start = 0, stop = original_image_stack.shape[2], step = window_size)
     square_upper_left_coords = []
-    
     for row in grid_rows:
         for col in grid_cols:
             square_upper_left_coords.append((row, col))
-    
-    
+
     all_squares = []
     for upper_left_y, upper_left_x in square_upper_left_coords:
         square_y_coords_slice = slice(upper_left_y, upper_left_y + window_size)
         square_x_coords_slice = slice(upper_left_x, upper_left_x + window_size)
-        selected_square = gray_scale_frames[:, square_y_coords_slice, square_x_coords_slice]
+        selected_square = original_image_stack[:, square_y_coords_slice, square_x_coords_slice]
         all_squares.append(Square(upper_left_corner_coords = (upper_left_y, upper_left_x), cropped_image_stack = selected_square))
+    
+    # Split image into squares according to grid & process individual squares:
+    num_processes = multiprocessing.cpu_count()
+    with multiprocessing.Pool(processes = num_processes) as pool:
+        processed_squares = pool.starmap(process_squares, [(square, signal_to_noise_ratio) for square in all_squares])
 
-
-    for square in all_squares:
-        square.compute_mean_intensity_timeseries()
-        square.detect_peaks(signal_to_noise_ratio = signal_to_noise_ratio)
-
-
-    sizes = [square.peaks_count for square in all_squares]
+    # Plot the results:
+    sizes = [square.peaks_count for square in processed_squares]
     # creating the plot
     fig, ax = plt.subplots()
     # drawing the circles
-    for square in all_squares:
+    for square in processed_squares:
         true_size = (square.peaks_count/max(sizes))*(window_size/2)
         circle = plt.Circle((square.center_coords[1], square.center_coords[0]), radius=true_size, fill=False, color='red')
         ax.add_patch(circle)
     
     # putting the image in the background
-    background = gray_scale_frames[0]
-    ax.imshow(gray_scale_frames[0], cmap="gray")
+    background = original_image_stack[0]
+    ax.imshow(original_image_stack[0], cmap="gray")
     
     # putting the grid on top of the image
     ax.grid(color = 'gray', linestyle = '--', linewidth = 1)
