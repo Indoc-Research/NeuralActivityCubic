@@ -1,5 +1,6 @@
 import ipywidgets as w
 from ipyfilechooser import FileChooser
+from IPython.display import Image
 import numpy as np
 from datetime import datetime
 
@@ -23,10 +24,11 @@ class UserInfoPanel:
                                    style = {'font_style': 'italic', 'text_color': 'gray', 'font_family': 'monospace', 'text_align': 'center'},
                                    layout = w.Layout(width = 'initial'))
         self.progress_bar = w.FloatProgress(description = 'Progress', style = {'description_width': 'initial'}, layout = w.Layout(width = '20%'))
-        info_overview_box = w.HBox([info, self.latest_logs, self.progress_bar], layout = w.Layout(justify_content = 'space-between', align_items = 'center'))
+        info_overview_box = w.HBox([info, self.latest_logs, self.progress_bar], layout = w.Layout(justify_content = 'space-between', align_items = 'center', width = '95%'))
         self.detailed_logs_output = w.Output(layout = w.Layout(max_height = '200px', y_overflow='scroll'))
-        self.detailed_logs_accordion = w.Accordion(children = [self.detailed_logs_output], titles = ('Detailed logs', ), selected_index = None)
-        return w.VBox([info_overview_box, self.detailed_logs_accordion])
+        self.detailed_logs_accordion = w.Accordion(children = [self.detailed_logs_output], titles = ('Detailed logs', ), selected_index = None, layout = w.Layout(width = '95%'))
+        vertical_spacer = w.HTML(value = '', layout = w.Layout(height = '15px'))
+        return w.VBox([info_overview_box, self.detailed_logs_accordion, vertical_spacer], layout = w.Layout(align_items = 'center'))
 
 
     def add_new_logs(self, message: str) -> None:
@@ -56,123 +58,6 @@ class UserInfoPanel:
         if progress_in_percent == 100.0:
             self.progress_bar.bar_style = 'success'
         self.progress_bar.value = progress_in_percent
-
-
-
-class WidgetsInterface:
-
-    @property
-    def layouts(self) -> Dict[str, w.Layout]:
-        default_layout = w.Layout(justify_content = 'space-between', width = '100%')
-        layouts = {'default': default_layout}
-        return layouts
-
-    @property
-    def styles(self) -> Dict[str, w.Style]:
-        default_style = {'description_width': 'initial'}
-        styles = {'default': default_style}
-        return styles
-
-    def __init__(self) -> None:
-        self.widget = self._build_widget()
-        
-
-    def _build_widget(self) -> w.VBox:
-        welcome_banner = self._build_welcome_banner()
-        directories_box = self._build_directories_box()
-        display_elements = self._build_display_elements()
-        settings_box = self._build_main_settings_box()
-        widget = w.VBox([welcome_banner, directories_box, w.HBox([display_elements, settings_box])], layout = w.Layout(width = '100%', height = '880px'))
-        return widget
-
-
-
-    def _build_welcome_banner(self) -> w.HBox:
-        welcome_html = w.HTML(value="<p style='font-size:32px; font-weight:bold; text-align:center;'>Welcome to NeuralActivityCubic</p>",
-                              layout = w.Layout(width = '100%', height = '80px'))
-        # include some branding logos
-        return w.HBox([welcome_html], layout = w.Layout(width = '100%', height = '80px'))
-
-
-    def _build_directories_box(self) -> w.VBox:
-        self.user_settings_recording_filepath = w.Text(description = 'Filepath of Recording: ',
-                                                       value = 'spiking_neuron.avi', 
-                                                       placeholder = 'Provide filepath to ROI file',
-                                                       style = {'description_width': 'initial'},
-                                                       layout = w.Layout(width = '80%'))
-        self.user_settings_roi_filepath = w.Text(description = 'Filepath of ROI file: ',
-                                                 value = '',
-                                                 placeholder = 'Provide filepath to ROI file',
-                                                 style = {'description_width': 'initial'},
-                                                 layout = w.Layout(width = '80%'))                         
-        self.user_settings_results_directory = w.Text(description = 'Output directory for results: ',
-                                                      value = '',
-                                                      placeholder = 'Current working directory will be used if left empty',
-                                                      style = {'description_width': 'initial'},
-                                                      layout = w.Layout(width = '99%'))
-        self.load_recording_button = w.Button(description = 'Load Recording', layout = w.Layout(width = '20%'))
-        self.load_roi_button = w.Button(description = 'Load ROI', layout = w.Layout(width = '20%'))
-        recordings_filepath_button_box = w.HBox([self.user_settings_recording_filepath, self.load_recording_button], layout = self.layouts['default'])
-        roi_filepath_button_box = w.HBox([self.user_settings_roi_filepath, self.load_roi_button], layout = self.layouts['default'])
-        directories_box = w.VBox([recordings_filepath_button_box, roi_filepath_button_box, self.user_settings_results_directory],
-                                 layout = w.Layout(width = '100%', height = '128px', justify_content = 'space-around'))
-        return directories_box
-
-    
-
-    def _build_display_elements(self) -> w.VBox:
-        self.main_screen = w.Output(layout = w.Layout(width = '100%', height = '450px'))
-        self.logs_screen = w.Output(layout = w.Layout(width = '100%', height = '100px'))
-        display_elements = w.VBox([self.main_screen, self.logs_screen], layout = w.Layout(width = '60%', height = '5500 px'))
-        return display_elements
-
-
-    def _build_main_settings_box(self) -> w.VBox:
-        self.user_settings_window_size = w.IntSlider(description='Window Size', 
-                                                     value=8, 
-                                                     min=1, 
-                                                     max=999, 
-                                                     step=1,
-                                                     style = self.styles['default'],
-                                                     layout = w.Layout(width = '99%'))
-        self.user_settings_signal_to_noise_ratio = w.FloatSlider(description='Signal to Noise Ratio',
-                                                                 value=3.0,
-                                                                 min=0.05,
-                                                                 max=30.0,
-                                                                 step=0.05,
-                                                                 style = self.styles['default'],
-                                                                 layout = w.Layout(width = '99%'))
-
-        self.user_settings_preview_only = w.Checkbox(description = 'Load preview frame only: ',
-                                                     value = False,
-                                                     style = self.styles['default'],
-                                                     layout = w.Layout(width = '99%'))
-        self.user_settings_frame_idx = w.BoundedIntText(description = 'Frame index to display for preview: ',
-                                                        value = 0,
-                                                        min = 0,
-                                                        max = 999,
-                                                        step = 1,
-                                                        style = self.styles['default'],
-                                                        layout = w.Layout(width = '99%'))                                                
-        user_settings_box = w.VBox([self.user_settings_window_size,
-                                    self.user_settings_signal_to_noise_ratio,
-                                    self.user_settings_preview_only,
-                                    self.user_settings_frame_idx], layout=w.Layout(width = '100%'))
-        self.run_analysis_button = w.Button(description = 'Run analysis', icon = 'rocket', layout = w.Layout(width = '99%'))
-        main_settings = w.VBox([user_settings_box, self.run_analysis_button], layout = w.Layout(justify_content = 'space-between', width = '40%', height = '550px'))
-        return main_settings
-
-
-    def show_on_main_window(self, image_to_show) -> None:
-        # display the image passed 
-        pass
-
-
-    def add_to_logs(self, message: str) -> None:
-        with self.logs_output:
-            print(message)
-
-
 
 
 
@@ -403,3 +288,231 @@ class IOPanel:
         # Add timestamp
         # Add new entry to displayed logs
         pass
+
+
+
+class AnalysisSettingsPanel:
+
+    def __init__(self, user_info_panel: UserInfoPanel) -> None:
+        self.user_info_panel = user_info_panel
+        self.widget = self._build_default_widget()
+        # self.enable_analysis_settings(False)
+
+
+    def _build_default_widget(self) -> None:
+        # Create and configure all elements:
+        analysis_settings_info = w.HTML(value="<p style='font-size:16px; font-weight:bold; text-align:center;'>Analysis Settings</p>", layout = w.Layout(width = '99%'))
+        snr_label = w.Label(value = 'Signal to noise ratio:', style = {'text_align': 'left'}, layout = w.Layout(width = '90%'))
+        self.user_settings_signal_to_noise_ratio = w.FloatSlider(value = 3.0, min = 0.0, max = 100.0, step = 0.05, disabled = True, layout = w.Layout(width = '90%'))
+        sat_label = w.Label(value = 'Signal average threshold:', style = {'text_align': 'left'}, layout = w.Layout(width = '90%'))
+        self.user_settings_signal_average_threshold = w.FloatSlider(value = 10.0, min = 0.0, max = 255.0, step = 0.5, disabled = True, layout = w.Layout(width = '90%'))
+        mac_label = w.Label(value = 'Minimum activity counts:', style = {'text_align': 'left'}, layout = w.Layout(width = '90%'))
+        self.user_settings_minimum_activity_counts = w.BoundedIntText(value = 2, min = 0, max = 100, step = 1, disabled = True, layout = w.Layout(width = '75%'))
+        bem_label = w.Label(value = 'Baseline estimation method:', style = {'text_align': 'left'}, layout = w.Layout(width = '90%'))
+        self.user_settings_baseline_estimation_method = w.Dropdown(value = "Asymmetric Least Squares", 
+                                                                   options = ["Asymmetric Least Squares",
+                                                                              "Fully Automatic Baseline Correction",
+                                                                              "Peaked Signal's Asymmetric Least Squares Algorithm",
+                                                                              "Standard Deviation Distribution"
+                                                                             ],
+                                                                   disabled = True,
+                                                                   layout = w.Layout(width = '75%'))
+        vertical_spacer = w.HTML(value = '', layout = w.Layout(height = '10px'))
+        dashed_separator_line = w.HTML(value = "<hr style='border: none; border-bottom: 1px dashed;'>", layout = w.Layout(width = '95%'))
+        optional_info = w.Label(value = 'Optional settings:', style = {'text_align': 'left', 'font_weight': 'bold'}, layout = w.Layout(width = '90%'))
+        self.user_settings_include_variance = w.Checkbox(description = 'include Variance', value = False, disabled = True, layout = w.Layout(width = '90%'))
+        self.user_settings_variance = w.BoundedFloatText(description = 'Variance:', disabled = True,
+                                                         value = 3.0, min = 0.0, max = 30.0, step = 0.1,
+                                                         style = {'description_width': 'initial'},
+                                                         layout = w.Layout(width = '75%', visibility = 'hidden'))
+        self.user_settings_limit_analysis_to_frame_interval = w.Checkbox(description = 'limit analysis to specific frame interval', 
+                                                                         value = False, disabled = True, layout = w.Layout(width = '90%'))
+        self.user_settings_frame_interval_to_analyze = w.IntRangeSlider(description = 'Frame interval:', disabled = True, 
+                                                                        value = (0, 100), min = 0, max = 100, step = 1, 
+                                                                        style = {'description_width': 'initial'}, layout = w.Layout(width = '90%', visibility = 'hidden'))
+        # Enable event handling:
+        self.user_settings_include_variance.observe(self._include_variance_config_changed)
+        self.user_settings_limit_analysis_to_frame_interval.observe(self._limit_analysis_to_interval_changed)
+        # Arrange elements:
+        analysis_settings_box = w.VBox([analysis_settings_info,
+                                        snr_label, self.user_settings_signal_to_noise_ratio,
+                                        sat_label, self.user_settings_signal_average_threshold,
+                                        mac_label, self.user_settings_minimum_activity_counts,
+                                        bem_label, self.user_settings_baseline_estimation_method,
+                                        vertical_spacer,
+                                        dashed_separator_line, 
+                                        optional_info,
+                                        self.user_settings_include_variance, self.user_settings_variance,
+                                        self.user_settings_limit_analysis_to_frame_interval, self.user_settings_frame_interval_to_analyze],
+                                       layout = w.Layout(height = '512px', width = '33%', align_items = 'center', border_bottom = '1px dashed'))
+        return analysis_settings_box
+                                        
+                                        
+    def enable_analysis_settings(self, enable_all_widgets: bool=True) -> None:
+        for attribute_name, attribute_obj in vars(self).items():
+            if attribute_name.startswith('user_settings'):
+                attribute_obj.disabled = not enable_all_widgets
+    
+
+    def _include_variance_config_changed(self, change) -> None:
+        if change['name'] == 'value':
+            if change['new'] == True:
+                self.user_settings_variance.layout.visibility = 'visible'
+            else:
+                self.user_settings_variance.layout.visibility = 'hidden'
+
+
+    def _limit_analysis_to_interval_changed(self, change) -> None:
+        if change['name'] == 'value':
+            if change['new'] == True:
+                self.user_settings_frame_interval_to_analyze.layout.visibility = 'visible'
+            else:
+                self.user_settings_frame_interval_to_analyze.layout.visibility = 'hidden'
+
+
+class MainScreen:
+
+    def __init__(self) -> None:
+        self.widget = self._build_widget()
+
+    def _build_widget(self) -> w.VBox:
+        welcome = w.HTML(value="<p style='font-size:32px; font-weight:bold; text-align:center;'>Welcome to</p>", layout = w.Layout(width = '99%'))
+        logo = w.HTML(value='<img src="https://raw.githubusercontent.com/jpits30/NeuronActivityTool/master/Logo.png" width="256" height="256">')
+        start_instructions = w.HTML(value="<p style='font-size:20px; font-weight:bold; text-align:center;'>Please start by selecting data of a recording to analyze</p>", layout = w.Layout(width = '99%'))
+        widget = w.VBox([welcome, logo, start_instructions], layout = w.Layout(height = '512px', width = '67%', justify_content = 'center', align_items = 'center',
+                                                                               border_top = '1px solid', border_left = '1px solid', border_bottom = '1px solid'))
+        return widget
+
+
+
+class WidgetsInterface:
+
+    def __init__(self) -> None:
+        self.user_info_panel = UserInfoPanel()
+        self.io_panel = IOPanel(user_info_panel = self.user_info_panel)
+        self.analysis_settings_panel = AnalysisSettingsPanel(user_info_panel = self.user_info_panel)
+        self.main_screen = MainScreen().widget
+        self.widget = w.VBox([self.io_panel.widget, 
+                              w.HBox([self.analysis_settings_panel.widget, self.main_screen]),
+                              self.user_info_panel.widget], layout = w.Layout(border = '1px solid'))
+        
+
+
+
+
+
+# Previous version:
+"""
+class WidgetsInterface:
+
+    @property
+    def layouts(self) -> Dict[str, w.Layout]:
+        default_layout = w.Layout(justify_content = 'space-between', width = '100%')
+        layouts = {'default': default_layout}
+        return layouts
+
+    @property
+    def styles(self) -> Dict[str, w.Style]:
+        default_style = {'description_width': 'initial'}
+        styles = {'default': default_style}
+        return styles
+
+    def __init__(self) -> None:
+        self.widget = self._build_widget()
+        
+
+    def _build_widget(self) -> w.VBox:
+        welcome_banner = self._build_welcome_banner()
+        directories_box = self._build_directories_box()
+        display_elements = self._build_display_elements()
+        settings_box = self._build_main_settings_box()
+        widget = w.VBox([welcome_banner, directories_box, w.HBox([display_elements, settings_box])], layout = w.Layout(width = '100%', height = '880px'))
+        return widget
+
+
+
+    def _build_welcome_banner(self) -> w.HBox:
+        welcome_html = w.HTML(value="<p style='font-size:32px; font-weight:bold; text-align:center;'>Welcome to NeuralActivityCubic</p>",
+                              layout = w.Layout(width = '100%', height = '80px'))
+        # include some branding logos
+        return w.HBox([welcome_html], layout = w.Layout(width = '100%', height = '80px'))
+
+
+    def _build_directories_box(self) -> w.VBox:
+        self.user_settings_recording_filepath = w.Text(description = 'Filepath of Recording: ',
+                                                       value = 'spiking_neuron.avi', 
+                                                       placeholder = 'Provide filepath to ROI file',
+                                                       style = {'description_width': 'initial'},
+                                                       layout = w.Layout(width = '80%'))
+        self.user_settings_roi_filepath = w.Text(description = 'Filepath of ROI file: ',
+                                                 value = '',
+                                                 placeholder = 'Provide filepath to ROI file',
+                                                 style = {'description_width': 'initial'},
+                                                 layout = w.Layout(width = '80%'))                         
+        self.user_settings_results_directory = w.Text(description = 'Output directory for results: ',
+                                                      value = '',
+                                                      placeholder = 'Current working directory will be used if left empty',
+                                                      style = {'description_width': 'initial'},
+                                                      layout = w.Layout(width = '99%'))
+        self.load_recording_button = w.Button(description = 'Load Recording', layout = w.Layout(width = '20%'))
+        self.load_roi_button = w.Button(description = 'Load ROI', layout = w.Layout(width = '20%'))
+        recordings_filepath_button_box = w.HBox([self.user_settings_recording_filepath, self.load_recording_button], layout = self.layouts['default'])
+        roi_filepath_button_box = w.HBox([self.user_settings_roi_filepath, self.load_roi_button], layout = self.layouts['default'])
+        directories_box = w.VBox([recordings_filepath_button_box, roi_filepath_button_box, self.user_settings_results_directory],
+                                 layout = w.Layout(width = '100%', height = '128px', justify_content = 'space-around'))
+        return directories_box
+
+    
+
+    def _build_display_elements(self) -> w.VBox:
+        self.main_screen = w.Output(layout = w.Layout(width = '100%', height = '450px'))
+        self.logs_screen = w.Output(layout = w.Layout(width = '100%', height = '100px'))
+        display_elements = w.VBox([self.main_screen, self.logs_screen], layout = w.Layout(width = '60%', height = '5500 px'))
+        return display_elements
+
+
+    def _build_main_settings_box(self) -> w.VBox:
+        self.user_settings_window_size = w.IntSlider(description='Window Size', 
+                                                     value=8, 
+                                                     min=1, 
+                                                     max=999, 
+                                                     step=1,
+                                                     style = self.styles['default'],
+                                                     layout = w.Layout(width = '99%'))
+        self.user_settings_signal_to_noise_ratio = w.FloatSlider(description='Signal to Noise Ratio',
+                                                                 value=3.0,
+                                                                 min=0.05,
+                                                                 max=30.0,
+                                                                 step=0.05,
+                                                                 style = self.styles['default'],
+                                                                 layout = w.Layout(width = '99%'))
+
+        self.user_settings_preview_only = w.Checkbox(description = 'Load preview frame only: ',
+                                                     value = False,
+                                                     style = self.styles['default'],
+                                                     layout = w.Layout(width = '99%'))
+        self.user_settings_frame_idx = w.BoundedIntText(description = 'Frame index to display for preview: ',
+                                                        value = 0,
+                                                        min = 0,
+                                                        max = 999,
+                                                        step = 1,
+                                                        style = self.styles['default'],
+                                                        layout = w.Layout(width = '99%'))                                                
+        user_settings_box = w.VBox([self.user_settings_window_size,
+                                    self.user_settings_signal_to_noise_ratio,
+                                    self.user_settings_preview_only,
+                                    self.user_settings_frame_idx], layout=w.Layout(width = '100%'))
+        self.run_analysis_button = w.Button(description = 'Run analysis', icon = 'rocket', layout = w.Layout(width = '99%'))
+        main_settings = w.VBox([user_settings_box, self.run_analysis_button], layout = w.Layout(justify_content = 'space-between', width = '40%', height = '550px'))
+        return main_settings
+
+
+    def show_on_main_window(self, image_to_show) -> None:
+        # display the image passed 
+        pass
+
+
+    def add_to_logs(self, message: str) -> None:
+        with self.logs_output:
+            print(message)
+"""
