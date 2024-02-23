@@ -63,18 +63,12 @@ class UserInfoPanel:
 
 class IOPanel:
     
-    def __init__(self) -> None:
+    def __init__(self, user_info_panel: UserInfoPanel) -> None:
+        self.user_info_panel = user_info_panel
         self.widget = self._build_widget()
 
 
-    def _build_widget(self) -> w.VBox:
-        self.io_selection_box = self._build_io_selection_box()
-        self.logs = w.Output(description = 'Logs:')
-        logs_box = w.HBox([self.logs], layout=w.Layout(height='250px', overflow_y='scroll'))
-        return w.VBox([self.io_selection_box])
-
-
-    def _build_io_selection_box(self):
+    def _build_widget(self):
         self.io_recording_box = self._build_io_recording_box()
         self.io_roi_box = self._build_io_roi_box()
         self.io_results_box = self._build_io_results_box()
@@ -103,7 +97,7 @@ class IOPanel:
                                  self.user_settings_results_filepath,
                                  self.run_analysis_button,
                                  self._get_spacer()],
-                                layout = w.Layout(width = '33%', max_height = '400px', align_items='center', border = '1px solid'))
+                                layout = w.Layout(width = '33%', max_height = '400px', align_items='center'))
         return io_results_box
     
 
@@ -131,7 +125,7 @@ class IOPanel:
                              self.user_settings_roi_filepath,
                              self.load_roi_button,
                              self._get_spacer()],
-                            layout = w.Layout(width = '33%', max_height = '400px', align_items='center', border = '1px solid'))
+                            layout = w.Layout(width = '33%', max_height = '400px', align_items='center', border_right = '1px dashed'))
         return io_roi_box
 
     
@@ -165,7 +159,7 @@ class IOPanel:
                     self.user_settings_roi_filepath.reset()
                     self._change_widget_state(self.load_roi_button, disabled = True, tooltip = 'Please select which data to load!')
                     message = 'You have to select a directory if batch processing is enabled!'
-                    self.add_entry_to_logs(message)
+                    self.user_info_panel.add_new_logs(message)
             if self.user_settings_enable_batch_processing.value == False:
                 if filepath.is_file() == True:
                     self._change_widget_state(self.load_roi_button, disabled = False, tooltip = 'Click to load the selected data')
@@ -175,7 +169,7 @@ class IOPanel:
                     message = ('You have to select a file if batch processing is disabled! '
                                'If you want to analyze multiple recording files within a directory '
                                '- with the same settings - consider enabling batch mode.')
-                    self.add_entry_to_logs(message)   
+                    self.user_info_panel.add_new_logs(message)   
 
     
 
@@ -203,7 +197,7 @@ class IOPanel:
                                    self.user_settings_recording_filepath,
                                    self.load_recording_button,
                                    self._get_spacer()],
-                                  layout = w.Layout(width = '33%', max_height = '400px', align_items='center', border = '1px solid'))
+                                  layout = w.Layout(width = '33%', max_height = '400px', align_items='center', border_right = '1px dashed', border_bottom = '1px dashed'))
         return io_recording_box
 
     
@@ -266,7 +260,7 @@ class IOPanel:
                     self.user_settings_recording_filepath.reset()
                     self._change_widget_state(self.load_recording_button, disabled = True, tooltip = 'Please select which data to load!')
                     message = 'You have to select a directory if batch processing is enabled!'
-                    self.add_entry_to_logs(message)
+                    self.user_info_panel.add_new_logs(message)
             if self.user_settings_enable_batch_processing.value == False:
                 if filepath.is_file() == True:
                     self._change_widget_state(self.load_recording_button, disabled = False, tooltip = 'Click to load the selected data')
@@ -276,27 +270,19 @@ class IOPanel:
                     message = ('You have to select a file if batch processing is disabled! '
                                'If you want to analyze multiple recording files within a directory '
                                '- with the same settings - consider enabling batch mode.')
-                    self.add_entry_to_logs(message)                
+                    self.user_info_panel.add_new_logs(message)                
                 
             
     def _get_spacer(self, height: str='10px', width: str='99%') -> w.HTML:
+        # consider making a general function in view.py
         return w.HTML(layout = w.Layout(height = height, width = width))
-
-
-
-    def add_entry_to_logs(self, message: str) -> None:
-        # Add timestamp
-        # Add new entry to displayed logs
-        pass
 
 
 
 class AnalysisSettingsPanel:
 
-    def __init__(self, user_info_panel: UserInfoPanel) -> None:
-        self.user_info_panel = user_info_panel
+    def __init__(self) -> None:
         self.widget = self._build_default_widget()
-        # self.enable_analysis_settings(False)
 
 
     def _build_default_widget(self) -> None:
@@ -370,6 +356,9 @@ class AnalysisSettingsPanel:
                 self.user_settings_frame_interval_to_analyze.layout.visibility = 'hidden'
 
 
+
+
+
 class MainScreen:
 
     def __init__(self) -> None:
@@ -385,134 +374,24 @@ class MainScreen:
 
 
 
+
+
 class WidgetsInterface:
 
     def __init__(self) -> None:
         self.user_info_panel = UserInfoPanel()
         self.io_panel = IOPanel(user_info_panel = self.user_info_panel)
-        self.analysis_settings_panel = AnalysisSettingsPanel(user_info_panel = self.user_info_panel)
-        self.main_screen = MainScreen().widget
+        self.analysis_settings_panel = AnalysisSettingsPanel()
+        self.main_screen = MainScreen()
         self.widget = w.VBox([self.io_panel.widget, 
-                              w.HBox([self.analysis_settings_panel.widget, self.main_screen]),
+                              w.HBox([self.analysis_settings_panel.widget, self.main_screen.widget]),
                               self.user_info_panel.widget], layout = w.Layout(border = '1px solid'))
-        
 
 
-
-
-
-# Previous version:
-"""
-class WidgetsInterface:
-
-    @property
-    def layouts(self) -> Dict[str, w.Layout]:
-        default_layout = w.Layout(justify_content = 'space-between', width = '100%')
-        layouts = {'default': default_layout}
-        return layouts
-
-    @property
-    def styles(self) -> Dict[str, w.Style]:
-        default_style = {'description_width': 'initial'}
-        styles = {'default': default_style}
-        return styles
-
-    def __init__(self) -> None:
-        self.widget = self._build_widget()
-        
-
-    def _build_widget(self) -> w.VBox:
-        welcome_banner = self._build_welcome_banner()
-        directories_box = self._build_directories_box()
-        display_elements = self._build_display_elements()
-        settings_box = self._build_main_settings_box()
-        widget = w.VBox([welcome_banner, directories_box, w.HBox([display_elements, settings_box])], layout = w.Layout(width = '100%', height = '880px'))
-        return widget
-
-
-
-    def _build_welcome_banner(self) -> w.HBox:
-        welcome_html = w.HTML(value="<p style='font-size:32px; font-weight:bold; text-align:center;'>Welcome to NeuralActivityCubic</p>",
-                              layout = w.Layout(width = '100%', height = '80px'))
-        # include some branding logos
-        return w.HBox([welcome_html], layout = w.Layout(width = '100%', height = '80px'))
-
-
-    def _build_directories_box(self) -> w.VBox:
-        self.user_settings_recording_filepath = w.Text(description = 'Filepath of Recording: ',
-                                                       value = 'spiking_neuron.avi', 
-                                                       placeholder = 'Provide filepath to ROI file',
-                                                       style = {'description_width': 'initial'},
-                                                       layout = w.Layout(width = '80%'))
-        self.user_settings_roi_filepath = w.Text(description = 'Filepath of ROI file: ',
-                                                 value = '',
-                                                 placeholder = 'Provide filepath to ROI file',
-                                                 style = {'description_width': 'initial'},
-                                                 layout = w.Layout(width = '80%'))                         
-        self.user_settings_results_directory = w.Text(description = 'Output directory for results: ',
-                                                      value = '',
-                                                      placeholder = 'Current working directory will be used if left empty',
-                                                      style = {'description_width': 'initial'},
-                                                      layout = w.Layout(width = '99%'))
-        self.load_recording_button = w.Button(description = 'Load Recording', layout = w.Layout(width = '20%'))
-        self.load_roi_button = w.Button(description = 'Load ROI', layout = w.Layout(width = '20%'))
-        recordings_filepath_button_box = w.HBox([self.user_settings_recording_filepath, self.load_recording_button], layout = self.layouts['default'])
-        roi_filepath_button_box = w.HBox([self.user_settings_roi_filepath, self.load_roi_button], layout = self.layouts['default'])
-        directories_box = w.VBox([recordings_filepath_button_box, roi_filepath_button_box, self.user_settings_results_directory],
-                                 layout = w.Layout(width = '100%', height = '128px', justify_content = 'space-around'))
-        return directories_box
-
-    
-
-    def _build_display_elements(self) -> w.VBox:
-        self.main_screen = w.Output(layout = w.Layout(width = '100%', height = '450px'))
-        self.logs_screen = w.Output(layout = w.Layout(width = '100%', height = '100px'))
-        display_elements = w.VBox([self.main_screen, self.logs_screen], layout = w.Layout(width = '60%', height = '5500 px'))
-        return display_elements
-
-
-    def _build_main_settings_box(self) -> w.VBox:
-        self.user_settings_window_size = w.IntSlider(description='Window Size', 
-                                                     value=8, 
-                                                     min=1, 
-                                                     max=999, 
-                                                     step=1,
-                                                     style = self.styles['default'],
-                                                     layout = w.Layout(width = '99%'))
-        self.user_settings_signal_to_noise_ratio = w.FloatSlider(description='Signal to Noise Ratio',
-                                                                 value=3.0,
-                                                                 min=0.05,
-                                                                 max=30.0,
-                                                                 step=0.05,
-                                                                 style = self.styles['default'],
-                                                                 layout = w.Layout(width = '99%'))
-
-        self.user_settings_preview_only = w.Checkbox(description = 'Load preview frame only: ',
-                                                     value = False,
-                                                     style = self.styles['default'],
-                                                     layout = w.Layout(width = '99%'))
-        self.user_settings_frame_idx = w.BoundedIntText(description = 'Frame index to display for preview: ',
-                                                        value = 0,
-                                                        min = 0,
-                                                        max = 999,
-                                                        step = 1,
-                                                        style = self.styles['default'],
-                                                        layout = w.Layout(width = '99%'))                                                
-        user_settings_box = w.VBox([self.user_settings_window_size,
-                                    self.user_settings_signal_to_noise_ratio,
-                                    self.user_settings_preview_only,
-                                    self.user_settings_frame_idx], layout=w.Layout(width = '100%'))
-        self.run_analysis_button = w.Button(description = 'Run analysis', icon = 'rocket', layout = w.Layout(width = '99%'))
-        main_settings = w.VBox([user_settings_box, self.run_analysis_button], layout = w.Layout(justify_content = 'space-between', width = '40%', height = '550px'))
-        return main_settings
-
-
-    def show_on_main_window(self, image_to_show) -> None:
+    def show_on_main_screen(self, image_to_show) -> None:
         # display the image passed 
         pass
 
 
     def add_to_logs(self, message: str) -> None:
-        with self.logs_output:
-            print(message)
-"""
+        self.user_info_panel.add_new_logs(message)
