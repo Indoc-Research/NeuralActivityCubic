@@ -1,9 +1,62 @@
 import ipywidgets as w
 from ipyfilechooser import FileChooser
 import numpy as np
+from datetime import datetime
 
 from typing import Dict, Optional, Any
 from pathlib import Path
+
+
+class UserInfoPanel:
+
+    def __init__(self) -> None:
+        self.widget = self._build_widget()
+        # Initialize basic parameters and configs:
+        self.max_lines_that_can_be_displayed_in_output = int(self.detailed_logs_output.layout.max_height.replace('px', '')) / 15
+        self.logs_message_count = 0
+        self.progress_in_percent = 0.0
+
+
+    def _build_widget(self) -> w.VBox:
+        info = w.HTML(value="<p style='font-size:16px; font-weight:bold; text-align:center;'>Info</p>", layout = w.Layout(width = '40px'))
+        self.latest_logs = w.Label(value = ' ... the latest logs message will be displayed here ... ',
+                                   style = {'font_style': 'italic', 'text_color': 'gray', 'font_family': 'monospace', 'text_align': 'center'},
+                                   layout = w.Layout(width = 'initial'))
+        self.progress_bar = w.FloatProgress(description = 'Progress', style = {'description_width': 'initial'}, layout = w.Layout(width = '20%'))
+        info_overview_box = w.HBox([info, self.latest_logs, self.progress_bar], layout = w.Layout(justify_content = 'space-between', align_items = 'center'))
+        self.detailed_logs_output = w.Output(layout = w.Layout(max_height = '200px', y_overflow='scroll'))
+        self.detailed_logs_accordion = w.Accordion(children = [self.detailed_logs_output], titles = ('Detailed logs', ), selected_index = None)
+        return w.VBox([info_overview_box, self.detailed_logs_accordion])
+
+
+    def add_new_logs(self, message: str) -> None:
+        assert type(message) == str, f'UserInfoHandler.add_new_logs() expects a message of type string. However, you passed {message}, which is of type {type(message)}.'
+        current_time = datetime.now(user_timezone)
+        # Update latest logs:
+        time_prefix_latest_logs = current_time.strftime('%H-%M-%S')
+        if len(message) > 125:
+            self.latest_logs.value = f'{time_prefix_latest_logs}: {message[:85]}...(find full message in detailed logs)'
+        else:
+            self.latest_logs.value = f'{time_prefix_latest_logs}: {message}'
+        # Update detailed logs:
+        time_prefix_detailed_logs = current_time.strftime('%d-%m-%y %H:%M:%S.%f')
+        self.logs_message_count += 1
+        # Check if title has already been changed:
+        if self.detailed_logs_accordion.get_title(0) == 'Detailed logs':
+            # If not, check if max lines have been reached with this new message and adjust title accordingly:
+            if self.logs_message_count >= self.max_lines_that_can_be_displayed_in_output:
+                self.detailed_logs_accordion.set_title(0, 'Detailed logs - please scroll down to see latest logs')
+        with self.detailed_logs_output:
+            print(f'{time_prefix_detailed_logs}: {message}')
+
+
+    def update_progress_bar(self, progress_in_percent: float) -> None:
+        assert type(progress_in_percent) == float, ('UserInfoHandler.update_progress_bar() expects the progress_in_percent of type float. '
+                                                    f'However, you passed {progress_in_percent}, which is of type {type(progress_in_percent)}.')
+        if progress_in_percent == 100.0:
+            self.progress_bar.bar_style = 'success'
+        self.progress_bar.value = progress_in_percent
+
 
 
 class WidgetsInterface:
