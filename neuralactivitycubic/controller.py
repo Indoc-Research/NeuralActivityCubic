@@ -50,14 +50,15 @@ class App:
 
 
     def _get_validated_user_settings_required_for_model_function(self, model_func: Callable) -> Dict[str, Any]:
-        all_user_settings = self._export_current_user_settings()
+        all_user_settings = self.view.export_user_settings()
         relevant_user_settings = {}
         for expected_parameter_name in inspect.signature(model_func).parameters:
             self._validate_user_settings_for_model_function(model_func, all_user_settings, expected_parameter_name)
             relevant_user_settings[expected_parameter_name] = all_user_settings[expected_parameter_name]
         return relevant_user_settings
 
-
+    # Was now moved to WidgetsInterface in view.py
+    """
     def _export_current_user_settings(self) -> Dict[str, Any]:
         user_settings = {}
         for attribute_name, attribute_value in vars(self.view).items():
@@ -68,6 +69,7 @@ class App:
                     value_set_by_user = Path(value_set_by_user)
                 user_settings[parameter_name] = value_set_by_user
         return user_settings
+    """
 
 
     def _validate_user_settings_for_model_function(self, model_func: Callable, user_settings: Dict[str, Any], expected_parameter_name: str) -> None:

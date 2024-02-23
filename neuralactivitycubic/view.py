@@ -395,8 +395,6 @@ class MainScreen:
 
 
 
-
-
 class WidgetsInterface:
 
     def __init__(self) -> None:
@@ -407,11 +405,6 @@ class WidgetsInterface:
         self.widget = w.VBox([self.io_panel.widget, 
                               w.HBox([self.analysis_settings_panel.widget, self.main_screen.widget]),
                               self.user_info_panel.widget], layout = w.Layout(border = '1px solid'))
-
-
-    def show_on_main_screen(self, image_to_show) -> None:
-        # display the image passed 
-        pass
 
 
     def add_to_logs(self, message: str) -> None:
