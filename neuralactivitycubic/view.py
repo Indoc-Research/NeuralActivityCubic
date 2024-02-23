@@ -362,15 +362,36 @@ class AnalysisSettingsPanel:
 class MainScreen:
 
     def __init__(self) -> None:
-        self.widget = self._build_widget()
+        self.welcome_screen = self._build_welcome_screen()
+        self.output_screen = self._build_output_screen()
+        self.widget = w.VBox([], layout = w.Layout(height = '512px', width = '67%', justify_content = 'center', align_items = 'center', 
+                                                                border_top = '1px solid', border_left = '1px solid', border_bottom = '1px solid'))
+        self.show_welcome_screen()
 
-    def _build_widget(self) -> w.VBox:
+    def _build_welcome_screen(self) -> w.VBox:
         welcome = w.HTML(value="<p style='font-size:32px; font-weight:bold; text-align:center;'>Welcome to</p>", layout = w.Layout(width = '99%'))
         logo = w.HTML(value='<img src="https://raw.githubusercontent.com/jpits30/NeuronActivityTool/master/Logo.png" width="256" height="256">')
         start_instructions = w.HTML(value="<p style='font-size:20px; font-weight:bold; text-align:center;'>Please start by selecting data of a recording to analyze</p>", layout = w.Layout(width = '99%'))
-        widget = w.VBox([welcome, logo, start_instructions], layout = w.Layout(height = '512px', width = '67%', justify_content = 'center', align_items = 'center',
-                                                                               border_top = '1px solid', border_left = '1px solid', border_bottom = '1px solid'))
-        return widget
+        welcome_screen = w.VBox([welcome, logo, start_instructions])
+        return welcome_screen
+
+
+    def _build_output_screen(self) -> w.VBox:
+        self.output = w.Output()
+        output_screen = w.VBox([self.output])
+        return output_screen
+
+
+    def show_welcome_screen(self) -> None:
+        self.widget.children = self.welcome_screen.children
+        self.current_screen = 'welcome'
+
+
+    def show_output_screen(self, clear_output: bool=True) -> None:
+        if clear_output == True:
+            self.output.clear_output()
+        self.widget.children = self.output_screen.children
+        self.current_screen = 'output'   
 
 
 
