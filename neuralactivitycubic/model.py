@@ -17,13 +17,10 @@ class Model:
         self.num_processes = multiprocessing.cpu_count()
         
 
-    def load_recording(self, recording_filepath: Path, preview_only: bool=False, frame_idx: int=0) -> None:
+    def load_recording(self, recording_filepath: Path) -> None:
         recording_loader = RecordingLoaderFactory().get_loader(recording_filepath)
-        if preview_only == True:
-            self.recording_preview = recording_loader.load_single_frame_as_preview(frame_idx)
-        else:
-            self.recording_zstack = recording_loader.load_all_frames()
-            self.recording_preview = self.recording_zstack[frame_idx, :, :, :] # ensure that dimensions are the same as for ".get_single_frame_as_preview()"
+        self.recording_zstack = recording_loader.load_all_frames()
+        self.recording_preview = self.recording_zstack[0, :, :, :] # ensure that dimensions are the same as for ".get_single_frame_as_preview()"
 
 
     def load_roi(self, roi_filepath: Path) -> None:
