@@ -3,8 +3,24 @@ from scipy import signal
 from pybaselines import Baseline
 from collections import Counter
 
-from typing import Optional, Tuple, Dict, List
+from typing import Optional, Tuple, Dict, List, Callable, Any
 from dataclasses import dataclass
+
+
+
+class BaselineEstimatorFactory:
+        
+    @property
+    def supported_baseline_estimation_methods(self) -> Dict[str, Callable]:
+        supported_baseline_estimation_methods = {'asls': Baseline().asls,
+                                                 'fabc': Baseline().fabc,
+                                                 'psalsa': Baseline().psalsa,
+                                                 'std_distribution': Baseline().std_distribution}
+        return supported_baseline_estimation_methods
+
+    def get_baseline_estimation_callable(self, algorithm_acronym: str) -> Callable:
+        baseline_estimation_method = self.supported_baseline_estimation_methods[algorithm_acronym]
+        return baseline_estimation_method
 
 
 
@@ -27,8 +43,14 @@ class Square:
         self.upper_left_corner_coords = upper_left_corner_coords
         self.frames_zstack = frames_zstack
         self.center_coords = self._get_center_coords()
-        
 
+
+    def _get_center_coords(self) -> Tuple[int, int]:
+        square_height = self.frames_zstack.shape[1]
+        square_width = self.frames_zstack.shape[2]
+        return (self.upper_left_corner_coords[0] + int(square_height/2), self.upper_left_corner_coords[1] + int(square_width/2))
+
+        
     def compute_mean_intensity_timeseries(self) -> None:
         self.mean_intensity_over_time = np.mean(self.frames_zstack, axis = (1,2,3))
 
@@ -46,15 +68,16 @@ class Square:
         self.peaks_count = self.frame_idxs_of_peaks.shape[0]
 
 
-    def estimate_baseline(self) -> None:
-        baseline_estimator = Baseline()
-        self.baseline = baseline_estimator.asls(data = self.mean_intensity_over_time)[0]
+    def estimate_baseline(self, algorithm_acronym: str) -> None:
+        baseline_estimation_method = BaselineEstimatorFactory().get_baseline_estimation_callable(algorithm_acronym)
+        self.baseline = baseline_estimation_method(data = self.mean_intensity_over_time)[0]
 
 
     def compute_area_under_curve(self) -> None:
-        quick_estimate_of_intersection_frame_idxs = np.argwhere(np.diff(np.sign(self.mean_intensity_over_time - self.baseline))).flatten()
-        self._add_information_about_neighboring_intersections_to_peaks(quick_estimate_of_intersection_frame_idxs)
-        self._find_closest_neighboring_intersections_for_each_peak(quick_estimate_of_intersection_frame_idxs)
+        self._get_unique_frame_idxs_of_intersections_between_signal_and_baseline()
+        self._add_information_about_neighboring_intersections_to_peaks()
+        #self._add_information_about_neighboring_intersections_to_peaks(quick_estimate_of_intersection_frame_idxs)
+        #self._find_closest_neighboring_intersections_for_each_peak(quick_estimate_of_intersection_frame_idxs)
         area_under_curve_classification = {'peaks_with_auc': [], 'all_intersection_frame_idxs_pairs': []}
         for peak_frame_idx, peak in self.peaks.items():
             if peak.has_neighboring_intersections == True:
@@ -66,19 +89,30 @@ class Square:
                                                                                     
 
 
-    def _classify_area_under_curve_types(self, data_for_auc_classification: Dict[str, List]) -> None:
-        if len(data_for_auc_classification['all_intersection_frame_idxs_pairs']) != len(set(data_for_auc_classification['all_intersection_frame_idxs_pairs'])):
-            counter = Counter(data_for_auc_classification['all_intersection_frame_idxs_pairs'])
-            reoccuring_intersection_frame_idxs = [pair_of_intersection_frame_idxs for pair_of_intersection_frame_idxs, count in counter.items() if count > 1]
+    def _get_unique_frame_idxs_of_intersections_between_signal_and_baseline(self, improve_accuracy_via_interpolation: bool=True) -> None:
+        quick_estimate_of_intersection_frame_idxs = np.argwhere(np.diff(np.sign(self.mean_intensity_over_time - self.baseline))).flatten()
+        if improve_accuracy_via_interpolation == True:
+            intersection_frame_idxs = np.asarray([self._improve_intersection_frame_idx_estimation_by_interpolation(idx) for idx in quick_estimate_of_intersection_frame_idxs])
+            unique_intersection_frame_idxs = np.unique(intersection_frame_idxs)
         else:
-            reoccuring_intersection_frame_idxs = []
-        for peak in data_for_auc_classification['peaks_with_auc']:
-            if peak.frame_idxs_of_neighboring_intersections in reoccuring_intersection_frame_idxs:
-                peak.area_under_curve_type = 'event_train'
+            unique_intersection_frame_idxs = np.unique(quick_estimate_of_intersection_frame_idxs)
+        self.unique_intersection_frame_idxs = unique_intersection_frame_idxs
+
+
+    def _add_information_about_neighboring_intersections_to_peaks(self) -> None:
+        for peak_frame_idx, peak in self.peaks.items():
+            #if peak_frame_idx in self.unique_intersection_frame_idxs:
+                # log that this peak coincides with an intersection at the very same frame idx
+            if (peak_frame_idx > self.unique_intersection_frame_idxs[0]) & (peak_frame_idx < self.unique_intersection_frame_idxs[-1]):
+                peak.has_neighboring_intersections = True
+                idx_pre_peak = self.unique_intersection_frame_idxs[self.unique_intersection_frame_idxs < peak_frame_idx][-1]
+                idx_post_peak = self.unique_intersection_frame_idxs[self.unique_intersection_frame_idxs > peak_frame_idx][0]
+                peak.frame_idxs_of_neighboring_intersections = (idx_pre_peak, idx_post_peak)
             else:
-                peak.area_under_curve_type = 'individual_event'
+                peak.has_neighboring_intersections = False
 
 
+    """
     def _add_information_about_neighboring_intersections_to_peaks(self, intersection_frame_idxs: np.ndarray) -> None:
         frame_idxs_of_peaks_with_neighboring_intersections = self.frame_idxs_of_peaks[((self.frame_idxs_of_peaks > intersection_frame_idxs[0]) 
                                                                                        & (self.frame_idxs_of_peaks < intersection_frame_idxs[-1]))]
@@ -89,7 +123,7 @@ class Square:
                 peak.has_neighboring_intersections = False
 
 
-    def _find_closest_neighboring_intersections_for_each_peak(self, quick_estimate_of_intersection_frame_idxs: np.ndarray, improve_accuracy_via_interpolation: bool=True) -> None:
+    def _find_closest_neighboring_intersections_for_each_peak(self, quick_estimate_of_intersection_frame_idxs: np.ndarray, improve_accuracy_via_interpolation: bool=False) -> None:
         for peak_frame_idx, peak in self.peaks.items():
             if peak.has_neighboring_intersections == True:
                 neighboring_intersection_frame_idxs = self._get_neighboring_intersection_frame_idxs(peak_frame_idx, quick_estimate_of_intersection_frame_idxs)
@@ -109,7 +143,7 @@ class Square:
         intersection_frame_idx_before_peak = all_intersection_idxs[idx_before_peak_in_intersections]
         intersection_frame_idx_after_peak = all_intersection_idxs[idx_before_peak_in_intersections + 1]
         return intersection_frame_idx_before_peak, intersection_frame_idx_after_peak
-    
+    """
 
 
     def _improve_intersection_frame_idx_estimation_by_interpolation(self, idx_frame_0: int) -> int:
@@ -143,6 +177,18 @@ class Square:
         return interpolation_evaluated_intersection_frame_idx
     
 
+    def _classify_area_under_curve_types(self, data_for_auc_classification: Dict[str, List]) -> None:
+        if len(data_for_auc_classification['all_intersection_frame_idxs_pairs']) != len(set(data_for_auc_classification['all_intersection_frame_idxs_pairs'])):
+            counter = Counter(data_for_auc_classification['all_intersection_frame_idxs_pairs'])
+            reoccuring_intersection_frame_idxs = [pair_of_intersection_frame_idxs for pair_of_intersection_frame_idxs, count in counter.items() if count > 1]
+        else:
+            reoccuring_intersection_frame_idxs = []
+        for peak in data_for_auc_classification['peaks_with_auc']:
+            if peak.frame_idxs_of_neighboring_intersections in reoccuring_intersection_frame_idxs:
+                peak.area_under_curve_type = 'event_train'
+            else:
+                peak.area_under_curve_type = 'individual_event'
+
     
     def compute_delta_f_over_f(self):
         for peak in self.peaks.values():
@@ -150,17 +196,13 @@ class Square:
 
     
 
-    def _get_center_coords(self) -> Tuple[int, int]:
-        square_height = self.frames_zstack.shape[1]
-        square_width = self.frames_zstack.shape[2]
-        return (self.upper_left_corner_coords[0] + int(square_height/2), self.upper_left_corner_coords[1] + int(square_width/2))
 
 
 
-def process_squares(square: Square, signal_to_noise_ratio: float) -> Square:
+def process_squares(square: Square, configs: Dict[str, Any]) -> Square:
     square.compute_mean_intensity_timeseries()
-    square.detect_peaks(signal_to_noise_ratio)
-    #square.estimate_baseline()
-    #square.compute_area_under_curve()
-    #square.compute_delta_f_over_f()
+    square.detect_peaks(configs['signal_to_noise_ratio'])
+    square.estimate_baseline(configs['baseline_estimation_method'])
+    square.compute_area_under_curve()
+    square.compute_delta_f_over_f()
     return square
