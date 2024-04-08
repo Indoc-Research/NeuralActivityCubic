@@ -32,14 +32,22 @@ class Model:
 
     def run_analysis(self,
                      window_size: int,
-                     signal_to_noise_ratio: float
+                     signal_to_noise_ratio: float,
+                     signal_average_threshold: float,
+                     minimum_activity_counts: int,
+                     baseline_estimation_method: str,
+                     include_variance: bool,
+                     variance: float,
+                     limit_analysis_to_frame_interval: bool
+                     # frame_interval_to_analyze: Tuple[int, int]
                     ) -> None:
         self._create_squares(window_size)
-        params = locals()
+        configs = locals()
+        configs.pop('self')
         with multiprocessing.Pool(processes = self.num_processes) as pool:
             # check if following line can instead refer to original list - maybe the individual elements are also directly overwritten? 
             # consider changing into for loop if neccessary & possible
-            processed_squares = pool.starmap(process_squares, [(square, signal_to_noise_ratio) for square in self.squares])
+            processed_squares = pool.starmap(process_squares, [(square, configs) for square in self.squares])
         self.processed_squares = processed_squares
 
 
