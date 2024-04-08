@@ -15,31 +15,45 @@ class App:
         self.view = WidgetsInterface()
         self._bind_buttons_to_functions()
 
+    
     def launch(self) -> None:
         display(self.view.widget)
 
     
     def _bind_buttons_to_functions(self) -> None:
-        self.view.run_analysis_button.on_click(self._run_button_clicked)
-        self.view.load_recording_button.on_click(self._load_recording_button_clicked)
-        self.view.load_roi_button.on_click(self._load_roi_button_clicked)
+        self.view.io_panel.run_analysis_button.on_click(self._run_button_clicked)
+        self.view.io_panel.load_recording_button.on_click(self._load_recording_button_clicked)
+        self.view.io_panel.load_roi_button.on_click(self._load_roi_button_clicked)
 
 
     def _run_button_clicked(self, change) -> None:
+        self.view.enable_analysis(False)
+        self.view.update_infos(logs_message = 'Validating user input for analysis', progress_in_percent = 5.0)
         validated_user_settings_analysis = self._get_validated_user_settings_required_for_model_function(self.model.run_analysis)
+        self.view.update_infos(logs_message = 'Validation successful! Starting analysis ...', progress_in_percent = 10.0)
         self.model.run_analysis(**validated_user_settings_analysis)
+        self.view.update_infos(logs_message = 'Analysis completed! Generating output results ...', progress_in_percent = 90.0)
         validated_user_settings_overview_results = self._get_validated_user_settings_required_for_model_function(self.model.create_overview_results)
-        self.view.main_screen.clear_output()
-        with self.view.main_screen:
+        self.view.main_screen.show_output_screen()
+        with self.view.main_screen.output:
             self.model.create_overview_results(**validated_user_settings_overview_results)
+        self.view.update_infos(logs_message = 'All result files have been created.')
+        self.view.update_infos(logs_message = 'All jobs finished!', progress_in_percent = 100.0)
+        self.view.enable_analysis(True)
 
 
     def _load_recording_button_clicked(self, change) -> None:
         validated_user_settings = self._get_validated_user_settings_required_for_model_function(self.model.load_recording)
+        self.view.update_infos(logs_message = f'Loading data from specified input path: {validated_user_settings["recording_filepath"]}',
+                               progress_in_percent = 10.0)
         self.model.load_recording(**validated_user_settings)
-        with self.view.main_screen:
+        self.view.update_infos(logs_message = 'Recording data successfully loaded', progress_in_percent = 95.0)
+        self.view.main_screen.show_output_screen()
+        with self.view.main_screen.output:
             plt.imshow(self.model.recording_preview)
             plt.show()
+        self.view.update_infos(progress_in_percent = 100.0)
+        self.view.enable_analysis()
 
 
     def _load_roi_button_clicked(self, change) -> None:
@@ -56,20 +70,6 @@ class App:
             self._validate_user_settings_for_model_function(model_func, all_user_settings, expected_parameter_name)
             relevant_user_settings[expected_parameter_name] = all_user_settings[expected_parameter_name]
         return relevant_user_settings
-
-    # Was now moved to WidgetsInterface in view.py
-    """
-    def _export_current_user_settings(self) -> Dict[str, Any]:
-        user_settings = {}
-        for attribute_name, attribute_value in vars(self.view).items():
-            if attribute_name.startswith('user_settings_'):
-                value_set_by_user = attribute_value.value
-                parameter_name = attribute_name.replace('user_settings_', '')
-                if 'filepath' in parameter_name:
-                    value_set_by_user = Path(value_set_by_user)
-                user_settings[parameter_name] = value_set_by_user
-        return user_settings
-    """
 
 
     def _validate_user_settings_for_model_function(self, model_func: Callable, user_settings: Dict[str, Any], expected_parameter_name: str) -> None:

@@ -13,6 +13,7 @@ class UserInfoPanel:
     def __init__(self) -> None:
         self.widget = self._build_widget()
         # Initialize basic parameters and configs:
+        self.user_timezone = datetime.now().astimezone().tzinfo
         self.max_lines_that_can_be_displayed_in_output = int(self.detailed_logs_output.layout.max_height.replace('px', '')) / 15
         self.logs_message_count = 0
         self.progress_in_percent = 0.0
@@ -33,7 +34,7 @@ class UserInfoPanel:
 
     def add_new_logs(self, message: str) -> None:
         assert type(message) == str, f'UserInfoHandler.add_new_logs() expects a message of type string. However, you passed {message}, which is of type {type(message)}.'
-        current_time = datetime.now(user_timezone)
+        current_time = datetime.now(self.user_timezone)
         # Update latest logs:
         time_prefix_latest_logs = current_time.strftime('%H-%M-%S')
         if len(message) > 125:
@@ -69,14 +70,10 @@ class IOPanel:
 
 
     def _build_widget(self):
-        self.io_recording_box = self._build_io_recording_box()
-        self.io_roi_box = self._build_io_roi_box()
-        self.io_results_box = self._build_io_results_box()
-        return w.HBox([self.io_recording_box,
-                       self.io_roi_box,
-                       self.io_results_box],
-                      layout = w.Layout(width = '100%'))
-
+        io_recording_box = self._build_io_recording_box()
+        io_roi_box = self._build_io_roi_box()
+        io_results_box = self._build_io_results_box()
+        return w.HBox([io_recording_box, io_roi_box, io_results_box], layout = w.Layout(width = '100%'))
 
 
     def _build_io_results_box(self) -> w.VBox:
@@ -88,7 +85,7 @@ class IOPanel:
         self.run_analysis_button = w.Button(description = 'Run analysis',
                                             disabled = True,
                                             tooltip = 'You have to load some data first, before you can run the analysis!',
-                                            button_style = 'danger',
+                                            button_style = '',
                                             icon = 'rocket',
                                             layout = w.Layout(width = '90%'))
         io_results_box = w.VBox([io_results_info,
@@ -288,6 +285,8 @@ class AnalysisSettingsPanel:
     def _build_default_widget(self) -> None:
         # Create and configure all elements:
         analysis_settings_info = w.HTML(value="<p style='font-size:16px; font-weight:bold; text-align:center;'>Analysis Settings</p>", layout = w.Layout(width = '99%'))
+        wis_label = w.Label(value = 'Window size:', style = {'text_align': 'left'}, layout = w.Layout(width = '90%'))
+        self.user_settings_window_size = w.IntSlider(value = 10, min = 1, max = 128, step = 1, disabled = True, layout = w.Layout(width = '90%'))
         snr_label = w.Label(value = 'Signal to noise ratio:', style = {'text_align': 'left'}, layout = w.Layout(width = '90%'))
         self.user_settings_signal_to_noise_ratio = w.FloatSlider(value = 3.0, min = 0.0, max = 100.0, step = 0.05, disabled = True, layout = w.Layout(width = '90%'))
         sat_label = w.Label(value = 'Signal average threshold:', style = {'text_align': 'left'}, layout = w.Layout(width = '90%'))
@@ -295,32 +294,35 @@ class AnalysisSettingsPanel:
         mac_label = w.Label(value = 'Minimum activity counts:', style = {'text_align': 'left'}, layout = w.Layout(width = '90%'))
         self.user_settings_minimum_activity_counts = w.BoundedIntText(value = 2, min = 0, max = 100, step = 1, disabled = True, layout = w.Layout(width = '75%'))
         bem_label = w.Label(value = 'Baseline estimation method:', style = {'text_align': 'left'}, layout = w.Layout(width = '90%'))
-        self.user_settings_baseline_estimation_method = w.Dropdown(value = "Asymmetric Least Squares", 
-                                                                   options = ["Asymmetric Least Squares",
-                                                                              "Fully Automatic Baseline Correction",
-                                                                              "Peaked Signal's Asymmetric Least Squares Algorithm",
-                                                                              "Standard Deviation Distribution"
+        self.user_settings_baseline_estimation_method = w.Dropdown(value = 'asls', 
+                                                                   options = [("Asymmetric Least Squares", "asls"),
+                                                                              ("Fully Automatic Baseline Correction", "fabc"),
+                                                                              ("Peaked Signal's Asymmetric Least Squares Algorithm", "psalsa"),
+                                                                              ("Standard Deviation Distribution", "std_distribution")
                                                                              ],
                                                                    disabled = True,
                                                                    layout = w.Layout(width = '75%'))
-        vertical_spacer = w.HTML(value = '', layout = w.Layout(height = '10px'))
+        vertical_spacer = w.HTML(value = '', layout = w.Layout(height = '5px'))
         dashed_separator_line = w.HTML(value = "<hr style='border: none; border-bottom: 1px dashed;'>", layout = w.Layout(width = '95%'))
         optional_info = w.Label(value = 'Optional settings:', style = {'text_align': 'left', 'font_weight': 'bold'}, layout = w.Layout(width = '90%'))
-        self.user_settings_include_variance = w.Checkbox(description = 'include Variance', value = False, disabled = True, layout = w.Layout(width = '90%'))
+        self.user_settings_include_variance = w.Checkbox(description = 'include Variance', value = False, disabled = True, indent = False)
         self.user_settings_variance = w.BoundedFloatText(description = 'Variance:', disabled = True,
                                                          value = 3.0, min = 0.0, max = 30.0, step = 0.1,
                                                          style = {'description_width': 'initial'},
                                                          layout = w.Layout(width = '75%', visibility = 'hidden'))
-        self.user_settings_limit_analysis_to_frame_interval = w.Checkbox(description = 'limit analysis to specific frame interval', 
-                                                                         value = False, disabled = True, layout = w.Layout(width = '90%'))
+        self.user_settings_limit_analysis_to_frame_interval = w.Checkbox(description = 'analyze only specific interval', 
+                                                                         value = False, disabled = True, indent = False)
         self.user_settings_frame_interval_to_analyze = w.IntRangeSlider(description = 'Frame interval:', disabled = True, 
                                                                         value = (0, 100), min = 0, max = 100, step = 1, 
                                                                         style = {'description_width': 'initial'}, layout = w.Layout(width = '90%', visibility = 'hidden'))
+        optional_checkboxes = w.HBox([self.user_settings_include_variance, self.user_settings_limit_analysis_to_frame_interval],
+                                     layout = w.Layout(width = '90%'))
         # Enable event handling:
         self.user_settings_include_variance.observe(self._include_variance_config_changed)
         self.user_settings_limit_analysis_to_frame_interval.observe(self._limit_analysis_to_interval_changed)
         # Arrange elements:
         analysis_settings_box = w.VBox([analysis_settings_info,
+                                        wis_label, self.user_settings_window_size,
                                         snr_label, self.user_settings_signal_to_noise_ratio,
                                         sat_label, self.user_settings_signal_average_threshold,
                                         mac_label, self.user_settings_minimum_activity_counts,
@@ -328,8 +330,9 @@ class AnalysisSettingsPanel:
                                         vertical_spacer,
                                         dashed_separator_line, 
                                         optional_info,
-                                        self.user_settings_include_variance, self.user_settings_variance,
-                                        self.user_settings_limit_analysis_to_frame_interval, self.user_settings_frame_interval_to_analyze],
+                                        optional_checkboxes,
+                                        self.user_settings_variance,
+                                        self.user_settings_frame_interval_to_analyze],
                                        layout = w.Layout(height = '512px', width = '33%', align_items = 'center', border_bottom = '1px dashed'))
         return analysis_settings_box
                                         
@@ -407,5 +410,36 @@ class WidgetsInterface:
                               self.user_info_panel.widget], layout = w.Layout(border = '1px solid'))
 
 
-    def add_to_logs(self, message: str) -> None:
-        self.user_info_panel.add_new_logs(message)
+    def update_infos(self, logs_message: Optional[str]=None, progress_in_percent: Optional[float]=None) -> None:
+        if logs_message != None:
+            self.user_info_panel.add_new_logs(logs_message)
+        if progress_in_percent != None:
+            self.user_info_panel.update_progress_bar(progress_in_percent)
+
+
+    def export_user_settings(self) -> Dict[str, Any]:
+        user_settings = {}
+        for panel_name_with_user_settings in ['analysis_settings_panel', 'io_panel']:
+            panel = getattr(self, panel_name_with_user_settings)
+            for attribute_name, attribute_value in vars(panel).items():
+                if attribute_name.startswith('user_settings_'):
+                    value_set_by_user = attribute_value.value
+                    if value_set_by_user != None:
+                        parameter_name = attribute_name.replace('user_settings_', '')
+                        if 'filepath' in parameter_name:
+                            value_set_by_user = Path(value_set_by_user)
+                        user_settings[parameter_name] = value_set_by_user               
+        return user_settings
+
+
+    def enable_analysis(self, enable: bool=True) -> None:
+        self.analysis_settings_panel.enable_analysis_settings(enable)
+        if enable == True:
+            self.io_panel._change_widget_state(self.io_panel.run_analysis_button, 
+                                               disabled = False, 
+                                               button_style = 'danger',
+                                               tooltip = 'Click here to start the analysis will all currently specified settings!')
+        else:
+            self.io_panel._change_widget_state(self.io_panel.run_analysis_button, 
+                                               disabled = True, 
+                                               button_style = '')            
