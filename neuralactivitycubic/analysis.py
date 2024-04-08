@@ -56,12 +56,22 @@ class Square:
 
 
     def detect_peaks(self, signal_to_noise_ratio: float) -> None:
+        # Add default exclusion of peaks within first / last 20 frames to avoid border effects?
+        widths = np.logspace(np.log10(1), np.log10(self.mean_intensity_over_time.shape[0]), 100)
+        n_octaves_min = 1
+        min_length = n_octaves_min / np.log2(widths[1] / widths[0])
+        print(widths)
+        print(min_length)
         self.frame_idxs_of_peaks = signal.find_peaks_cwt(vector = self.mean_intensity_over_time, 
                                                          wavelet = signal.ricker, 
-                                                         widths = np.arange(1, 81), 
-                                                         min_length = 7, 
-                                                         noise_perc = 10, 
-                                                         min_snr = signal_to_noise_ratio)
+                                                         widths = widths, 
+                                                         min_length = min_length,
+                                                         max_distances = widths / 4, # default
+                                                         gap_thresh = 0.0,
+                                                         noise_perc = 10, # default: 10
+                                                         min_snr = signal_to_noise_ratio,
+                                                         window_size = max(round(0.05 * self.mean_intensity_over_time.shape[0]), 10) # window size to calculate noise is very narrow (lowest point = noise)
+                                                        )
         self.peaks = {}
         for peak_frame_idx in self.frame_idxs_of_peaks:
             self.peaks[peak_frame_idx] = Peak(frame_idx = peak_frame_idx, intensity = self.mean_intensity_over_time[peak_frame_idx]) 
@@ -88,7 +98,6 @@ class Square:
         self._classify_area_under_curve_types(area_under_curve_classification)
                                                                                     
 
-
     def _get_unique_frame_idxs_of_intersections_between_signal_and_baseline(self, improve_accuracy_via_interpolation: bool=True) -> None:
         quick_estimate_of_intersection_frame_idxs = np.argwhere(np.diff(np.sign(self.mean_intensity_over_time - self.baseline))).flatten()
         if improve_accuracy_via_interpolation == True:
@@ -110,40 +119,6 @@ class Square:
                 peak.frame_idxs_of_neighboring_intersections = (idx_pre_peak, idx_post_peak)
             else:
                 peak.has_neighboring_intersections = False
-
-
-    """
-    def _add_information_about_neighboring_intersections_to_peaks(self, intersection_frame_idxs: np.ndarray) -> None:
-        frame_idxs_of_peaks_with_neighboring_intersections = self.frame_idxs_of_peaks[((self.frame_idxs_of_peaks > intersection_frame_idxs[0]) 
-                                                                                       & (self.frame_idxs_of_peaks < intersection_frame_idxs[-1]))]
-        for peak_frame_idx, peak in self.peaks.items():
-            if peak_frame_idx in frame_idxs_of_peaks_with_neighboring_intersections:
-                peak.has_neighboring_intersections = True
-            else:
-                peak.has_neighboring_intersections = False
-
-
-    def _find_closest_neighboring_intersections_for_each_peak(self, quick_estimate_of_intersection_frame_idxs: np.ndarray, improve_accuracy_via_interpolation: bool=False) -> None:
-        for peak_frame_idx, peak in self.peaks.items():
-            if peak.has_neighboring_intersections == True:
-                neighboring_intersection_frame_idxs = self._get_neighboring_intersection_frame_idxs(peak_frame_idx, quick_estimate_of_intersection_frame_idxs)
-                if improve_accuracy_via_interpolation == True:
-                    intersection_frame_idx_before_peak = self._improve_intersection_frame_idx_estimation_by_interpolation(neighboring_intersection_frame_idxs[0])
-                    intersection_frame_idx_after_peak = self._improve_intersection_frame_idx_estimation_by_interpolation(neighboring_intersection_frame_idxs[1])
-                else:
-                    intersection_frame_idx_before_peak, intersection_frame_idx_after_peak = neighboring_intersection_frame_idxs
-                peak.frame_idxs_of_neighboring_intersections = (intersection_frame_idx_before_peak, intersection_frame_idx_after_peak)
-
-
-    def _get_neighboring_intersection_frame_idxs(self, peak_frame_idx: int, all_intersection_idxs: np.ndarray) -> Tuple[int, int]:
-        rolling_diff_on_signed_distance = np.diff(np.sign(all_intersection_idxs - peak_frame_idx))
-        assert 2 in rolling_diff_on_signed_distance, ('Failed to identify the two neighboring intersection indices between signal and baseline '
-                                                      f'for identified peak at frame idx: {peak_frame_idx}')
-        idx_before_peak_in_intersections = np.argmax(rolling_diff_on_signed_distance)
-        intersection_frame_idx_before_peak = all_intersection_idxs[idx_before_peak_in_intersections]
-        intersection_frame_idx_after_peak = all_intersection_idxs[idx_before_peak_in_intersections + 1]
-        return intersection_frame_idx_before_peak, intersection_frame_idx_after_peak
-    """
 
 
     def _improve_intersection_frame_idx_estimation_by_interpolation(self, idx_frame_0: int) -> int:
