@@ -3,7 +3,7 @@ import multiprocessing
 import numpy as np
 
 from .analysis import Square, process_squares
-from .plotting import plot_activity_overview
+from .plotting import plot_activity_overview, plot_intensity_trace_with_identified_peaks_for_individual_square
 from .io import RecordingLoaderFactory
 
 from typing import List, Tuple
@@ -32,14 +32,17 @@ class Model:
 
     def run_analysis(self,
                      window_size: int,
-                     signal_to_noise_ratio: float,
+                     limit_analysis_to_frame_interval: bool,
+                     start_frame_idx: int,
+                     end_frame_idx: int,
                      signal_average_threshold: float,
-                     minimum_activity_counts: int,
+                     signal_to_noise_ratio: float,
+                     #octaves_ridge_needs_to_spann: float,
+                     #noise_window_size: int,
                      baseline_estimation_method: str,
-                     include_variance: bool,
-                     variance: float,
-                     limit_analysis_to_frame_interval: bool
-                     # frame_interval_to_analyze: Tuple[int, int]
+                     #interpolate_intersection_frame_idxs: bool,
+                     #include_variance: bool,
+                     #variance: float,
                     ) -> None:
         self._create_squares(window_size)
         configs = locals()
@@ -52,17 +55,31 @@ class Model:
 
 
     def create_overview_results(self,
-                                window_size: int
+                                window_size: int,
+                                minimum_activity_counts: int
                                ) -> None:
-        plot_activity_overview(self.processed_squares, self.recording_preview, window_size)
+        plot_activity_overview(self.processed_squares, self.recording_preview, window_size, minimum_activity_counts)
         # create_summary_text_files(whatever, might, be, needed, here, plus, additional, user, setttings)
 
 
-    def create_detailed_results(self, user, settings, split, into, single, arguments, where, defaults, are, used, whenever, possible) -> None:
+    def create_detailed_results(self,
+                                include_detailed_results: bool,
+                                window_size: int,
+                                signal_average_threshold: float,
+                                signal_to_noise_ratio: float,
+                                minimum_activity_counts: int,
+                                results_filepath: Path
+                               ) -> None:
+        if include_detailed_results == True:
+            for square in self.processed_squares:
+                if hasattr(square, 'peaks_count') == True:
+                    if square.peaks_count >= minimum_activity_counts:
+                        filename = f'Single_trace_graph_{square.idx}_WS-{window_size}_SNR-{signal_to_noise_ratio}_SAT-{signal_average_threshold}_MAC-{minimum_activity_counts}.pdf'
+                        filepath = results_filepath.joinpath(filename)
+                        plot_intensity_trace_with_identified_peaks_for_individual_square(square, filepath)
         #with multiprocessing.Pool(processes = self.num_processes) as pool:
             # check and align with multiprocessing of square processing above
             #pool.starmap(plot_intensity_trace_with_identified_peaks_for_individual_square, [(square, user, settings) for square in self.processed_squares])
-        pass
 
 
     def _create_preview_with_superimposed_rois(self) -> None:
@@ -72,11 +89,11 @@ class Model:
     
     def _create_squares(self, window_size: int) -> None:
         upper_left_coords_of_squares_in_grid = self._get_upper_left_coords_of_squares_in_grid(window_size)
-        for upper_left_y, upper_left_x in upper_left_coords_of_squares_in_grid:
+        for idx, (upper_left_y, upper_left_x) in enumerate(upper_left_coords_of_squares_in_grid):
             square_y_coords_slice = slice(upper_left_y, upper_left_y + window_size)
             square_x_coords_slice = slice(upper_left_x, upper_left_x + window_size)
             zstack_within_square = self.recording_zstack[:, square_y_coords_slice, square_x_coords_slice, :]
-            self.squares.append(Square((upper_left_y, upper_left_x), zstack_within_square))
+            self.squares.append(Square(idx, (upper_left_y, upper_left_x), zstack_within_square))
             
 
     def _get_upper_left_coords_of_squares_in_grid(self, window_size: int) -> List[Tuple[int, int]]:

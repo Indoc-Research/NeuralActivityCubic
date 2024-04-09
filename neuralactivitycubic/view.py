@@ -313,7 +313,7 @@ class AnalysisSettingsPanel:
         self.user_settings_limit_analysis_to_frame_interval = w.Checkbox(description = 'analyze only specific interval', 
                                                                          value = False, disabled = True, indent = False)
         self.user_settings_frame_interval_to_analyze = w.IntRangeSlider(description = 'Frame interval:', disabled = True, 
-                                                                        value = (0, 100), min = 0, max = 100, step = 1, 
+                                                                        value = (0, 500), min = 0, max = 500, step = 1, 
                                                                         style = {'description_width': 'initial'}, layout = w.Layout(width = '90%', visibility = 'hidden'))
         optional_checkboxes = w.HBox([self.user_settings_include_variance, self.user_settings_limit_analysis_to_frame_interval],
                                      layout = w.Layout(width = '90%'))
@@ -422,7 +422,10 @@ class WidgetsInterface:
         for panel_name_with_user_settings in ['analysis_settings_panel', 'io_panel']:
             panel = getattr(self, panel_name_with_user_settings)
             for attribute_name, attribute_value in vars(panel).items():
-                if attribute_name.startswith('user_settings_'):
+                if attribute_name == 'user_settings_frame_interval_to_analyze':
+                    user_settings['start_frame_idx'] = attribute_value.value[0]
+                    user_settings['end_frame_idx'] = attribute_value.value[1]
+                elif attribute_name.startswith('user_settings_'):
                     value_set_by_user = attribute_value.value
                     if value_set_by_user != None:
                         parameter_name = attribute_name.replace('user_settings_', '')

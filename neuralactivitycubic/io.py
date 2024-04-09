@@ -9,14 +9,6 @@ class RecordingLoader(ABC):
 
 
     @abstractmethod
-    def _get_single_frame(self, frame_idx: int=0) -> np.ndarray:
-        # To be implemented in individual subclasses
-        # Should NOT keep the entire recording in memory!
-        # Shape of returned numpy array: [frames, rows, cols, color_channels]
-        pass
-
-
-    @abstractmethod
     def _get_all_frames(self) -> np.ndarray: 
         # To be implemented in individual subclasses
         # Shape of returned numpy array: [frames, rows, cols, color_channels]
@@ -25,12 +17,6 @@ class RecordingLoader(ABC):
 
     def __init__(self, filepath: Path) -> None:
         self.filepath = filepath
-
-
-    def load_single_frame_as_preview(self, frame_idx: int=0) -> np.ndarray:
-        preview_frame = self._get_single_frame(frame_idx)
-        preview_frame = self._validate_shape_and_convert_to_grayscale_if_possible(preview_frame)
-        return preview_frame
 
 
     def load_all_frames(self) -> np.ndarray: 
@@ -74,13 +60,6 @@ class RecordingLoader(ABC):
 
 
 class AVILoader(RecordingLoader):
-
-    def _get_single_frame(self, frame_idx: int=0) -> np.ndarray: 
-        # To be implemented in individual subclasses
-        # Should NOT keep the entire recording in memory!
-        # Shape of returned numpy array: [frames, rows, cols, color_channels]
-        pass
-
 
     def _get_all_frames(self) -> np.ndarray: 
         return iio.imread(self.filepath)
