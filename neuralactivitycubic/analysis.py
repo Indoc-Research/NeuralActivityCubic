@@ -63,7 +63,9 @@ class Square:
         # Add default exclusion of peaks within first / last 10-20 frames to avoid border effects? implement zero_padding / mirroring?
         widths = np.logspace(np.log10(1), np.log10(self.mean_intensity_over_time.shape[0]), 100)
         min_length = n_octaves_min / np.log2(widths[1] / widths[0])
-        self.frame_idxs_of_peaks = signal.find_peaks_cwt(vector = self.mean_intensity_over_time, 
+        n_padded_frames = int(np.median(widths)) + 1
+        signal_padded_with_reflection = np.pad(self.mean_intensity_over_time, n_padded_frames, 'reflect')
+        frame_idxs_of_peaks_in_padded_signal = signal.find_peaks_cwt(vector = signal_padded_with_reflection, 
                                                          wavelet = signal.ricker, 
                                                          widths = widths, 
                                                          min_length = min_length,
@@ -73,6 +75,9 @@ class Square:
                                                          min_snr = signal_to_noise_ratio,
                                                          window_size = noise_window_size # window size to calculate noise is very narrow (lowest point = noise)
                                                         )
+        frame_idxs_of_peaks_in_padded_signal = frame_idxs_of_peaks_in_padded_signal[((frame_idxs_of_peaks_in_padded_signal >= n_padded_frames) & 
+                                                                                     (frame_idxs_of_peaks_in_padded_signal < self.mean_intensity_over_time.shape[0] + n_padded_frames))]
+        self.frame_idxs_of_peaks = frame_idxs_of_peaks_in_padded_signal - n_padded_frames
         self.peaks = {}
         for peak_frame_idx in self.frame_idxs_of_peaks:
             self.peaks[peak_frame_idx] = Peak(frame_idx = peak_frame_idx, intensity = self.mean_intensity_over_time[peak_frame_idx]) 
