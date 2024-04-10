@@ -417,6 +417,15 @@ class WidgetsInterface:
             self.user_info_panel.update_progress_bar(progress_in_percent)
 
 
+    def adjust_widgets_to_loaded_data(self, total_frames: int) -> None:
+        self._adjust_frame_interval_selection_widget(total_frames)
+
+
+    def _adjust_frame_interval_selection_widget(self, total_frames: int) -> None:
+        self.analysis_settings_panel.user_settings_frame_interval_to_analyze.max = total_frames + 1
+        self.analysis_settings_panel.user_settings_frame_interval_to_analyze.value = (1, total_frames + 1)
+
+
     def export_user_settings(self) -> Dict[str, Any]:
         user_settings = {}
         for panel_name_with_user_settings in ['analysis_settings_panel', 'io_panel']:

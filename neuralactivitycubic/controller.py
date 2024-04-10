@@ -50,6 +50,7 @@ class App:
         self.view.update_infos(logs_message = f'Loading data from specified input path: {validated_user_settings["recording_filepath"]}',
                                progress_in_percent = 10.0)
         self.model.load_recording(**validated_user_settings)
+        self.view.adjust_widgets_to_loaded_data(total_frames = self.model.recording_zstack.shape[0])
         self.view.update_infos(logs_message = 'Recording data successfully loaded', progress_in_percent = 95.0)
         self.view.main_screen.show_output_screen()
         with self.view.main_screen.output:
