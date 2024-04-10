@@ -67,3 +67,6 @@ def plot_intensity_trace_with_identified_peaks_for_individual_square(square: Squ
     plt.tight_layout()
     plt.savefig(filepath)
     plt.close()
+    
+
+
