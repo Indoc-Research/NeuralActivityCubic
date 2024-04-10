@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 import numpy as np
+import pandas as pd
 
 
 from typing import List
@@ -67,6 +68,42 @@ def plot_intensity_trace_with_identified_peaks_for_individual_square(square: Squ
     plt.tight_layout()
     plt.savefig(filepath)
     plt.close()
+
+
+
+def export_peak_results_df_from_square(square: Square) -> pd.DataFrame:
+    all_peaks = [peak for peak in square.peaks.values()]
+    df_all_peak_results_one_square = pd.DataFrame(all_peaks)
+    df_all_peak_results_one_square.drop(['has_neighboring_intersections', 'frame_idxs_of_neighboring_intersections'], axis = 'columns', inplace = True)
+    df_all_peak_results_one_square.columns = ['peak frame index', 'peak bit value', 'peak dF/F',  'peak AUC', 'peak classification']
+    df_all_peak_results_one_square.insert(loc = 0, column = 'square coordinates [X / Y]', value = square.idx)
+    return df_all_peak_results_one_square
+
+
+
+def create_single_square_delta_f_over_f_results(df_all_results_single_square: pd.DataFrame, zfill_factor: int) -> pd.DataFrame:
+    rearranged_data = {'square coordinates [X / Y]': [df_all_results_single_square['square coordinates [X / Y]'].iloc[0]],
+                       'total peak count': [df_all_results_single_square.shape[0]]}
+    for i in range(df_all_results_single_square.shape[0]):
+        peak_idx = str(i + 1)
+        peak_idx_suffix = peak_idx.zfill(zfill_factor)
+        rearranged_data[f'frame index peak #{peak_idx_suffix}'] = [df_all_results_single_square.iloc[i]['peak frame index']]
+        rearranged_data[f'dF/F peak #{peak_idx_suffix}'] = [df_all_results_single_square.iloc[i]['peak dF/F']]
+    return pd.DataFrame(rearranged_data)
     
 
+    
+def create_single_square_auc_results(df_all_results_single_square: pd.DataFrame, zfill_factor: int) -> pd.DataFrame:
+    rearranged_data = {'square coordinates [X / Y]': [df_all_results_single_square['square coordinates [X / Y]'].iloc[0]],
+                       'total count all peaks': [df_all_results_single_square.shape[0]],
+                       'total count "singular" peaks': [df_all_results_single_square['peak classification'].str.count('singular').sum()],
+                       'total count "clustered" peaks': [df_all_results_single_square['peak classification'].str.count('clustered').sum()],
+                       'total count "isolated" peaks': [df_all_results_single_square['peak classification'].str.count('isolated').sum()]}
+    for i in range(df_all_results_single_square.shape[0]):
+        peak_idx = str(i + 1)
+        peak_idx_suffix = peak_idx.zfill(zfill_factor)
+        rearranged_data[f'frame index peak #{peak_idx_suffix}'] = [df_all_results_single_square.iloc[i]['peak frame index']]
+        rearranged_data[f'AUC peak #{peak_idx_suffix}'] = [df_all_results_single_square.iloc[i]['peak AUC']]
+        rearranged_data[f'classification peak #{peak_idx_suffix}'] = [df_all_results_single_square.iloc[i]['peak classification']]
+    return pd.DataFrame(rearranged_data)
 

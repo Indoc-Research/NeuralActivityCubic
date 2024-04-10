@@ -33,7 +33,7 @@ class Peak:
     has_neighboring_intersections: Optional[bool]=None
     frame_idxs_of_neighboring_intersections: Optional[Tuple[int, int]]=None
     area_under_curve: Optional[float]=None
-    area_under_curve_type: Optional[str]=None
+    peak_type: Optional[str]=None
 
 
 
@@ -44,6 +44,7 @@ class Square:
         self.upper_left_corner_coords = upper_left_corner_coords
         self.frames_zstack = frames_zstack
         self.center_coords = self._get_center_coords()
+        self.peaks_count = 0
 
 
     def _get_center_coords(self) -> Tuple[int, int]:
@@ -162,11 +163,14 @@ class Square:
             reoccuring_intersection_frame_idxs = [pair_of_intersection_frame_idxs for pair_of_intersection_frame_idxs, count in counter.items() if count > 1]
         else:
             reoccuring_intersection_frame_idxs = []
-        for peak in data_for_auc_classification['peaks_with_auc']:
-            if peak.frame_idxs_of_neighboring_intersections in reoccuring_intersection_frame_idxs:
-                peak.area_under_curve_type = 'event_train'
+        for peak in self.peaks.values():
+            if peak in data_for_auc_classification['peaks_with_auc']:
+                if peak.frame_idxs_of_neighboring_intersections in reoccuring_intersection_frame_idxs:
+                    peak.peak_type = 'clustered'
+                else:
+                    peak.peak_type = 'singular'
             else:
-                peak.area_under_curve_type = 'individual_event'
+                peak.peak_type = 'isolated'
 
     
     def compute_delta_f_over_f(self):

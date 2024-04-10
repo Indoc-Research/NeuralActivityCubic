@@ -1,9 +1,10 @@
 from pathlib import Path
 import multiprocessing
 import numpy as np
+import pandas as pd
 
 from .analysis import Square, process_squares
-from .plotting import plot_activity_overview, plot_intensity_trace_with_identified_peaks_for_individual_square
+from . import results
 from .io import RecordingLoaderFactory
 
 from typing import List, Tuple
@@ -56,10 +57,10 @@ class Model:
 
     def create_overview_results(self,
                                 window_size: int,
-                                minimum_activity_counts: int
+                                minimum_activity_counts: int,
                                ) -> None:
-        plot_activity_overview(self.processed_squares, self.recording_preview, window_size, minimum_activity_counts)
-        # create_summary_text_files(whatever, might, be, needed, here, plus, additional, user, setttings)
+        results.plot_activity_overview(self.processed_squares, self.recording_preview, window_size, minimum_activity_counts)
+
 
 
     def create_detailed_results(self,
@@ -71,16 +72,39 @@ class Model:
                                 results_filepath: Path
                                ) -> None:
         if include_detailed_results == True:
+            self._create_csv_result_files(results_filepath, minimum_activity_counts)
             for square in self.processed_squares:
                 if hasattr(square, 'peaks_count') == True:
                     if square.peaks_count >= minimum_activity_counts:
+                        # modify to aggregate into single PDF here
                         filename = f'Single_trace_graph_{square.idx}_WS-{window_size}_SNR-{signal_to_noise_ratio}_SAT-{signal_average_threshold}_MAC-{minimum_activity_counts}.pdf'
                         filepath = results_filepath.joinpath(filename)
-                        plot_intensity_trace_with_identified_peaks_for_individual_square(square, filepath)
+                        results.plot_intensity_trace_with_identified_peaks_for_individual_square(square, filepath)
         #with multiprocessing.Pool(processes = self.num_processes) as pool:
             # check and align with multiprocessing of square processing above
             #pool.starmap(plot_intensity_trace_with_identified_peaks_for_individual_square, [(square, user, settings) for square in self.processed_squares])
 
+
+    def _create_csv_result_files(self, results_filepath: Path, minimum_activity_counts: int) -> None:
+        peak_results_per_square = [results.export_peak_results_df_from_square(square) for square in self.processed_squares if square.peaks_count >= minimum_activity_counts]
+        df_all_peak_results = pd.concat(peak_results_per_square, ignore_index = True)
+        max_peak_count_across_all_squares = df_all_peak_results.groupby('square coordinates [X / Y]').count()['peak frame index'].max()
+        zfill_factor = int(np.log10(max_peak_count_across_all_squares)) + 1
+        delta_f_over_f_results_all_squares = []
+        auc_results_all_squares = []
+        for square_coords in df_all_peak_results['square coordinates [X / Y]'].unique():
+            tmp_df_single_square = df_all_peak_results[df_all_peak_results['square coordinates [X / Y]'] == square_coords].copy()
+            delta_f_over_f_results_all_squares.append(results.create_single_square_delta_f_over_f_results(tmp_df_single_square, zfill_factor))
+            auc_results_all_squares.append(results.create_single_square_auc_results(tmp_df_single_square, zfill_factor))
+        df_all_delta_f_over_f_results = pd.concat(delta_f_over_f_results_all_squares, ignore_index = True)
+        df_all_auc_results = pd.concat(auc_results_all_squares, ignore_index = True)
+        # Once all DataFrames are created successfully, write them to disk 
+        df_all_peak_results.to_csv(results_filepath.joinpath('all_peak_results.csv'), index = False)
+        df_all_delta_f_over_f_results.to_csv(results_filepath.joinpath('dF_over_F_results.csv'), index = False)
+        df_all_auc_results.to_csv(results_filepath.joinpath('AUC_results.csv'), index = False)
+
+
+    
 
     def _create_preview_with_superimposed_rois(self) -> None:
         #self.recording_preview_with_superimposed_rois = 
