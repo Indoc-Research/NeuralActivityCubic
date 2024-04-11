@@ -42,7 +42,6 @@ class Model:
                      #octaves_ridge_needs_to_spann: float,
                      #noise_window_size: int,
                      baseline_estimation_method: str,
-                     #interpolate_intersection_frame_idxs: bool,
                      #include_variance: bool,
                      #variance: float,
                     ) -> None:
@@ -99,26 +98,26 @@ class Model:
     def create_overview_results(self,
                                 minimum_activity_counts: int,
                                 window_size: int,
-                                include_overview_results: bool,
+                                save_overview_png: bool,
                                 results_filepath: Path
                                ) -> None:
         filtered_squares = [square for square in self.processed_squares if square.peaks_count >= minimum_activity_counts]
         overview_fig, ax = results.plot_activity_overview(filtered_squares, self.recording_preview, self.row_cropping_idx, self.col_cropping_idx, window_size)
-        if include_overview_results == True:
+        if save_overview_png == True:
             overview_fig.savefig(results_filepath.joinpath('overview.png'))
         plt.show()
         
 
 
     def create_detailed_results(self,
-                                include_detailed_results: bool,
+                                save_detailed_results: bool,
                                 window_size: int,
                                 signal_average_threshold: float,
                                 signal_to_noise_ratio: float,
                                 minimum_activity_counts: int,
                                 results_filepath: Path
                                ) -> None:
-        if include_detailed_results == True:
+        if save_detailed_results == True:
             self._create_csv_result_files(results_filepath, minimum_activity_counts)
             filename = f'Plots_WS-{window_size}_SNR-{signal_to_noise_ratio}_SAT-{signal_average_threshold}_MAC-{minimum_activity_counts}.pdf'
             filepath = results_filepath.joinpath(filename)
@@ -131,7 +130,6 @@ class Model:
                     fig = results.plot_intensity_trace_with_identified_peaks_for_individual_square(square)
                     pdf.savefig(fig)
                     plt.close()
-                #plt.close()
         #with multiprocessing.Pool(processes = self.num_processes) as pool:
             # check and align with multiprocessing of square processing above
             #pool.starmap(plot_intensity_trace_with_identified_peaks_for_individual_square, [(square, user, settings) for square in self.processed_squares])

@@ -59,10 +59,10 @@ class Square:
             self.mean_intensity_over_time = np.mean(self.frames_zstack, axis = (1,2,3))
 
 
-    def detect_peaks(self, signal_to_noise_ratio: float, n_octaves_min: float=1.0, noise_window_size: int=200) -> None:
+    def detect_peaks(self, signal_to_noise_ratio: float, octaves_ridge_needs_to_spann: float=1.0, noise_window_size: int=200) -> None:
         # Add default exclusion of peaks within first / last 10-20 frames to avoid border effects? implement zero_padding / mirroring?
         widths = np.logspace(np.log10(1), np.log10(self.mean_intensity_over_time.shape[0]), 100)
-        min_length = n_octaves_min / np.log2(widths[1] / widths[0])
+        min_length = octaves_ridge_needs_to_spann / np.log2(widths[1] / widths[0])
         n_padded_frames = int(np.median(widths)) + 1
         signal_padded_with_reflection = np.pad(self.mean_intensity_over_time, n_padded_frames, 'reflect')
         frame_idxs_of_peaks_in_padded_signal = signal.find_peaks_cwt(vector = signal_padded_with_reflection, 
@@ -89,8 +89,8 @@ class Square:
         self.baseline = baseline_estimation_method(data = self.mean_intensity_over_time)[0]
 
 
-    def compute_area_under_curve(self, improve_accuracy_via_interpolation: bool=True) -> None:
-        self._get_unique_frame_idxs_of_intersections_between_signal_and_baseline(improve_accuracy_via_interpolation)
+    def compute_area_under_curve(self) -> None:
+        self._get_unique_frame_idxs_of_intersections_between_signal_and_baseline()
         self._add_information_about_neighboring_intersections_to_peaks()
         area_under_curve_classification = {'peaks_with_auc': [], 'all_intersection_frame_idxs_pairs': []}
         for peak_frame_idx, peak in self.peaks.items():
@@ -102,20 +102,14 @@ class Square:
         self._classify_area_under_curve_types(area_under_curve_classification)
                                                                                     
 
-    def _get_unique_frame_idxs_of_intersections_between_signal_and_baseline(self, improve_accuracy_via_interpolation: bool) -> None:
+    def _get_unique_frame_idxs_of_intersections_between_signal_and_baseline(self) -> None:
         quick_estimate_of_intersection_frame_idxs = np.argwhere(np.diff(np.sign(self.mean_intensity_over_time - self.baseline))).flatten()
-        if improve_accuracy_via_interpolation == True:
-            intersection_frame_idxs = np.asarray([self._improve_intersection_frame_idx_estimation_by_interpolation(idx) for idx in quick_estimate_of_intersection_frame_idxs])
-            unique_intersection_frame_idxs = np.unique(intersection_frame_idxs)
-        else:
-            unique_intersection_frame_idxs = np.unique(quick_estimate_of_intersection_frame_idxs)
-        self.unique_intersection_frame_idxs = unique_intersection_frame_idxs
+        intersection_frame_idxs = np.asarray([self._improve_intersection_frame_idx_estimation_by_interpolation(idx) for idx in quick_estimate_of_intersection_frame_idxs])
+        self.unique_intersection_frame_idxs = np.unique(intersection_frame_idxs)
 
 
     def _add_information_about_neighboring_intersections_to_peaks(self) -> None:
         for peak_frame_idx, peak in self.peaks.items():
-            #if peak_frame_idx in self.unique_intersection_frame_idxs:
-                # log that this peak coincides with an intersection at the very same frame idx
             if (peak_frame_idx > self.unique_intersection_frame_idxs[0]) & (peak_frame_idx < self.unique_intersection_frame_idxs[-1]):
                 peak.has_neighboring_intersections = True
                 idx_pre_peak = self.unique_intersection_frame_idxs[self.unique_intersection_frame_idxs < peak_frame_idx][-1]
@@ -182,10 +176,10 @@ class Square:
 def process_squares(square: Square, configs: Dict[str, Any]) -> Square:
     square.compute_mean_intensity_timeseries(configs['limit_analysis_to_frame_interval'], configs['start_frame_idx'], configs['end_frame_idx'])
     if np.mean(square.mean_intensity_over_time) >= configs['signal_average_threshold']:
-        square.detect_peaks(configs['signal_to_noise_ratio']) # add 'n_octaves_min' and 'noise_window_size' here!
+        square.detect_peaks(configs['signal_to_noise_ratio']) # add 'octaves_ridge_needs_to_spann' and 'noise_window_size' here!
         #if configs['compute_aucs'] == True:
         square.estimate_baseline(configs['baseline_estimation_method'])
-        square.compute_area_under_curve() # add 'improve_accuracy_by_interpolation' here!
+        square.compute_area_under_curve()
         #if configs['compute_df_over_f'] == True:
         square.compute_delta_f_over_f()
     return square

@@ -16,7 +16,7 @@ class UserInfoPanel:
         self.user_timezone = datetime.now().astimezone().tzinfo
         self.max_lines_that_can_be_displayed_in_output = int(self.detailed_logs_output.layout.max_height.replace('px', '')) / 15
         self.logs_message_count = 0
-        self.progress_in_percent = 0.0
+        self.progress_in_percent = 0.0 # still required?
 
 
     def _build_widget(self) -> w.VBox:
@@ -54,7 +54,7 @@ class UserInfoPanel:
 
 
     def update_progress_bar(self, progress_in_percent: float) -> None:
-        assert type(progress_in_percent) == float, ('UserInfoHandler.update_progress_bar() expects the progress_in_percent of type float. '
+        assert type(progress_in_percent) == float, ('UserInfoPanel.update_progress_bar() expects the progress_in_percent of type float. '
                                                     f'However, you passed {progress_in_percent}, which is of type {type(progress_in_percent)}.')
         if progress_in_percent == 100.0:
             self.progress_bar.bar_style = 'success'
@@ -78,8 +78,8 @@ class IOPanel:
 
     def _build_io_results_box(self) -> w.VBox:
         io_results_info = w.HTML(value="<p style='font-size:16px; font-weight:bold; text-align:center;'>Results output</p>")
-        self.user_settings_include_overview_results = w.Checkbox(description = 'Create overview results', value = True, style = {'description_width': 'initial'})
-        self.user_settings_include_detailed_results = w.Checkbox(description = 'Create detailed results', value = True, style = {'description_width': 'initial'})
+        self.user_settings_save_overview_png = w.Checkbox(description = 'Save overview plot', value = True, style = {'description_width': 'initial'})
+        self.user_settings_save_detailed_results = w.Checkbox(description = 'Save detailed results', value = True, style = {'description_width': 'initial'})
         self.user_settings_results_filepath = FileChooser(title = 'Please select directory in which the output files shall be saved:', show_only_dirs = True, layout = w.Layout(width = '90%'))
         self.user_settings_results_filepath.rows = 4
         self.run_analysis_button = w.Button(description = 'Run analysis',
@@ -89,8 +89,8 @@ class IOPanel:
                                             icon = 'rocket',
                                             layout = w.Layout(width = '90%'))
         io_results_box = w.VBox([io_results_info,
-                                 self.user_settings_include_overview_results,
-                                 self.user_settings_include_detailed_results,
+                                 self.user_settings_save_overview_png,
+                                 self.user_settings_save_detailed_results,
                                  self.user_settings_results_filepath,
                                  self.run_analysis_button,
                                  self._get_spacer()],
