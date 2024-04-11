@@ -2,6 +2,8 @@ from pathlib import Path
 import multiprocessing
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
 
 from .analysis import Square, process_squares
 from . import results
@@ -14,7 +16,6 @@ from typing import List, Tuple
 class Model:
 
     def __init__(self) -> None:
-        self.squares = []
         self.num_processes = multiprocessing.cpu_count()
         
 
@@ -45,6 +46,8 @@ class Model:
                      #include_variance: bool,
                      #variance: float,
                     ) -> None:
+        if hasattr(self, 'processed_squares'):
+            self._clear_all_data_from_previous_analyses()
         self._create_squares(window_size)
         configs = locals()
         configs.pop('self')
@@ -55,12 +58,56 @@ class Model:
         self.processed_squares = processed_squares
 
 
-    def create_overview_results(self,
-                                window_size: int,
-                                minimum_activity_counts: int,
-                               ) -> None:
-        results.plot_activity_overview(self.processed_squares, self.recording_preview, window_size, minimum_activity_counts)
+    def _clear_all_data_from_previous_analyses(self) -> None:
+        delattr(self, 'squares')
+        delattr(self, 'processed_squares')
+        delattr(self, 'row_cropping_idx')
+        delattr(self, 'col_cropping_idx')
 
+
+    def _create_squares(self, window_size: int) -> None:
+        self.row_cropping_idx, self.col_cropping_idx = self._get_cropping_indices_to_adjust_for_window_size(window_size)
+        upper_left_pixel_idxs_of_squares_in_grid, grid_cell_labels = self._get_positions_for_squares_in_grid(window_size)
+        self.squares = []
+        for (upper_left_row_pixel_idx, upper_left_col_pixel_idx), grid_cell_label in zip(upper_left_pixel_idxs_of_squares_in_grid, grid_cell_labels):
+            square_row_coords_slice = slice(upper_left_row_pixel_idx, upper_left_row_pixel_idx + window_size)
+            square_col_coords_slice = slice(upper_left_col_pixel_idx, upper_left_col_pixel_idx + window_size)
+            zstack_within_square = self.recording_zstack[:, square_row_coords_slice, square_col_coords_slice, :]
+            self.squares.append(Square(grid_cell_label, (upper_left_row_pixel_idx, upper_left_col_pixel_idx), zstack_within_square))
+
+    
+    def _get_cropping_indices_to_adjust_for_window_size(self, window_size: int) -> Tuple[int, int]:
+        row_cropping_index = (self.recording_preview.shape[0] // window_size) * window_size
+        col_cropping_index = (self.recording_preview.shape[1] // window_size) * window_size
+        return row_cropping_index, col_cropping_index
+
+    
+    def _get_positions_for_squares_in_grid(self, window_size: int) -> Tuple[List[Tuple[int, int]], List[Tuple[int, int]]]:
+        pixel_idxs_of_grid_rows = np.arange(start = 0, stop = self.row_cropping_idx, step = window_size)
+        pixel_idxs_of_grid_cols = np.arange(start = 0, stop = self.col_cropping_idx, step = window_size)
+        grid_row_labels = np.arange(start = 1, stop = self.row_cropping_idx / window_size + 1, step = 1, dtype = 'int')
+        grid_col_labels = np.arange(start = 1, stop = self.col_cropping_idx / window_size + 1, step = 1, dtype = 'int')
+        upper_left_pixel_idxs_of_squares_in_grid = []
+        grid_cell_labels = []
+        for row_pixel_idx, row_label in zip(pixel_idxs_of_grid_rows, grid_row_labels):
+            for col_pixel_idx, col_label in zip(pixel_idxs_of_grid_cols, grid_col_labels):
+                upper_left_pixel_idxs_of_squares_in_grid.append((row_pixel_idx, col_pixel_idx))
+                grid_cell_labels.append((row_label, col_label))
+        return upper_left_pixel_idxs_of_squares_in_grid, grid_cell_labels
+
+
+    def create_overview_results(self,
+                                minimum_activity_counts: int,
+                                window_size: int,
+                                include_overview_results: bool,
+                                results_filepath: Path
+                               ) -> None:
+        filtered_squares = [square for square in self.processed_squares if square.peaks_count >= minimum_activity_counts]
+        overview_fig, ax = results.plot_activity_overview(filtered_squares, self.recording_preview, self.row_cropping_idx, self.col_cropping_idx, window_size)
+        if include_overview_results == True:
+            overview_fig.savefig(results_filepath.joinpath('overview.png'))
+        plt.show()
+        
 
 
     def create_detailed_results(self,
@@ -73,13 +120,18 @@ class Model:
                                ) -> None:
         if include_detailed_results == True:
             self._create_csv_result_files(results_filepath, minimum_activity_counts)
-            for square in self.processed_squares:
-                if hasattr(square, 'peaks_count') == True:
-                    if square.peaks_count >= minimum_activity_counts:
-                        # modify to aggregate into single PDF here
-                        filename = f'Single_trace_graph_{square.idx}_WS-{window_size}_SNR-{signal_to_noise_ratio}_SAT-{signal_average_threshold}_MAC-{minimum_activity_counts}.pdf'
-                        filepath = results_filepath.joinpath(filename)
-                        results.plot_intensity_trace_with_identified_peaks_for_individual_square(square, filepath)
+            filename = f'Plots_WS-{window_size}_SNR-{signal_to_noise_ratio}_SAT-{signal_average_threshold}_MAC-{minimum_activity_counts}.pdf'
+            filepath = results_filepath.joinpath(filename)
+            with PdfPages(filepath) as pdf:
+                filtered_squares = [square for square in self.processed_squares if square.peaks_count >= minimum_activity_counts]
+                overview_fig, ax = results.plot_activity_overview(filtered_squares, self.recording_preview, self.row_cropping_idx, self.col_cropping_idx, window_size)
+                pdf.savefig(overview_fig)
+                plt.close()
+                for square in filtered_squares:
+                    fig = results.plot_intensity_trace_with_identified_peaks_for_individual_square(square)
+                    pdf.savefig(fig)
+                    plt.close()
+                #plt.close()
         #with multiprocessing.Pool(processes = self.num_processes) as pool:
             # check and align with multiprocessing of square processing above
             #pool.starmap(plot_intensity_trace_with_identified_peaks_for_individual_square, [(square, user, settings) for square in self.processed_squares])
@@ -109,22 +161,3 @@ class Model:
     def _create_preview_with_superimposed_rois(self) -> None:
         #self.recording_preview_with_superimposed_rois = 
         pass
-
-    
-    def _create_squares(self, window_size: int) -> None:
-        upper_left_coords_of_squares_in_grid = self._get_upper_left_coords_of_squares_in_grid(window_size)
-        for idx, (upper_left_y, upper_left_x) in enumerate(upper_left_coords_of_squares_in_grid):
-            square_y_coords_slice = slice(upper_left_y, upper_left_y + window_size)
-            square_x_coords_slice = slice(upper_left_x, upper_left_x + window_size)
-            zstack_within_square = self.recording_zstack[:, square_y_coords_slice, square_x_coords_slice, :]
-            self.squares.append(Square(idx, (upper_left_y, upper_left_x), zstack_within_square))
-            
-
-    def _get_upper_left_coords_of_squares_in_grid(self, window_size: int) -> List[Tuple[int, int]]:
-        grid_row_idxs = np.arange(start = 0, stop = self.recording_preview.shape[0], step = window_size)
-        grid_col_idxs = np.arange(start = 0, stop = self.recording_preview.shape[1], step = window_size)
-        upper_left_coords_of_squares_in_grid = []
-        for row_idx in grid_row_idxs:
-            for col_idx in grid_col_idxs:
-                upper_left_coords_of_squares_in_grid.append((row_idx, col_idx))
-        return upper_left_coords_of_squares_in_grid

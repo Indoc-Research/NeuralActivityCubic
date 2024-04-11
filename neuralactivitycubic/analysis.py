@@ -38,9 +38,8 @@ class Peak:
 
 
 class Square:
-
-    def __init__(self, idx: int, upper_left_corner_coords: Tuple[int, int], frames_zstack: np.ndarray) -> None:
-        self.idx = idx
+    def __init__(self, grid_cell_label: Tuple[int, int], upper_left_corner_coords: Tuple[int, int], frames_zstack: np.ndarray) -> None:
+        self.grid_row_label, self.grid_col_label = grid_cell_label
         self.upper_left_corner_coords = upper_left_corner_coords
         self.frames_zstack = frames_zstack
         self.center_coords = self._get_center_coords()

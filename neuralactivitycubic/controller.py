@@ -34,11 +34,13 @@ class App:
         self.model.run_analysis(**validated_user_settings_analysis)
         self.view.update_infos(logs_message = 'Analysis completed! Generating output results ...', progress_in_percent = 70.0)
         validated_user_settings_detailed_results = self._get_validated_user_settings_required_for_model_function(self.model.create_detailed_results)
-        self.model.create_detailed_results(**validated_user_settings_detailed_results)
-        self.view.update_infos(logs_message = 'Detailed results generated and saved! Generating overview ...', progress_in_percent = 95.0)
+        if validated_user_settings_detailed_results['include_detailed_results'] == True:
+            self.model.create_detailed_results(**validated_user_settings_detailed_results)
+            self.view.update_infos(logs_message = 'Detailed results generated and saved! Generating overview ...', progress_in_percent = 95.0)
         validated_user_settings_overview_results = self._get_validated_user_settings_required_for_model_function(self.model.create_overview_results)
         self.view.main_screen.show_output_screen()
         with self.view.main_screen.output:
+            self.view.main_screen.output.clear_output()
             self.model.create_overview_results(**validated_user_settings_overview_results)
         self.view.update_infos(logs_message = 'All result files have been created.')
         self.view.update_infos(logs_message = 'All jobs finished!', progress_in_percent = 100.0)

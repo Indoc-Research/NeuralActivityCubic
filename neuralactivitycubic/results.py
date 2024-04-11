@@ -10,41 +10,32 @@ from pathlib import Path
 from .analysis import Square
 
 
-def plot_activity_overview(all_squares: List[Square], preview_image: np.ndarray, window_size: int, minimum_activity_counts: int) -> None:
-    filtered_peak_counts = []
-    for square in all_squares:
-        if hasattr(square, 'peaks_count') == True:
-            if square.peaks_count >= minimum_activity_counts:
-                filtered_peak_counts.append(square.peaks_count)
-            else:
-                filtered_peak_counts.append(0)
-        else:
-            filtered_peak_counts.append(0)
-    # creating the plot
+def plot_activity_overview(squares_with_sufficient_activity: List[Square], preview_image: np.ndarray, row_cropping_idx: int, col_cropping_idx: int, window_size: int):
     fig, ax = plt.subplots()
-    # drawing the circles
-    max_peak_count = max(filtered_peak_counts)
-    for square, peak_count in zip(all_squares, filtered_peak_counts):
-        true_size = (peak_count/max_peak_count)*(window_size/2)
-        circle = plt.Circle((square.center_coords[1], square.center_coords[0]), radius=true_size, fill=False, color='red')
-        ax.add_patch(circle)
-    
-    # putting the image in the background
     ax.imshow(preview_image, cmap="gray")
-    
-    # putting the grid on top of the image
+    peak_counts = [square.peaks_count for square in squares_with_sufficient_activity]
+    max_peak_count = max(peak_counts)
+    for square, peak_count in zip(squares_with_sufficient_activity, peak_counts):
+        true_size = (peak_count/max_peak_count)*(window_size/2)
+        circle = plt.Circle((square.center_coords[1], square.center_coords[0]), radius=true_size, fill=False, color='cyan', linewidth = 2)
+        ax.add_patch(circle)
     ax.grid(color = 'gray', linestyle = '--', linewidth = 1)
-    
-    # setting the grid size to the square size
-    ax.xaxis.set_major_locator(MultipleLocator(window_size))
-    ax.yaxis.set_major_locator(MultipleLocator(window_size))
-    # plt.savefig('overview.png')
-    plt.show()
+    plt.hlines([0, row_cropping_idx], xmin=0, xmax=col_cropping_idx, color = 'magenta', linewidth = 2)
+    plt.vlines([0, col_cropping_idx], ymin=0, ymax=row_cropping_idx, color = 'magenta', linewidth = 2)
+    ax.set_xticks(np.arange(0, preview_image.shape[1], window_size), labels = [])
+    ax.set_xticks(np.arange(window_size/2, col_cropping_idx + window_size/2, window_size), labels = np.arange(1, col_cropping_idx/window_size + 1, 1, dtype='int'), minor = True)
+    ax.xaxis.set_label_text('X')
+    ax.set_yticks(np.arange(0,  preview_image.shape[0], window_size), labels = [])
+    ax.set_yticks(np.arange(window_size/2, row_cropping_idx + window_size/2, window_size), labels = np.arange(1, row_cropping_idx/window_size + 1, 1, dtype='int'), minor = True)
+    ax.yaxis.set_label_text('Y')
+    ax.tick_params(bottom = False, left = False)
+    ax.set_title(f'Total activity: {np.sum(peak_counts)}')
+    return fig, ax
 
 
 
-def plot_intensity_trace_with_identified_peaks_for_individual_square(square: Square, filepath: Path) -> None:
-    plt.figure(figsize = (9, 2.67), facecolor = 'white')
+def plot_intensity_trace_with_identified_peaks_for_individual_square(square: Square) -> None:
+    fig = plt.figure(figsize = (9, 2.67), facecolor = 'white')
     plt.plot(square.mean_intensity_over_time, c = 'gray')
     if hasattr(square, 'baseline'):
         plt.plot(square.baseline, c = 'cyan')
@@ -64,10 +55,9 @@ def plot_intensity_trace_with_identified_peaks_for_individual_square(square: Squ
                              alpha = 0.6)
         else:
             plt.plot(peak.frame_idx, peak.intensity, 'ko')
-    plt.title(f'Graph: [{square.idx}]     Total Activity: {square.peaks_count}')
+    plt.title(f'Graph: [{square.grid_col_label} / {square.grid_row_label}]     Total Activity: {square.peaks_count}')
     plt.tight_layout()
-    plt.savefig(filepath)
-    plt.close()
+    return fig
 
 
 
@@ -76,7 +66,7 @@ def export_peak_results_df_from_square(square: Square) -> pd.DataFrame:
     df_all_peak_results_one_square = pd.DataFrame(all_peaks)
     df_all_peak_results_one_square.drop(['has_neighboring_intersections', 'frame_idxs_of_neighboring_intersections'], axis = 'columns', inplace = True)
     df_all_peak_results_one_square.columns = ['peak frame index', 'peak bit value', 'peak dF/F',  'peak AUC', 'peak classification']
-    df_all_peak_results_one_square.insert(loc = 0, column = 'square coordinates [X / Y]', value = square.idx)
+    df_all_peak_results_one_square.insert(loc = 0, column = 'square coordinates [X / Y]', value = f'[{square.grid_col_label} / {square.grid_row_label}]')
     return df_all_peak_results_one_square
 
 
