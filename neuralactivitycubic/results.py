@@ -1,40 +1,69 @@
 import matplotlib.pyplot as plt
-from matplotlib.ticker import MultipleLocator
+from matplotlib.transforms import Bbox
 import numpy as np
 import pandas as pd
 
-
-from typing import List
+from typing import List, Tuple
 from pathlib import Path
+from matplotlib.text import Text
+from matplotlib.figure import Figure
+from matplotlib.axes._axes import Axes 
 
 from .analysis import Square
 
 
-def plot_activity_overview(squares_with_sufficient_activity: List[Square], preview_image: np.ndarray, row_cropping_idx: int, col_cropping_idx: int, window_size: int):
+def _get_text_bounding_box_size_in_data_dimensions(text: Text, fig: Figure, ax: Axes) -> Tuple[float, float]:
+    renderer = fig.canvas.get_renderer()
+    text_bbox_raw_dimensions = text.get_window_extent(renderer=renderer)
+    text_bbox_data_dimensions = Bbox(ax.transData.inverted().transform(text_bbox_raw_dimensions))
+    return np.abs(text_bbox_data_dimensions.width), np.abs(text_bbox_data_dimensions.height)
+
+
+def _iteratively_decrease_fontsize_to_fit_text_in_squares(text: Text, max_size: float, fig: Figure, ax: Axes) -> None:
+    text.set_fontsize(text.get_fontsize()-1)
+    text_width, text_height = _get_text_bounding_box_size_in_data_dimensions(text, fig, ax)
+    if (text_width > max_size) or (text_width > max_size): 
+        _iteratively_decrease_fontsize_to_fit_text_in_squares(text, max_size, fig, ax)
+
+
+def _get_adjusted_fontsize(preview_image: np.ndarray, window_size: int, max_peak_count: int, default_fontsize: int=25) -> float:
+    max_text_size = window_size*0.75
+    tmp_fig, tmp_ax = plt.subplots()
+    tmp_ax.imshow(preview_image)
+    sample_coord = window_size + 0.5 * window_size
+    max_width_text_from_number = '4'*len(str(max_peak_count))
+    tmp_text = tmp_ax.text(sample_coord, sample_coord, max_peak_count, fontsize = default_fontsize)
+    text_width, text_height = _get_text_bounding_box_size_in_data_dimensions(tmp_text, tmp_fig, tmp_ax)
+    if (text_width > max_text_size) or (text_height > max_text_size):
+        _iteratively_decrease_fontsize_to_fit_text_in_squares(tmp_text, max_text_size, tmp_fig, tmp_ax)
+    adjusted_fontsize = tmp_text.get_fontsize()
+    plt.close(tmp_fig)
+    return adjusted_fontsize
+
+
+def plot_activity_overview(squares_with_sufficient_activity: List[Square], preview_image: np.ndarray, row_cropping_idx: int, col_cropping_idx: int, window_size: int) -> Tuple[Figure, Axes]:
+    all_peak_counts = [square.peaks_count for square in squares_with_sufficient_activity]
+    max_peak_count = max(all_peak_counts)
+    peak_text_fontsize = _get_adjusted_fontsize(preview_image, window_size, max_peak_count)
     fig, ax = plt.subplots()
     ax.imshow(preview_image, cmap="gray")
-    peak_counts = [square.peaks_count for square in squares_with_sufficient_activity]
-    max_peak_count = max(peak_counts)
-    for square, peak_count in zip(squares_with_sufficient_activity, peak_counts):
-        true_size = (peak_count/max_peak_count)*(window_size/2)
-        circle = plt.Circle((square.center_coords[1], square.center_coords[0]), radius=true_size, fill=False, color='cyan', linewidth = 2)
-        ax.add_patch(circle)
+    for square in squares_with_sufficient_activity:
+        ax.text(square.center_coords[1], square.center_coords[0], square.peaks_count, color = 'magenta', horizontalalignment='center', verticalalignment = 'center', fontsize = peak_text_fontsize)
     ax.grid(color = 'gray', linestyle = '--', linewidth = 1)
-    plt.hlines([0, row_cropping_idx], xmin=0, xmax=col_cropping_idx, color = 'magenta', linewidth = 2)
-    plt.vlines([0, col_cropping_idx], ymin=0, ymax=row_cropping_idx, color = 'magenta', linewidth = 2)
+    plt.hlines([0, row_cropping_idx], xmin=0, xmax=col_cropping_idx, color = 'cyan', linewidth = 2)
+    plt.vlines([0, col_cropping_idx], ymin=0, ymax=row_cropping_idx, color = 'cyan', linewidth = 2)
     ax.set_xticks(np.arange(0, preview_image.shape[1], window_size), labels = [])
-    ax.set_xticks(np.arange(window_size/2, col_cropping_idx + window_size/2, window_size), labels = np.arange(1, col_cropping_idx/window_size + 1, 1, dtype='int'), minor = True)
+    ax.set_xticks(np.arange(window_size/2, col_cropping_idx + window_size/2, window_size), labels = np.arange(1, col_cropping_idx/window_size + 1, 1, dtype='int'), minor = True, fontsize = min(12, peak_text_fontsize))
     ax.xaxis.set_label_text('X')
     ax.set_yticks(np.arange(0,  preview_image.shape[0], window_size), labels = [])
-    ax.set_yticks(np.arange(window_size/2, row_cropping_idx + window_size/2, window_size), labels = np.arange(1, row_cropping_idx/window_size + 1, 1, dtype='int'), minor = True)
+    ax.set_yticks(np.arange(window_size/2, row_cropping_idx + window_size/2, window_size), labels = np.arange(1, row_cropping_idx/window_size + 1, 1, dtype='int'), minor = True, fontsize = min(12, peak_text_fontsize))
     ax.yaxis.set_label_text('Y')
     ax.tick_params(bottom = False, left = False)
-    ax.set_title(f'Total activity: {np.sum(peak_counts)}')
+    ax.set_title(f'Total activity: {np.sum(all_peak_counts)}')
     return fig, ax
 
 
-
-def plot_intensity_trace_with_identified_peaks_for_individual_square(square: Square) -> None:
+def plot_intensity_trace_with_identified_peaks_for_individual_square(square: Square) -> Figure:
     fig = plt.figure(figsize = (9, 2.67), facecolor = 'white')
     plt.plot(square.mean_intensity_over_time, c = 'gray')
     if hasattr(square, 'baseline'):
