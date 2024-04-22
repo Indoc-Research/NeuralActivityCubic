@@ -80,7 +80,10 @@ class IOPanel:
         io_results_info = w.HTML(value="<p style='font-size:16px; font-weight:bold; text-align:center;'>Results output</p>")
         self.user_settings_save_overview_png = w.Checkbox(description = 'Save overview plot', value = True, style = {'description_width': 'initial'})
         self.user_settings_save_detailed_results = w.Checkbox(description = 'Save detailed results', value = True, style = {'description_width': 'initial'})
-        self.user_settings_results_filepath = FileChooser(title = 'Please select directory in which the output files shall be saved:', show_only_dirs = True, layout = w.Layout(width = '90%'))
+        self.user_settings_results_filepath = FileChooser(title = 'Please select directory in which the output files shall be saved:',
+                                                          show_only_dirs = True,
+                                                          select_default = True,
+                                                          layout = w.Layout(width = '90%'))
         self.user_settings_results_filepath.rows = 4
         self.run_analysis_button = w.Button(description = 'Run analysis',
                                             disabled = True,

@@ -2,6 +2,7 @@ from pathlib import Path
 import multiprocessing
 import numpy as np
 import pandas as pd
+from datetime import datetime
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
@@ -47,6 +48,7 @@ class Model:
                     ) -> None:
         if hasattr(self, 'processed_squares'):
             self._clear_all_data_from_previous_analyses()
+        self._set_analysis_start_datetime()
         self._create_squares(window_size)
         configs = locals()
         configs.pop('self')
@@ -62,6 +64,13 @@ class Model:
         delattr(self, 'processed_squares')
         delattr(self, 'row_cropping_idx')
         delattr(self, 'col_cropping_idx')
+        if hasattr(self, 'results_subdir_path'):
+            delattr(self, 'results_subdir_path')
+
+
+    def _set_analysis_start_datetime(self) -> None:
+            users_local_timezone = datetime.now().astimezone().tzinfo
+            self.analysis_start_datetime = datetime.now(users_local_timezone)      
 
 
     def _create_squares(self, window_size: int) -> None:
@@ -104,9 +113,15 @@ class Model:
         filtered_squares = [square for square in self.processed_squares if square.peaks_count >= minimum_activity_counts]
         overview_fig, ax = results.plot_activity_overview(filtered_squares, self.recording_preview, self.row_cropping_idx, self.col_cropping_idx, window_size, True)
         if save_overview_png == True:
-            overview_fig.savefig(results_filepath.joinpath('overview.png'))
+            self._ensure_results_subdir_for_current_analysis_exists(results_filepath)
+            overview_fig.savefig(self.results_subdir_path.joinpath('overview.png'))
         plt.show()
-        
+
+
+    def _ensure_results_subdir_for_current_analysis_exists(self, results_filepath: Path) -> None:
+        if hasattr(self, 'results_subdir_path') == False:
+            self.results_subdir_path = results_filepath.joinpath(self.analysis_start_datetime.strftime('%Y_%m_%d_%H-%M-%S_NA3_results'))
+            self.results_subdir_path.mkdir()
 
 
     def create_detailed_results(self,
@@ -118,9 +133,10 @@ class Model:
                                 results_filepath: Path
                                ) -> None:
         if save_detailed_results == True:
-            self._create_csv_result_files(results_filepath, minimum_activity_counts)
+            self._ensure_results_subdir_for_current_analysis_exists(results_filepath)
+            self._create_csv_result_files(minimum_activity_counts)
             filename = f'Plots_WS-{window_size}_SNR-{signal_to_noise_ratio}_SAT-{signal_average_threshold}_MAC-{minimum_activity_counts}.pdf'
-            filepath = results_filepath.joinpath(filename)
+            filepath = self.results_subdir_path.joinpath(filename)
             with PdfPages(filepath) as pdf:
                 filtered_squares = [square for square in self.processed_squares if square.peaks_count >= minimum_activity_counts]
                 for indicate_activity in [True, False]:
@@ -136,7 +152,7 @@ class Model:
             #pool.starmap(plot_intensity_trace_with_identified_peaks_for_individual_square, [(square, user, settings) for square in self.processed_squares])
 
 
-    def _create_csv_result_files(self, results_filepath: Path, minimum_activity_counts: int) -> None:
+    def _create_csv_result_files(self, minimum_activity_counts: int) -> None:
         peak_results_per_square = [results.export_peak_results_df_from_square(square) for square in self.processed_squares if square.peaks_count >= minimum_activity_counts]
         df_all_peak_results = pd.concat(peak_results_per_square, ignore_index = True)
         max_peak_count_across_all_squares = df_all_peak_results.groupby('square coordinates [X / Y]').count()['peak frame index'].max()
@@ -150,9 +166,9 @@ class Model:
         df_all_amplitude_and_delta_f_over_f_results = pd.concat(amplitude_and_delta_f_over_f_results_all_squares, ignore_index = True)
         df_all_auc_results = pd.concat(auc_results_all_squares, ignore_index = True)
         # Once all DataFrames are created successfully, write them to disk 
-        df_all_peak_results.to_csv(results_filepath.joinpath('all_peak_results.csv'), index = False)
-        df_all_amplitude_and_delta_f_over_f_results.to_csv(results_filepath.joinpath('Amplitude_and_dF_over_F_results.csv'), index = False)
-        df_all_auc_results.to_csv(results_filepath.joinpath('AUC_results.csv'), index = False)
+        df_all_peak_results.to_csv(self.results_subdir_path.joinpath('all_peak_results.csv'), index = False)
+        df_all_amplitude_and_delta_f_over_f_results.to_csv(self.results_subdir_path.joinpath('Amplitude_and_dF_over_F_results.csv'), index = False)
+        df_all_auc_results.to_csv(self.results_subdir_path.joinpath('AUC_results.csv'), index = False)
 
 
     

@@ -32,13 +32,16 @@ class App:
         validated_user_settings_analysis = self._get_validated_user_settings_required_for_model_function(self.model.run_analysis)
         self.view.update_infos(logs_message = 'Validation successful! Starting analysis ...', progress_in_percent = 10.0)
         self.model.run_analysis(**validated_user_settings_analysis)
-        self.view.update_infos(logs_message = 'Analysis completed! Generating output results ...', progress_in_percent = 70.0)
+        self.view.update_infos(logs_message = 'Analysis completed!', progress_in_percent = 70.0)
         validated_user_settings_detailed_results = self._get_validated_user_settings_required_for_model_function(self.model.create_detailed_results)
         if validated_user_settings_detailed_results['save_detailed_results'] == True:
+            self.view.update_infos(logs_message = 'Generating detailed output results ...', progress_in_percent = 70.0)
             self.model.create_detailed_results(**validated_user_settings_detailed_results)
-            self.view.update_infos(logs_message = 'Detailed results generated and saved! Generating overview ...', progress_in_percent = 95.0)
+            results_subdir_path_as_string = self.model.results_subdir_path.as_posix()
+            self.view.update_infos(logs_message = f'Detailed results generated and saved in: {results_subdir_path_as_string}!', progress_in_percent = 95.0)
         validated_user_settings_overview_results = self._get_validated_user_settings_required_for_model_function(self.model.create_overview_results)
         self.view.main_screen.show_output_screen()
+        self.view.update_infos(logs_message = 'Generating overview results ...', progress_in_percent = 95.0)
         with self.view.main_screen.output:
             self.view.main_screen.output.clear_output()
             self.model.create_overview_results(**validated_user_settings_overview_results)
