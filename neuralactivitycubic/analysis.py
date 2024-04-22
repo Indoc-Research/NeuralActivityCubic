@@ -29,6 +29,7 @@ class Peak:
 
     frame_idx: int
     intensity: float
+    amplitude: Optional[float]=None
     delta_f_over_f: Optional[float]=None
     has_neighboring_intersections: Optional[bool]=None
     frame_idxs_of_neighboring_intersections: Optional[Tuple[int, int]]=None
@@ -166,9 +167,10 @@ class Square:
                 peak.peak_type = 'isolated'
 
     
-    def compute_delta_f_over_f(self):
+    def compute_amplitude_and_delta_f_over_f(self):
         for peak in self.peaks.values():
-            peak.delta_f_over_f = (self.mean_intensity_over_time[peak.frame_idx] - self.baseline[peak.frame_idx]) / self.baseline[peak.frame_idx]
+            peak.amplitude = self.mean_intensity_over_time[peak.frame_idx] - self.baseline[peak.frame_idx]
+            peak.delta_f_over_f = peak.amplitude / self.baseline[peak.frame_idx]
 
     
 
@@ -181,5 +183,5 @@ def process_squares(square: Square, configs: Dict[str, Any]) -> Square:
         square.estimate_baseline(configs['baseline_estimation_method'])
         square.compute_area_under_curve()
         #if configs['compute_df_over_f'] == True:
-        square.compute_delta_f_over_f()
+        square.compute_amplitude_and_delta_f_over_f()
     return square

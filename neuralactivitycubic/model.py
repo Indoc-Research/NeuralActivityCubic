@@ -102,7 +102,7 @@ class Model:
                                 results_filepath: Path
                                ) -> None:
         filtered_squares = [square for square in self.processed_squares if square.peaks_count >= minimum_activity_counts]
-        overview_fig, ax = results.plot_activity_overview(filtered_squares, self.recording_preview, self.row_cropping_idx, self.col_cropping_idx, window_size)
+        overview_fig, ax = results.plot_activity_overview(filtered_squares, self.recording_preview, self.row_cropping_idx, self.col_cropping_idx, window_size, True)
         if save_overview_png == True:
             overview_fig.savefig(results_filepath.joinpath('overview.png'))
         plt.show()
@@ -123,9 +123,10 @@ class Model:
             filepath = results_filepath.joinpath(filename)
             with PdfPages(filepath) as pdf:
                 filtered_squares = [square for square in self.processed_squares if square.peaks_count >= minimum_activity_counts]
-                overview_fig, ax = results.plot_activity_overview(filtered_squares, self.recording_preview, self.row_cropping_idx, self.col_cropping_idx, window_size)
-                pdf.savefig(overview_fig)
-                plt.close()
+                for indicate_activity in [True, False]:
+                    overview_fig, ax = results.plot_activity_overview(filtered_squares, self.recording_preview, self.row_cropping_idx, self.col_cropping_idx, window_size, indicate_activity)
+                    pdf.savefig(overview_fig)
+                    plt.close()
                 for square in filtered_squares:
                     fig = results.plot_intensity_trace_with_identified_peaks_for_individual_square(square)
                     pdf.savefig(fig)
@@ -140,17 +141,17 @@ class Model:
         df_all_peak_results = pd.concat(peak_results_per_square, ignore_index = True)
         max_peak_count_across_all_squares = df_all_peak_results.groupby('square coordinates [X / Y]').count()['peak frame index'].max()
         zfill_factor = int(np.log10(max_peak_count_across_all_squares)) + 1
-        delta_f_over_f_results_all_squares = []
+        amplitude_and_delta_f_over_f_results_all_squares = []
         auc_results_all_squares = []
         for square_coords in df_all_peak_results['square coordinates [X / Y]'].unique():
             tmp_df_single_square = df_all_peak_results[df_all_peak_results['square coordinates [X / Y]'] == square_coords].copy()
-            delta_f_over_f_results_all_squares.append(results.create_single_square_delta_f_over_f_results(tmp_df_single_square, zfill_factor))
+            amplitude_and_delta_f_over_f_results_all_squares.append(results.create_single_square_amplitude_and_delta_f_over_f_results(tmp_df_single_square, zfill_factor))
             auc_results_all_squares.append(results.create_single_square_auc_results(tmp_df_single_square, zfill_factor))
-        df_all_delta_f_over_f_results = pd.concat(delta_f_over_f_results_all_squares, ignore_index = True)
+        df_all_amplitude_and_delta_f_over_f_results = pd.concat(amplitude_and_delta_f_over_f_results_all_squares, ignore_index = True)
         df_all_auc_results = pd.concat(auc_results_all_squares, ignore_index = True)
         # Once all DataFrames are created successfully, write them to disk 
         df_all_peak_results.to_csv(results_filepath.joinpath('all_peak_results.csv'), index = False)
-        df_all_delta_f_over_f_results.to_csv(results_filepath.joinpath('dF_over_F_results.csv'), index = False)
+        df_all_amplitude_and_delta_f_over_f_results.to_csv(results_filepath.joinpath('Amplitude_and_dF_over_F_results.csv'), index = False)
         df_all_auc_results.to_csv(results_filepath.joinpath('AUC_results.csv'), index = False)
 
 

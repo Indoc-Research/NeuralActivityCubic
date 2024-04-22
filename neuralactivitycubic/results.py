@@ -41,22 +41,41 @@ def _get_adjusted_fontsize(preview_image: np.ndarray, window_size: int, max_peak
     return adjusted_fontsize
 
 
-def plot_activity_overview(squares_with_sufficient_activity: List[Square], preview_image: np.ndarray, row_cropping_idx: int, col_cropping_idx: int, window_size: int) -> Tuple[Figure, Axes]:
+def plot_activity_overview(squares_with_sufficient_activity: List[Square], 
+                           preview_image: np.ndarray, 
+                           row_cropping_idx: int, 
+                           col_cropping_idx: int, 
+                           window_size: int, 
+                           indicate_activity: bool=False
+                          ) -> Tuple[Figure, Axes]:
     all_peak_counts = [square.peaks_count for square in squares_with_sufficient_activity]
     max_peak_count = max(all_peak_counts)
     peak_text_fontsize = _get_adjusted_fontsize(preview_image, window_size, max_peak_count)
     fig, ax = plt.subplots()
     ax.imshow(preview_image, cmap="gray")
-    for square in squares_with_sufficient_activity:
-        ax.text(square.center_coords[1], square.center_coords[0], square.peaks_count, color = 'magenta', horizontalalignment='center', verticalalignment = 'center', fontsize = peak_text_fontsize)
+    if indicate_activity == True:
+        for square in squares_with_sufficient_activity:
+            ax.text(square.center_coords[1], 
+                    square.center_coords[0], 
+                    square.peaks_count, 
+                    color = 'magenta', 
+                    horizontalalignment='center', 
+                    verticalalignment = 'center', 
+                    fontsize = peak_text_fontsize)
     ax.grid(color = 'gray', linestyle = '--', linewidth = 1)
     plt.hlines([0, row_cropping_idx], xmin=0, xmax=col_cropping_idx, color = 'cyan', linewidth = 2)
     plt.vlines([0, col_cropping_idx], ymin=0, ymax=row_cropping_idx, color = 'cyan', linewidth = 2)
     ax.set_xticks(np.arange(0, preview_image.shape[1], window_size), labels = [])
-    ax.set_xticks(np.arange(window_size/2, col_cropping_idx + window_size/2, window_size), labels = np.arange(1, col_cropping_idx/window_size + 1, 1, dtype='int'), minor = True, fontsize = min(12, peak_text_fontsize))
+    ax.set_xticks(np.arange(window_size/2, col_cropping_idx + window_size/2, window_size), 
+                  labels = np.arange(1, col_cropping_idx/window_size + 1, 1, dtype='int'), 
+                  minor = True, 
+                  fontsize = min(12, peak_text_fontsize))
     ax.xaxis.set_label_text('X')
     ax.set_yticks(np.arange(0,  preview_image.shape[0], window_size), labels = [])
-    ax.set_yticks(np.arange(window_size/2, row_cropping_idx + window_size/2, window_size), labels = np.arange(1, row_cropping_idx/window_size + 1, 1, dtype='int'), minor = True, fontsize = min(12, peak_text_fontsize))
+    ax.set_yticks(np.arange(window_size/2, row_cropping_idx + window_size/2, window_size), 
+                  labels = np.arange(1, row_cropping_idx/window_size + 1, 1, dtype='int'), 
+                  minor = True, 
+                  fontsize = min(12, peak_text_fontsize))
     ax.yaxis.set_label_text('Y')
     ax.tick_params(bottom = False, left = False)
     ax.set_title(f'Total activity: {np.sum(all_peak_counts)}')
@@ -94,19 +113,20 @@ def export_peak_results_df_from_square(square: Square) -> pd.DataFrame:
     all_peaks = [peak for peak in square.peaks.values()]
     df_all_peak_results_one_square = pd.DataFrame(all_peaks)
     df_all_peak_results_one_square.drop(['has_neighboring_intersections', 'frame_idxs_of_neighboring_intersections'], axis = 'columns', inplace = True)
-    df_all_peak_results_one_square.columns = ['peak frame index', 'peak bit value', 'peak dF/F',  'peak AUC', 'peak classification']
+    df_all_peak_results_one_square.columns = ['peak frame index', 'peak bit value', 'peak amplitude', 'peak dF/F',  'peak AUC', 'peak classification']
     df_all_peak_results_one_square.insert(loc = 0, column = 'square coordinates [X / Y]', value = f'[{square.grid_col_label} / {square.grid_row_label}]')
     return df_all_peak_results_one_square
 
 
 
-def create_single_square_delta_f_over_f_results(df_all_results_single_square: pd.DataFrame, zfill_factor: int) -> pd.DataFrame:
+def create_single_square_amplitude_and_delta_f_over_f_results(df_all_results_single_square: pd.DataFrame, zfill_factor: int) -> pd.DataFrame:
     rearranged_data = {'square coordinates [X / Y]': [df_all_results_single_square['square coordinates [X / Y]'].iloc[0]],
                        'total peak count': [df_all_results_single_square.shape[0]]}
     for i in range(df_all_results_single_square.shape[0]):
         peak_idx = str(i + 1)
         peak_idx_suffix = peak_idx.zfill(zfill_factor)
         rearranged_data[f'frame index peak #{peak_idx_suffix}'] = [df_all_results_single_square.iloc[i]['peak frame index']]
+        rearranged_data[f'amplitude peak #{peak_idx_suffix}'] = [df_all_results_single_square.iloc[i]['peak amplitude']]
         rearranged_data[f'dF/F peak #{peak_idx_suffix}'] = [df_all_results_single_square.iloc[i]['peak dF/F']]
     return pd.DataFrame(rearranged_data)
     
