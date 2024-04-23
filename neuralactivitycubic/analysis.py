@@ -60,8 +60,7 @@ class Square:
             self.mean_intensity_over_time = np.mean(self.frames_zstack, axis = (1,2,3))
 
 
-    def detect_peaks(self, signal_to_noise_ratio: float, octaves_ridge_needs_to_spann: float=1.0, noise_window_size: int=200) -> None:
-        # Add default exclusion of peaks within first / last 10-20 frames to avoid border effects? implement zero_padding / mirroring?
+    def detect_peaks(self, signal_to_noise_ratio: float, octaves_ridge_needs_to_spann: float, noise_window_size: int) -> None:
         widths = np.logspace(np.log10(1), np.log10(self.mean_intensity_over_time.shape[0]), 100)
         min_length = octaves_ridge_needs_to_spann / np.log2(widths[1] / widths[0])
         n_padded_frames = int(np.median(widths)) + 1
@@ -178,7 +177,7 @@ class Square:
 def process_squares(square: Square, configs: Dict[str, Any]) -> Square:
     square.compute_mean_intensity_timeseries(configs['limit_analysis_to_frame_interval'], configs['start_frame_idx'], configs['end_frame_idx'])
     if np.mean(square.mean_intensity_over_time) >= configs['signal_average_threshold']:
-        square.detect_peaks(configs['signal_to_noise_ratio']) # add 'octaves_ridge_needs_to_spann' and 'noise_window_size' here!
+        square.detect_peaks(configs['signal_to_noise_ratio'], configs['octaves_ridge_needs_to_spann'], configs['noise_window_size'])
         #if configs['compute_aucs'] == True:
         square.estimate_baseline(configs['baseline_estimation_method'])
         square.compute_area_under_curve()
