@@ -35,6 +35,13 @@ class Model:
         pass
 
 
+    def preview_window_size(self, window_size: int) -> Tuple[Figure, Axes]:
+        self._clear_all_data_from_previous_analyses()
+        self._create_squares(window_size)
+        preview_fig, preview_ax = results.plot_window_size_preview(self.recording_preview, self.row_cropping_idx, self.col_cropping_idx, window_size)
+        return preview_fig, preview_ax
+
+
     def run_analysis(self,
                      window_size: int,
                      limit_analysis_to_frame_interval: bool,
@@ -48,8 +55,7 @@ class Model:
                      #include_variance: bool,
                      #variance: float,
                     ) -> None:
-        if hasattr(self, 'processed_squares'):
-            self._clear_all_data_from_previous_analyses()
+        self._clear_all_data_from_previous_analyses()
         self._set_analysis_start_datetime()
         self._create_squares(window_size)
         configs = locals()
@@ -62,12 +68,9 @@ class Model:
 
 
     def _clear_all_data_from_previous_analyses(self) -> None:
-        delattr(self, 'squares')
-        delattr(self, 'processed_squares')
-        delattr(self, 'row_cropping_idx')
-        delattr(self, 'col_cropping_idx')
-        if hasattr(self, 'results_subdir_path'):
-            delattr(self, 'results_subdir_path')
+        for attribute_name in ['squares', 'processed_squares', 'row_cropping_idx', 'col_cropping_idx', 'results_subdir_path']:
+            if hasattr(self, attribute_name):
+                delattr(self, attribute_name)
 
 
     def _set_analysis_start_datetime(self) -> None:

@@ -349,7 +349,8 @@ class AnalysisSettingsPanel:
                                                                              style = {'description_width': 'initial'},
                                                                              layout = w.Layout(width = '65%', visibility = 'hidden'))
         optional_variance_widgets = w.HBox([self.user_settings_include_variance, self.user_settings_variance], layout = w.Layout(width = '100%', align_items = 'flex-start'))
-        optional_interval_widgets = w.HBox([self.user_settings_limit_analysis_to_frame_interval, self.user_settings_frame_interval_to_analyze], layout = w.Layout(width = '100%', align_items = 'flex-start'))
+        optional_interval_widgets = w.HBox([self.user_settings_limit_analysis_to_frame_interval, self.user_settings_frame_interval_to_analyze], 
+                                           layout = w.Layout(width = '100%', align_items = 'flex-start'))
         optional_octave_widgets = w.HBox([self.user_settings_configure_octaves, self.user_settings_octaves_ridge_needs_to_spann], layout = w.Layout(width = '100%', align_items = 'flex-start'))
         
         optional_settings = w.VBox([optional_variance_widgets, vertical_spacer, optional_interval_widgets, vertical_spacer, optional_octave_widgets],

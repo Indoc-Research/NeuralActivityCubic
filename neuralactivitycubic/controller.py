@@ -25,6 +25,7 @@ class App:
         self.view.io_panel.run_analysis_button.on_click(self._run_button_clicked)
         self.view.io_panel.load_recording_button.on_click(self._load_recording_button_clicked)
         self.view.io_panel.load_roi_button.on_click(self._load_roi_button_clicked)
+        self.view.analysis_settings_panel.preview_window_size_button.on_click(self._preview_window_size_button_clicked)
 
 
     def _run_button_clicked(self, change) -> None:
@@ -44,7 +45,6 @@ class App:
         self.view.main_screen.show_output_screen()
         self.view.update_infos(logs_message = 'Generating overview results ...', progress_in_percent = 95.0)
         with self.view.main_screen.output:
-            self.view.main_screen.output.clear_output()
             overview_results_fig, overview_results_ax = self.model.create_overview_results(**validated_user_settings_overview_results)
             overview_results_fig.set_figheight(400 * self.px_conversion)
             overview_results_fig.tight_layout()
@@ -76,6 +76,16 @@ class App:
         #self.model.load_roi(**validated_user_settings)
         #self.view.show_on_main_window(self.model.recording_preview_with_superimposed_rois)
         pass
+
+
+    def _preview_window_size_button_clicked(self, change) -> None:
+        self.view.main_screen.show_output_screen()
+        with self.view.main_screen.output:
+            validated_user_settings_preview = self._get_validated_user_settings_required_for_model_function(self.model.preview_window_size)
+            preview_fig, preview_ax = self.model.preview_window_size(**validated_user_settings_preview)
+            preview_fig.set_figheight(400 * self.px_conversion)
+            preview_fig.tight_layout()
+            plt.show(preview_fig)
 
 
     def _get_validated_user_settings_required_for_model_function(self, model_func: Callable) -> Dict[str, Any]:
