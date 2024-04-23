@@ -14,6 +14,7 @@ class App:
         self.model = Model()
         self.view = WidgetsInterface()
         self._bind_buttons_to_functions()
+        self.px_conversion = 1/plt.rcParams['figure.dpi']
 
     
     def launch(self) -> None:
@@ -44,7 +45,10 @@ class App:
         self.view.update_infos(logs_message = 'Generating overview results ...', progress_in_percent = 95.0)
         with self.view.main_screen.output:
             self.view.main_screen.output.clear_output()
-            self.model.create_overview_results(**validated_user_settings_overview_results)
+            overview_results_fig, overview_results_ax = self.model.create_overview_results(**validated_user_settings_overview_results)
+            overview_results_fig.set_figheight(400 * self.px_conversion)
+            overview_results_fig.tight_layout()
+            plt.show(overview_results_fig)
         self.view.update_infos(logs_message = 'All result files have been created.')
         self.view.update_infos(logs_message = 'All jobs finished!', progress_in_percent = 100.0)
         self.view.enable_analysis(True)
@@ -59,7 +63,9 @@ class App:
         self.view.update_infos(logs_message = 'Recording data successfully loaded', progress_in_percent = 95.0)
         self.view.main_screen.show_output_screen()
         with self.view.main_screen.output:
+            fig = plt.figure(figsize = (600*self.px_conversion, 400*self.px_conversion))
             plt.imshow(self.model.recording_preview)
+            plt.tight_layout()
             plt.show()
         self.view.update_infos(progress_in_percent = 100.0)
         self.view.enable_analysis()

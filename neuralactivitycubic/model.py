@@ -11,6 +11,8 @@ from . import results
 from .io import RecordingLoaderFactory
 
 from typing import List, Tuple
+from matplotlib.figure import Figure
+from matplotlib.axes._axes import Axes 
 
 
 
@@ -109,13 +111,13 @@ class Model:
                                 window_size: int,
                                 save_overview_png: bool,
                                 results_filepath: Path
-                               ) -> None:
+                               ) -> Tuple[Figure, Axes]:
         filtered_squares = [square for square in self.processed_squares if square.peaks_count >= minimum_activity_counts]
         overview_fig, ax = results.plot_activity_overview(filtered_squares, self.recording_preview, self.row_cropping_idx, self.col_cropping_idx, window_size, True)
         if save_overview_png == True:
             self._ensure_results_subdir_for_current_analysis_exists(results_filepath)
             overview_fig.savefig(self.results_subdir_path.joinpath('overview.png'))
-        plt.show()
+        return overview_fig, ax
 
 
     def _ensure_results_subdir_for_current_analysis_exists(self, results_filepath: Path) -> None:

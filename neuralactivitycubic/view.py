@@ -286,63 +286,94 @@ class AnalysisSettingsPanel:
 
 
     def _build_default_widget(self) -> None:
+        width_percentage_core_widgets = '95%'
+        description_width = '35px'
         # Create and configure all elements:
         analysis_settings_info = w.HTML(value="<p style='font-size:16px; font-weight:bold; text-align:center;'>Analysis Settings</p>", layout = w.Layout(width = '99%'))
-        wis_label = w.Label(value = 'Window size:', style = {'text_align': 'left'}, layout = w.Layout(width = '90%'))
-        self.user_settings_window_size = w.IntSlider(value = 10, min = 1, max = 128, step = 1, disabled = True, layout = w.Layout(width = '90%'))
-        snr_label = w.Label(value = 'Signal to noise ratio:', style = {'text_align': 'left'}, layout = w.Layout(width = '90%'))
-        self.user_settings_signal_to_noise_ratio = w.FloatSlider(value = 3.0, min = 0.0, max = 100.0, step = 0.05, disabled = True, layout = w.Layout(width = '90%'))
-        sat_label = w.Label(value = 'Signal average threshold:', style = {'text_align': 'left'}, layout = w.Layout(width = '90%'))
-        self.user_settings_signal_average_threshold = w.FloatSlider(value = 10.0, min = 0.0, max = 255.0, step = 0.5, disabled = True, layout = w.Layout(width = '90%'))
-        mac_label = w.Label(value = 'Minimum activity counts:', style = {'text_align': 'left'}, layout = w.Layout(width = '90%'))
-        self.user_settings_minimum_activity_counts = w.BoundedIntText(value = 2, min = 0, max = 100, step = 1, disabled = True, layout = w.Layout(width = '75%'))
-        bem_label = w.Label(value = 'Baseline estimation method:', style = {'text_align': 'left'}, layout = w.Layout(width = '90%'))
-        self.user_settings_baseline_estimation_method = w.Dropdown(value = 'asls', 
+
+        self.user_settings_window_size = w.IntSlider(description = 'Grid size:', value = 10, min = 1, max = 128, step = 1, disabled = True, 
+                                                          layout = w.Layout(width = '80%'), style = {'description_width': 'initial'})
+        self.preview_window_size_button = w.Button(description = 'Preview', disabled = True, tooltip = 'Preview grid size. Does not start analysis', layout = w.Layout(width = '20%'))
+        self.user_settings_signal_to_noise_ratio = w.BoundedFloatText(description = 'SNR: ', tooltip = 'Signal to noise ratio', value = 3.0, min = 0.1, max = 100.0, step = 0.05, disabled = True, 
+                                                                      layout = w.Layout(width = width_percentage_core_widgets), style = {'description_width': description_width})
+        self.user_settings_noise_window_size = w.BoundedIntText(description = 'NWS: ', tooltip = 'Noise window size', value = 200, min = 10, max = 1000, step = 1, disabled = True,
+                                                                layout = w.Layout(width = width_percentage_core_widgets), style = {'description_width': description_width})
+        self.user_settings_signal_average_threshold = w.BoundedFloatText(description = 'SAT: ', tooltip = 'Signal average threshold', value = 10.0, min = 0.0, max = 255.0, step = 0.5, 
+                                                                         disabled = True, layout = w.Layout(width = width_percentage_core_widgets), 
+                                                                         style = {'description_width': description_width})
+        self.user_settings_minimum_activity_counts = w.BoundedIntText(description = 'MAC: ', tooltip = 'Minimum activity counts', value = 2, min = 0, max = 100, step = 1, disabled = True, 
+                                                                      layout = w.Layout(width = width_percentage_core_widgets), style = {'description_width': description_width})
+        self.user_settings_baseline_estimation_method = w.Dropdown(description = 'Baseline estimation method: ',
+                                                                   value = 'asls', 
                                                                    options = [("Asymmetric Least Squares", "asls"),
                                                                               ("Fully Automatic Baseline Correction", "fabc"),
                                                                               ("Peaked Signal's Asymmetric Least Squares Algorithm", "psalsa"),
                                                                               ("Standard Deviation Distribution", "std_distribution")
                                                                              ],
                                                                    disabled = True,
-                                                                   layout = w.Layout(width = '75%'))
+                                                                   layout = w.Layout(width = '99%'), style = {'description_width': 'initial'})
         vertical_spacer = w.HTML(value = '', layout = w.Layout(height = '5px'))
+        horizontal_spacer = w.HTML(value = '', layout = w.Layout(width = '5%'))
+        vbox_core_settings_left = w.VBox([self.user_settings_signal_to_noise_ratio, vertical_spacer, self.user_settings_signal_average_threshold], 
+                                         layout = w.Layout(width = '50%', align_items = 'flex-start'))
+        vbox_core_settings_right = w.VBox([self.user_settings_noise_window_size, vertical_spacer, self.user_settings_minimum_activity_counts], 
+                                           layout = w.Layout(width = '50%', align_items = 'flex-end'))      
+        hbox_grid_window_size_settings = w.HBox([self.user_settings_window_size, self.preview_window_size_button], layout = w.Layout(width = '100%', justify_content = 'flex-start'))
+        hbox_core_setting_vboxes = w.HBox([vbox_core_settings_left, vbox_core_settings_right], layout = w.Layout(width = '100%'))
+        vbox_all_core_settings = w.VBox([hbox_grid_window_size_settings, 
+                                         vertical_spacer,
+                                         hbox_core_setting_vboxes,
+                                         vertical_spacer,
+                                         self.user_settings_baseline_estimation_method], 
+                                        layout = w.Layout(width = '90%'))
+
+        
         dashed_separator_line = w.HTML(value = "<hr style='border: none; border-bottom: 1px dashed;'>", layout = w.Layout(width = '95%'))
         optional_info = w.Label(value = 'Optional settings:', style = {'text_align': 'left', 'font_weight': 'bold'}, layout = w.Layout(width = '90%'))
-        self.user_settings_include_variance = w.Checkbox(description = 'include Variance', value = False, disabled = True, indent = False)
+        self.user_settings_include_variance = w.Checkbox(description = 'include variance', value = False, indent = False, disabled = True, 
+                                                         layout = w.Layout(width = '35%'), style = {'description_width': 'initial'})
         self.user_settings_variance = w.BoundedFloatText(description = 'Variance:', disabled = True,
                                                          value = 3.0, min = 0.0, max = 30.0, step = 0.1,
                                                          style = {'description_width': 'initial'},
-                                                         layout = w.Layout(width = '75%', visibility = 'hidden'))
-        self.user_settings_limit_analysis_to_frame_interval = w.Checkbox(description = 'analyze only specific interval', 
-                                                                         value = False, disabled = True, indent = False)
-        self.user_settings_frame_interval_to_analyze = w.IntRangeSlider(description = 'Frame interval:', disabled = True, 
+                                                         layout = w.Layout(width = '65%', visibility = 'hidden'))
+        self.user_settings_limit_analysis_to_frame_interval = w.Checkbox(description = 'analyze interval', indent = False, 
+                                                                         value = False, disabled = True, layout = w.Layout(width = '35%'), 
+                                                                         style = {'description_width': 'initial'})
+        self.user_settings_frame_interval_to_analyze = w.IntRangeSlider(description = 'Frames:', disabled = True, 
                                                                         value = (0, 500), min = 0, max = 500, step = 1, 
-                                                                        style = {'description_width': 'initial'}, layout = w.Layout(width = '90%', visibility = 'hidden'))
-        optional_checkboxes = w.HBox([self.user_settings_include_variance, self.user_settings_limit_analysis_to_frame_interval],
-                                     layout = w.Layout(width = '90%'))
+                                                                        style = {'description_width': 'initial'}, layout = w.Layout(width = '65%', visibility = 'hidden'))
+        self.user_settings_configure_octaves = w.Checkbox(description = 'configure octaves', value = False, disabled = True, indent = False, 
+                                                          layout = w.Layout(width = '35%'), style = {'description_width': 'initial'})
+        self.user_settings_octaves_ridge_needs_to_spann = w.BoundedFloatText(description = 'Min. octaves:', tooltip = 'Minimum octaves a ridge needs to span', disabled = True,
+                                                                             value = 1.0, min = 0.1, max = 30.0, step = 0.05,
+                                                                             style = {'description_width': 'initial'},
+                                                                             layout = w.Layout(width = '65%', visibility = 'hidden'))
+        optional_variance_widgets = w.HBox([self.user_settings_include_variance, self.user_settings_variance], layout = w.Layout(width = '100%', align_items = 'flex-start'))
+        optional_interval_widgets = w.HBox([self.user_settings_limit_analysis_to_frame_interval, self.user_settings_frame_interval_to_analyze], layout = w.Layout(width = '100%', align_items = 'flex-start'))
+        optional_octave_widgets = w.HBox([self.user_settings_configure_octaves, self.user_settings_octaves_ridge_needs_to_spann], layout = w.Layout(width = '100%', align_items = 'flex-start'))
+        
+        optional_settings = w.VBox([optional_variance_widgets, vertical_spacer, optional_interval_widgets, vertical_spacer, optional_octave_widgets],
+                                     layout = w.Layout(width = '90%', align_items = 'flex-start', align_content = 'flex-start', justify_content = 'flex-start'))
         # Enable event handling:
         self.user_settings_include_variance.observe(self._include_variance_config_changed)
         self.user_settings_limit_analysis_to_frame_interval.observe(self._limit_analysis_to_interval_changed)
+        self.user_settings_configure_octaves.observe(self._configure_octaves_changed)
         # Arrange elements:
         analysis_settings_box = w.VBox([analysis_settings_info,
-                                        wis_label, self.user_settings_window_size,
-                                        snr_label, self.user_settings_signal_to_noise_ratio,
-                                        sat_label, self.user_settings_signal_average_threshold,
-                                        mac_label, self.user_settings_minimum_activity_counts,
-                                        bem_label, self.user_settings_baseline_estimation_method,
+                                        vbox_all_core_settings,
                                         vertical_spacer,
                                         dashed_separator_line, 
                                         optional_info,
-                                        optional_checkboxes,
-                                        self.user_settings_variance,
-                                        self.user_settings_frame_interval_to_analyze],
-                                       layout = w.Layout(height = '512px', width = '33%', align_items = 'center', border_bottom = '1px dashed'))
+                                        optional_settings],
+                                       layout = w.Layout(height = '415px', width = '33%', align_items = 'center', border_bottom = '1px dashed'))
         return analysis_settings_box
-                                        
-                                        
+
+    
     def enable_analysis_settings(self, enable_all_widgets: bool=True) -> None:
         for attribute_name, attribute_obj in vars(self).items():
             if attribute_name.startswith('user_settings'):
+                attribute_obj.disabled = not enable_all_widgets
+            elif attribute_name == 'preview_window_size_button':
                 attribute_obj.disabled = not enable_all_widgets
     
 
@@ -362,6 +393,14 @@ class AnalysisSettingsPanel:
                 self.user_settings_frame_interval_to_analyze.layout.visibility = 'hidden'
 
 
+    def _configure_octaves_changed(self, change) -> None:
+        if change['name'] == 'value':
+            if change['new'] == True:
+                self.user_settings_octaves_ridge_needs_to_spann.layout.visibility = 'visible'
+            else:
+                self.user_settings_octaves_ridge_needs_to_spann.layout.visibility = 'hidden'
+
+
 
 
 
@@ -370,7 +409,7 @@ class MainScreen:
     def __init__(self) -> None:
         self.welcome_screen = self._build_welcome_screen()
         self.output_screen = self._build_output_screen()
-        self.widget = w.VBox([], layout = w.Layout(height = '512px', width = '67%', justify_content = 'center', align_items = 'center', 
+        self.widget = w.VBox([], layout = w.Layout(height = '415px', width = '67%', justify_content = 'center', align_items = 'center', 
                                                                 border_top = '1px solid', border_left = '1px solid', border_bottom = '1px solid'))
         self.show_welcome_screen()
 
