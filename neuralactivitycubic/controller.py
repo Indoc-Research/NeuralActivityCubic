@@ -3,6 +3,7 @@ from .view import WidgetsInterface
 from PIL import Image
 import matplotlib.pyplot as plt
 from pathlib import Path
+import numpy as np
 import inspect
 from IPython.display import display
 
@@ -64,7 +65,7 @@ class App:
         self.view.main_screen.show_output_screen()
         with self.view.main_screen.output:
             fig = plt.figure(figsize = (600*self.px_conversion, 400*self.px_conversion))
-            plt.imshow(self.model.recording_preview)
+            plt.imshow(self.model.recording_preview, cmap = 'gray', vmin = np.percentile(self.model.recording_preview, 2.5), vmax = np.percentile(self.model.recording_preview, 97.5))
             plt.tight_layout()
             plt.show()
         self.view.update_infos(progress_in_percent = 100.0)
