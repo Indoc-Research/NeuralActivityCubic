@@ -22,7 +22,7 @@ def _get_text_bounding_box_size_in_data_dimensions(text: Text, fig: Figure, ax: 
 def _iteratively_decrease_fontsize_to_fit_text_in_squares(text: Text, max_size: float, fig: Figure, ax: Axes) -> None:
     text.set_fontsize(text.get_fontsize()-1)
     text_width, text_height = _get_text_bounding_box_size_in_data_dimensions(text, fig, ax)
-    if (text_width > max_size) or (text_width > max_size): 
+    if (text_width > max_size) or (text_height > max_size): 
         _iteratively_decrease_fontsize_to_fit_text_in_squares(text, max_size, fig, ax)
 
 
@@ -32,7 +32,7 @@ def _get_adjusted_fontsize(preview_image: np.ndarray, window_size: int, max_peak
     tmp_ax.imshow(preview_image)
     sample_coord = window_size + 0.5 * window_size
     max_width_text_from_number = '4'*len(str(max_peak_count))
-    tmp_text = tmp_ax.text(sample_coord, sample_coord, max_peak_count, fontsize = default_fontsize)
+    tmp_text = tmp_ax.text(sample_coord, sample_coord, max_width_text_from_number, fontsize = default_fontsize)
     text_width, text_height = _get_text_bounding_box_size_in_data_dimensions(tmp_text, tmp_fig, tmp_ax)
     if (text_width > max_text_size) or (text_height > max_text_size):
         _iteratively_decrease_fontsize_to_fit_text_in_squares(tmp_text, max_text_size, tmp_fig, tmp_ax)
