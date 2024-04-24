@@ -25,8 +25,48 @@ class Model:
     def load_recording(self, recording_filepath: Path) -> None:
         recording_loader = RecordingLoaderFactory().get_loader(recording_filepath)
         self.recording_zstack = recording_loader.load_all_frames()
-        self.recording_preview = self.recording_zstack[0, :, :, :] # ensure that dimensions are the same as for ".get_single_frame_as_preview()"
+        self.estimated_bit_depth = self._estimate_bit_depth()
+        self.recording_preview = self._create_brightness_and_contrast_enhanced_preview()
 
+
+    def _estimate_bit_depth(self) -> int:
+        max_bit_value = self.recording_zstack.max()
+        if max_bit_value <= 255:
+            estimated_bit_depth = 255
+        elif max_bit_value <= 4095:
+            estimated_bit_depth = 4095
+        elif max_bit_value <= 65535:
+            estimated_bit_depth = 65535
+        else:
+            raise ValueError(f'Max bit value in recording found to be {max_bit_value}, but NA3 currently only handles up to 16-bit recordings!')
+        return estimated_bit_depth
+
+
+    def _create_brightness_and_contrast_enhanced_preview(self, percentile_for_adjustment: int=1) -> np.ndarray:
+        raw_image = self.recording_zstack[0, :, :, :].copy() # ensure that dimensions are the same as for ".get_single_frame_as_preview()"
+        lower_percentile_bit_value = np.percentile(raw_image, percentile_for_adjustment)
+        upper_percentile_bit_value = np.percentile(raw_image, 100-percentile_for_adjustment)
+        contrast_adjustment_factor = self.estimated_bit_depth / (upper_percentile_bit_value - lower_percentile_bit_value)
+        brightness_adjustment_factor = -(contrast_adjustment_factor * lower_percentile_bit_value)
+        raw_image_clipped_at_percentile_bit_values = self._clip_image_at_bit_values(raw_image, lower_percentile_bit_value, upper_percentile_bit_value)
+        brightness_contrast_adjusted_image = contrast_adjustment_factor * raw_image_clipped_at_percentile_bit_values + brightness_adjustment_factor
+        return brightness_contrast_adjusted_image
+        
+
+    def _compute_contrast_and_brightness_adjustment_factors(self, raw_image: np.ndarray, percentile_for_adjustment: int=1) -> Tuple[float, float]:
+        lower_percentile_bit_value = np.percentile(raw_image, percentile_for_adjustment)
+        upper_percentile_bit_value = np.percentile(raw_image, 100-percentile_for_adjustment)
+        contrast_adjustment = self.estimated_bit_depth / (upper_percentile_bit_value - lower_percentile_bit_value)
+        brightness_adjustment = -(contrast_adjustment * lower_percentile_bit_value)
+        return contrast_adjustment, brightness_adjustment
+
+
+    def _clip_image_at_bit_values(self, raw_image: np.ndarray, min_bit_value: float, max_bit_value: float) -> np.ndarray:
+        raw_image[raw_image <= min_bit_value] = min_bit_value
+        raw_image[raw_image >= max_bit_value] = max_bit_value
+        return raw_image
+
+        
 
     def load_roi(self, roi_filepath: Path) -> None:
         # roi_loader = ROILoaderFactory().get_loader(roi_filepath)
