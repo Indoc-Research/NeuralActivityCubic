@@ -5,6 +5,70 @@ from abc import ABC, abstractmethod
 from typing import List, Dict
 
 
+class Recording:
+
+    def __init__(self, filepath: Path, loaded_data: np.ndarray) -> None:
+        self.filepath = filepath
+        self.zstack = loaded_data
+        self.estimated_bit_depth = self._estimate_bit_depth()
+        self.preview = self._create_brightness_and_contrast_enhanced_preview()
+
+
+    def _estimate_bit_depth(self) -> int:
+        max_bit_value = self.zstack.max()
+        if max_bit_value <= 255:
+            estimated_bit_depth = 255
+        elif max_bit_value <= 4095:
+            estimated_bit_depth = 4095
+        elif max_bit_value <= 65535:
+            estimated_bit_depth = 65535
+        else:
+            raise ValueError(f'Max bit value in recording found to be {max_bit_value}, but NA3 currently only handles up to 16-bit recordings!')
+        return estimated_bit_depth
+
+
+    def _create_brightness_and_contrast_enhanced_preview(self, percentile_for_adjustment: int=1) -> np.ndarray:
+        raw_image = self.zstack[0, :, :, :].copy() # ensure that dimensions are the same as for ".get_single_frame_as_preview()"
+        lower_percentile_bit_value = np.percentile(raw_image, percentile_for_adjustment)
+        upper_percentile_bit_value = np.percentile(raw_image, 100-percentile_for_adjustment)
+        contrast_adjustment_factor = self.estimated_bit_depth / (upper_percentile_bit_value - lower_percentile_bit_value)
+        brightness_adjustment_factor = -(contrast_adjustment_factor * lower_percentile_bit_value)
+        raw_image_clipped_at_percentile_bit_values = self._clip_image_at_bit_values(raw_image, lower_percentile_bit_value, upper_percentile_bit_value)
+        brightness_contrast_adjusted_image = contrast_adjustment_factor * raw_image_clipped_at_percentile_bit_values + brightness_adjustment_factor
+        return brightness_contrast_adjusted_image
+        
+
+    def _compute_contrast_and_brightness_adjustment_factors(self, raw_image: np.ndarray, percentile_for_adjustment: int=1) -> Tuple[float, float]:
+        lower_percentile_bit_value = np.percentile(raw_image, percentile_for_adjustment)
+        upper_percentile_bit_value = np.percentile(raw_image, 100-percentile_for_adjustment)
+        contrast_adjustment = self.estimated_bit_depth / (upper_percentile_bit_value - lower_percentile_bit_value)
+        brightness_adjustment = -(contrast_adjustment * lower_percentile_bit_value)
+        return contrast_adjustment, brightness_adjustment
+
+
+    def _clip_image_at_bit_values(self, raw_image: np.ndarray, min_bit_value: float, max_bit_value: float) -> np.ndarray:
+        raw_image[raw_image <= min_bit_value] = min_bit_value
+        raw_image[raw_image >= max_bit_value] = max_bit_value
+        return raw_image
+
+
+
+
+class ROI:
+
+    def __init__(self, filepath: Path, loaded_data: np.ndarray) -> None:
+        self.filepath = filepath
+        self.boundary_coords = loaded_data
+        self.roi_as_polygon = self._convert_to_valid_polygon()
+
+
+    def _convert_to_valid_polygon(self) -> None: #Polygon:
+        # conversion should happen here
+        roi_as_polygon = self.boundary_coords
+        return roi_as_polygon
+
+
+
 class RecordingLoader(ABC):
 
 
@@ -23,6 +87,12 @@ class RecordingLoader(ABC):
         all_frames = self._get_all_frames()
         all_frames = self._validate_shape_and_convert_to_grayscale_if_possible(all_frames)
         return all_frames
+
+
+    def load_as_recording(self) -> Recording:
+        all_frames = self.load_all_frames()
+        recording = Recording(self.filepath, all_frames)
+        return Recording
 
 
     def _validate_shape_and_convert_to_grayscale_if_possible(self, zstack: np.ndarray) -> np.ndarray:
@@ -205,6 +275,15 @@ class RecordingRoiCombiLoader:
         self.all_roi_loaders = []
         for roi_filepath in self.all_roi_filepaths:
             self.all_roi_loaders.append(roi_loader_factory.get_loader(roi_filepath))
+
+
+    def load_all_recording_roi_combos(self) -> List[Tuple[Recording, ROI]]:
+        recording_roi_combos = []
+        recording = self.recording_loader.load_as_recording()
+        for roi_loader in self.all_roi_loaders:
+            roi = roi_loader.load_as_roi()
+            recording_roi_combos.append((recording, roi))
+        return recording_roi_combos
         
 
     def _get_filepaths_with_supported_extension_in_dirpath(self, all_supported_extensions: List[str], max_results: Optional[int]=None) -> List[Path]:
