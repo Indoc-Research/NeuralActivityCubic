@@ -3,6 +3,7 @@ import multiprocessing
 import numpy as np
 import pandas as pd
 from datetime import datetime
+import ipywidgets as w
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
@@ -20,8 +21,129 @@ class Model:
 
     def __init__(self) -> None:
         self.num_processes = multiprocessing.cpu_count()
+        self.analysis_job_queue = []
+        self.logs = []
+        self.gui_enabled = False
+
+
+    def setup_connection_to_view(self, update_infos: Callable, show_output_display: Callable, output_display: w.Output, adjust_widgets_to_loaded_data: Callable) -> None:
+        self.callback_view_update_infos = update_infos
+        self.callback_view_show_output_display = show_output_display
+        self.output_display = output_display
+        self.callback_view_update_widgets_to_loaded_data = adjust_widgets_to_loaded_data
+        self.pixel_conversion = 1/plt.rcParams['figure.dpi']
+        self.gui_enabled = True
+
+
+    def add_info_to_logs(self, message: str, progress_in_percent: Optional[float]=None) -> None:
+        if self.gui_enabled == True:
+            self.callback_view_update_infos(message, progress_in_percent)
+        else:
+            # write logs to Model owned attribute logs
+            pass                                 
+
+    
+    def load_data(self, configs: Dict[str, Any]) -> None:
+        validated_configs = self._get_configs_required_for_specific_function(configs, self._assertion_for_load_data)
+        self.add_info_to_logs(message = 'Basic configurations validated successfully.')
+        if validated_configs['batch_mode'] == False:
+            if validated_configs['roi_mode'] == False:
+                self.add_info_to_logs(message = 'Starting to load data...')
+                self._add_new_recording_without_rois_to_analysis_job_queue(validated_configs['data_source_path'])
+            else: #'roi_mode' == True:
+                self.add_info_to_logs(message = 'Starting to load data...')
+                self._add_new_recording_with_rois_to_analysis_job_queue(validated_configs['data_source_path'])
+        else: #'batch_mode' == True:
+            all_subdirs = [subdir_path for subdir_path in validated_configs['data_source_path'].iterdir() if subdir_path.is_dir()]
+            total_step_count = len(all_subdirs)
+            progress_step_size = 100 / total_step_count
+            if validated_configs['roi_mode'] == False:
+                for idx, subdir_path in enumerate(all_subdirs):
+                    self.add_info_to_logs(message = 'Starting to load data...')
+                    self._add_new_recording_without_rois_to_analysis_job_queue(subdir_path)
+                    self.add_info_to_logs(message = f'Successfully loaded {idx+1} out of {total_step_count} recordings in this batch.', progress = min((idx+1)*progress_step_size, 100.0))
+            else: #'roi_mode' == True:
+                for idx, subdir_path in enumerate(all_subdirs):
+                    self.add_info_to_logs(message = 'Starting to load data...')
+                    self._add_new_recording_with_rois_to_analysis_job_queue(subdir_path)
+                    self.add_info_to_logs(message = f'Successfully loaded {idx+1} out of {total_step_count} recordings in this batch.', progress = min((idx+1)*progress_step_size, 100.0))
+        # determine number of frames of representative recording
+        # update widgets with that number using the following callback:
+        # self.callback_view_update_widgets_to_loaded_data(n_frames)
+
+    
+    def _assertion_for_load_data(self, batch_mode: bool, roi_mode: bool, data_source_path: Path) -> None:
+        # just a convenience function to use the existing config validation and filtering methods
+        pass
         
 
+    def _add_new_recording_without_rois_to_analysis_job_queue(self, recording_filepath) -> None:
+        recording_loader = RecordingLoaderFactory().get_loader(recording_filepath)
+        recording = recording_loader.load_as_recording()
+        self.analysis_job_queue.append(AnalysisJob(recording))
+
+
+    def _add_new_recording_with_rois_to_analysis_job_queue(self, dir_path) -> None:
+        rec_roi_loader = RecordingROICombiLoader(dir_path)
+        recording_roi_combos = rec_roi_loader.load_all_recording_roi_combos()
+        for recording, roi in recording_roi_combos:
+            self.analysis_job_queue.append(AnalysisJob(recording, roi))
+    
+
+    def run_analysis(self, configs: Dict[str, Any], output_widget_to_display_plots: Optional[w.Output]=None, progress_bar_widget: Optional[w.ProgressBar]=None) -> None:
+        sample_job_to_validate_configs = self.analysis_job_queue[0]
+        validated_configs_for_analysis = self._get_configs_required_for_specific_function(sample_job_to_validate_configs.run_analysis)
+        validated_configs_for_result_creation = self._get_configs_required_for_specific_function(sample_job_to_validate_configs.create_results)
+        for analysis_job in self.analysis_job_queue:
+            analysis_job.run_analysis(**validated_configs_for_analysis)
+            analysis_job.create_results(**validated_configs_for_result_creation)
+            if output_widget_to_display_plots != None:
+                with output_widget_to_display_plots:
+                    output_widget_to_display_plots.clear_output()
+                    analysis_job.
+
+
+
+    def _get_configs_required_for_specific_function(self, all_configs: Dict[str, Any], function_to_execute: Callable) -> Dict[str, Any]:
+        filtered_and_validated_configs = {}
+        for expected_parameter_name in inspect.signature(function_to_execute).parameters:
+            self._validate_individual_config_value_against_function_type_hints(all_configs, function_to_execute, expected_parameter_name)
+            filtered_and_validated_configs[expected_parameter_name] = all_configs[expected_parameter_name]
+        return filtered_and_validated_configs
+
+
+    def _validate_individual_config_value_against_function_type_hints(self, all_configs: Dict[str, Any], function_to_execute: Callable, expected_parameter_name: str) -> None:
+        assert expected_parameter_name in all_configs.keys(), (
+            f'{function_to_execute.__name__} requires the parameter "{expected_parameter_name}", '
+            f'which is not included in the configs ({list(all_configs.keys())})'
+        )
+        value_in_configs = all_configs[expected_parameter_name]
+        expected_parameter_type = inspect.signature(function_to_execute).parameters[expected_parameter_name].annotation
+        if expected_parameter_type == Path:
+            assert isinstance(value_in_configs, Path), (
+                f'{function_to_execute.__name__} requires the parameter "{expected_parameter_name}" to be a '
+                f'pathlib.Path object. However, {value_in_configs}, which is of type '
+                f'{type(value_in_configs)}, was passed.'
+            )
+        else:
+            assert expected_parameter_type == type(value_in_configs), (
+                f'{function_to_execute.__name__} requires the parameter "{expected_parameter_name}" '
+                f'to be of type {expected_parameter_type}. However, {value_in_configs}, which '
+                f'is of type {type(value_in_configs)}, was passed.'
+            )
+
+
+
+
+
+
+
+
+
+
+
+    
+    """
     def load_recording(self, recording_filepath: Path) -> None:
         recording_loader = RecordingLoaderFactory().get_loader(recording_filepath)
         self.recording_zstack = recording_loader.load_all_frames()
@@ -73,6 +195,7 @@ class Model:
         # self.rois = roi_loader.load_all_rois()
         # self._create_preview_with_superimposed_rois()
         pass
+    """
 
 
     def preview_window_size(self, window_size: int) -> Tuple[Figure, Axes]:
@@ -81,7 +204,7 @@ class Model:
         preview_fig, preview_ax = results.plot_window_size_preview(self.recording_preview, self.row_cropping_idx, self.col_cropping_idx, window_size)
         return preview_fig, preview_ax
 
-
+    """
     def run_analysis(self,
                      window_size: int,
                      limit_analysis_to_frame_interval: bool,
@@ -147,7 +270,7 @@ class Model:
                 upper_left_pixel_idxs_of_squares_in_grid.append((row_pixel_idx, col_pixel_idx))
                 grid_cell_labels.append((row_label, col_label))
         return upper_left_pixel_idxs_of_squares_in_grid, grid_cell_labels
-
+    """
 
     def create_overview_results(self,
                                 minimum_activity_counts: int,

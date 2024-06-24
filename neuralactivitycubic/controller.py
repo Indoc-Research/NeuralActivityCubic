@@ -14,23 +14,62 @@ class App:
     def __init__(self):
         self.model = Model()
         self.view = WidgetsInterface()
-        self._bind_buttons_to_functions()
-        self.px_conversion = 1/plt.rcParams['figure.dpi']
+        self._setup_interaction_between_model_and_view()
 
-    
-    def launch(self) -> None:
-        display(self.view.widget)
 
-    
-    def _bind_buttons_to_functions(self) -> None:
+    def _setup_interaction_between_model_and_view(self) -> None:
+        self._bind_buttons_of_view_to_functions_of_model()
+        self.model.setup_connection_to_view(self.view.update_infos, self.view.main_screen.show_output_screen, self.view.update_output_display, self.view.adjust_widgets_to_loaded_data)
+
+
+    def _bind_buttons_of_view_to_functions_of_model(self) -> None:
         self.view.io_panel.run_analysis_button.on_click(self._run_button_clicked)
         self.view.io_panel.load_recording_button.on_click(self._load_recording_button_clicked)
         self.view.io_panel.load_roi_button.on_click(self._load_roi_button_clicked)
         self.view.analysis_settings_panel.preview_window_size_button.on_click(self._preview_window_size_button_clicked)
 
+    
+    def launch(self) -> None:
+        display(self.view.widget)
+
+
+    def _load_data_button_clicked(self, change) -> None:
+        user_settings = self.view.export_user_settings()
+        self.model.load_data(user_settings)
+        self.view.adjust_widgets_to_loaded_data(total_frames = self.model.analysis_jobs_queue[self.model.idx_of_representative_analysis_job].recording.zstack.shape[0])
+        with self.view.main_screen.output:
+            fig = plt.figure(figsize = (600*self.model.pixel_conversion, 400*self.model.pixel_conversion))
+            plt.imshow(self.model.analysis_jobs_queue[self.model.idx_of_representative_analysis_job].recording.preview, cmap = 'gray')
+            plt.tight_layout()
+            plt.show()        
+        self.model.add_info_to_logs('All data was loaded successfully!', 100.0)
+        self.view.enable_analysis()
+
+        """
+        validated_user_settings = self._get_validated_user_settings_required_for_model_function(self.model.load_recording)
+        self.view.update_infos(logs_message = f'Loading data from specified input path: {validated_user_settings["recording_filepath"]}',
+                               progress_in_percent = 10.0)
+        self.model.load_recording(**validated_user_settings)
+        self.view.adjust_widgets_to_loaded_data(total_frames = self.model.recording_zstack.shape[0])
+        self.view.update_infos(logs_message = 'Recording data successfully loaded', progress_in_percent = 95.0)
+        self.view.main_screen.show_output_screen()
+        with self.view.main_screen.output:
+            fig = plt.figure(figsize = (600*self.px_conversion, 400*self.px_conversion))
+            plt.imshow(self.model.recording_preview, cmap = 'gray', vmin = np.percentile(self.model.recording_preview, 2.5), vmax = np.percentile(self.model.recording_preview, 97.5))
+            plt.tight_layout()
+            plt.show()
+        self.view.update_infos(progress_in_percent = 100.0)
+        self.view.enable_analysis()
+        """
+
 
     def _run_button_clicked(self, change) -> None:
         self.view.enable_analysis(False)
+
+
+
+
+        
         self.view.update_infos(logs_message = 'Validating user input for analysis', progress_in_percent = 5.0)
         validated_user_settings_analysis = self._get_validated_user_settings_required_for_model_function(self.model.run_analysis)
         self.view.update_infos(logs_message = 'Validation successful! Starting analysis ...', progress_in_percent = 10.0)
