@@ -184,3 +184,97 @@ def process_squares(square: Square, configs: Dict[str, Any]) -> Square:
         #if configs['compute_df_over_f'] == True:
         square.compute_amplitude_and_delta_f_over_f()
     return square
+
+
+
+
+
+
+
+class AnalysisJob:
+
+    def __init__(self, 
+                 number_of_parallel_processes: int,
+                 recording: Recording, 
+                 roi: Optional[ROI]=None
+                ) -> None:
+        self.number_of_parallel_processes = number_of_parallel_processes
+        self.recording = recording
+        self.roi = roi
+        self.roi_based = (self.roi != None)
+
+    
+    def run_analysis(self,
+                window_size: int,
+                limit_analysis_to_frame_interval: bool,
+                start_frame_idx: int,
+                end_frame_idx: int,
+                signal_average_threshold: float,
+                signal_to_noise_ratio: float,
+                octaves_ridge_needs_to_spann: float,
+                noise_window_size: int,
+                baseline_estimation_method: str,
+                #include_variance: bool,
+                #variance: float
+               ) -> None:
+        self._set_analysis_start_datetime()
+        self.squares = self._create_squares(window_size, self.roi_based)
+        configs = locals()
+        configs.pop('self')
+        with multiprocessing.Pool(processes = self.number_of_parallel_processes) as pool:
+            processed_squares = pool.starmap(process_squares, [(square, configs) for square in self.squares])
+        self.processed_squares = processed_squares
+
+
+    
+
+
+    def _set_analysis_start_datetime(self) -> None:
+            users_local_timezone = datetime.now().astimezone().tzinfo
+            self.analysis_start_datetime = datetime.now(users_local_timezone)      
+
+
+    def _create_squares(self, window_size: int, roi_based: bool) -> List[Square]:
+        self.row_cropping_idx, self.col_cropping_idx = self._get_cropping_indices_to_adjust_for_window_size(window_size)
+        upper_left_pixel_idxs_of_squares_in_grid, grid_cell_labels = self._get_positions_for_squares_in_grid(window_size)
+        squares = []
+        for (upper_left_row_pixel_idx, upper_left_col_pixel_idx), grid_cell_label in zip(upper_left_pixel_idxs_of_squares_in_grid, grid_cell_labels):
+            square_row_coords_slice = slice(upper_left_row_pixel_idx, upper_left_row_pixel_idx + window_size)
+            square_col_coords_slice = slice(upper_left_col_pixel_idx, upper_left_col_pixel_idx + window_size)
+            zstack_within_square = self.recording_zstack[:, square_row_coords_slice, square_col_coords_slice, :]
+            squares.append(Square(grid_cell_label, (upper_left_row_pixel_idx, upper_left_col_pixel_idx), zstack_within_square))
+        if roi_based == True:
+            # filter out all squares that don´t overlap with ROI
+            # use shapely polygons? Something like:
+            # filtered_squares = []
+            # for square in squares:
+            #     square_as_polygon = convert_square_to_polygon(square)
+            #     if square.intersects(roi) == True:
+            #        filtered_squares.append(square)
+            # squares = filtered_squares
+            continue
+        return squares
+
+    
+    def _get_cropping_indices_to_adjust_for_window_size(self, window_size: int) -> Tuple[int, int]:
+        row_cropping_index = (self.recording_preview.shape[0] // window_size) * window_size
+        col_cropping_index = (self.recording_preview.shape[1] // window_size) * window_size
+        return row_cropping_index, col_cropping_index
+
+    
+    def _get_positions_for_squares_in_grid(self, window_size: int) -> Tuple[List[Tuple[int, int]], List[Tuple[int, int]]]:
+        pixel_idxs_of_grid_rows = np.arange(start = 0, stop = self.row_cropping_idx, step = window_size)
+        pixel_idxs_of_grid_cols = np.arange(start = 0, stop = self.col_cropping_idx, step = window_size)
+        grid_row_labels = np.arange(start = 1, stop = self.row_cropping_idx / window_size + 1, step = 1, dtype = 'int')
+        grid_col_labels = np.arange(start = 1, stop = self.col_cropping_idx / window_size + 1, step = 1, dtype = 'int')
+        upper_left_pixel_idxs_of_squares_in_grid = []
+        grid_cell_labels = []
+        for row_pixel_idx, row_label in zip(pixel_idxs_of_grid_rows, grid_row_labels):
+            for col_pixel_idx, col_label in zip(pixel_idxs_of_grid_cols, grid_col_labels):
+                upper_left_pixel_idxs_of_squares_in_grid.append((row_pixel_idx, col_pixel_idx))
+                grid_cell_labels.append((row_label, col_label))
+        return upper_left_pixel_idxs_of_squares_in_grid, grid_cell_labels
+
+
+
+        
