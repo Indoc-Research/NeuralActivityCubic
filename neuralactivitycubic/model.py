@@ -2,7 +2,7 @@ from pathlib import Path
 import multiprocessing
 import numpy as np
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timezone
 import ipywidgets as w
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
@@ -26,21 +26,60 @@ class Model:
         self.gui_enabled = False
 
 
-    def setup_connection_to_view(self, update_infos: Callable, show_output_display: Callable, output_display: w.Output, adjust_widgets_to_loaded_data: Callable) -> None:
+    def setup_connection_to_update_infos_in_view(self, update_infos: Callable) -> None:
         self.callback_view_update_infos = update_infos
-        self.callback_view_show_output_display = show_output_display
+        self._check_if_gui_setup_is_completed()
+
+
+    def setup_connection_to_display_results(self, show_output_screen: Callable, output: w.Output, pixel_conversion: float) -> None:
+        self.callback_view_show_output_screen = show_output_screen
+        self.view_output = output
+        self.pixel_conversion = pixel_conversion
+        self._check_if_gui_setup_is_completed()
+
+
+    def _check_if_gui_setup_is_completed(self) -> None:
+        checklist_expected_attributes_with_type = {'callback_view_update_infos': Callable,
+                                                   'callback_view_show_output_screen': Callable,
+                                                   'view_output': w.Output,
+                                                   'pixel_conversion': float}
+        confirmed_attributes = []
+        failed_attributes = []
+        for attribute_name, expected_type in checklist_expected_attributes_with_type.items():
+            if hasattr(self, attribute_name) == True:
+                attribute = getattr(self, attribute_name)
+                if type(attribute) == expected_type:
+                    confirmed_attributes.append(True)
+                elif isinstance(attribute, expected_type):
+                    confirmed_attributes.append(True)
+                else:
+                    failed_attributes.append(attribute_name)
+            else:
+                failed_attributes.append(attribute_name)
+        if len(confirmed_attributes) == len(checklist_expected_attributes_with_type.keys()):
+            self.gui_enabled = True
+            self.add_info_to_logs('All required setups confirmed, GUI connection was be enabled.')
+        else:
+            self.gui_enabled = False
+            for attribute_name in failed_attributes:
+                self.add_info_to_logs(f'Setup of {attribute_name} missing before GUI connection can be enabled.')
+            
+                                                        
+    
+    
+    def setup_connection_to_view(self, update_infos: Callable, show_output_display: Callable, output_display: w.Output) -> None:
+        
+        self.callback_view_show_output_screen = show_output_display
         self.output_display = output_display
-        self.callback_view_update_widgets_to_loaded_data = adjust_widgets_to_loaded_data
         self.pixel_conversion = 1/plt.rcParams['figure.dpi']
         self.gui_enabled = True
 
 
     def add_info_to_logs(self, message: str, progress_in_percent: Optional[float]=None) -> None:
+        time_prefix_in_utc = datetime.now(timezone.utc).strftime('%d-%m-%y %H:%M:%S.%f')
+        self.logs.append(f'{time_prefix_in_utc} (UTC): {message}')
         if self.gui_enabled == True:
             self.callback_view_update_infos(message, progress_in_percent)
-        else:
-            # write logs to Model owned attribute logs
-            pass                                 
 
     
     def load_data(self, configs: Dict[str, Any]) -> None:
@@ -61,15 +100,12 @@ class Model:
                 for idx, subdir_path in enumerate(all_subdirs):
                     self.add_info_to_logs(message = 'Starting to load data...')
                     self._add_new_recording_without_rois_to_analysis_job_queue(subdir_path)
-                    self.add_info_to_logs(message = f'Successfully loaded {idx+1} out of {total_step_count} recordings in this batch.', progress = min((idx+1)*progress_step_size, 100.0))
+                    self.add_info_to_logs(message = f'Successfully loaded {idx+1} out of {total_step_count} recordings.', progress = min((idx+1)*progress_step_size, 100.0))
             else: #'roi_mode' == True:
                 for idx, subdir_path in enumerate(all_subdirs):
                     self.add_info_to_logs(message = 'Starting to load data...')
                     self._add_new_recording_with_rois_to_analysis_job_queue(subdir_path)
-                    self.add_info_to_logs(message = f'Successfully loaded {idx+1} out of {total_step_count} recordings in this batch.', progress = min((idx+1)*progress_step_size, 100.0))
-        # determine number of frames of representative recording
-        # update widgets with that number using the following callback:
-        # self.callback_view_update_widgets_to_loaded_data(n_frames)
+                    self.add_info_to_logs(message = f'Successfully loaded {idx+1} out of {total_step_count} recordings.', progress = min((idx+1)*progress_step_size, 100.0))
 
     
     def _assertion_for_load_data(self, batch_mode: bool, roi_mode: bool, data_source_path: Path) -> None:

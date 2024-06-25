@@ -14,12 +14,15 @@ class App:
     def __init__(self):
         self.model = Model()
         self.view = WidgetsInterface()
+        self.pixel_conversion = 1/plt.rcParams['figure.dpi']
         self._setup_interaction_between_model_and_view()
 
 
     def _setup_interaction_between_model_and_view(self) -> None:
         self._bind_buttons_of_view_to_functions_of_model()
-        self.model.setup_connection_to_view(self.view.update_infos, self.view.main_screen.show_output_screen, self.view.update_output_display, self.view.adjust_widgets_to_loaded_data)
+        self.model.setup_connection_to_update_infos_in_view(self.view.update_infos)
+        self.model.setup_connection_to_display_results(self.view.main_screen.show_output_screen, self.view.main_screen.output, self.pixel_conversion)
+
 
 
     def _bind_buttons_of_view_to_functions_of_model(self) -> None:
@@ -36,7 +39,9 @@ class App:
     def _load_data_button_clicked(self, change) -> None:
         user_settings = self.view.export_user_settings()
         self.model.load_data(user_settings)
-        self.view.adjust_widgets_to_loaded_data(total_frames = self.model.analysis_jobs_queue[self.model.idx_of_representative_analysis_job].recording.zstack.shape[0])
+        representative_recording = self.model.analysis_jobs_queue[0].recording
+        self.view.adjust_widgets_to_loaded_data(total_frames = representative_recording.zstack.shape[0])
+        self.view.main_screen.show_output_screen()
         with self.view.main_screen.output:
             fig = plt.figure(figsize = (600*self.model.pixel_conversion, 400*self.model.pixel_conversion))
             plt.imshow(self.model.analysis_jobs_queue[self.model.idx_of_representative_analysis_job].recording.preview, cmap = 'gray')
