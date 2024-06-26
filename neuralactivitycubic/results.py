@@ -66,7 +66,8 @@ def plot_activity_overview(squares_with_sufficient_activity: List[Square],
                            row_cropping_idx: int, 
                            col_cropping_idx: int, 
                            window_size: int, 
-                           indicate_activity: bool=False
+                           indicate_activity: bool=False,
+                           roi: Optional[io.ROI]=None
                           ) -> Tuple[Figure, Axes]:
     all_peak_counts = [square.peaks_count for square in squares_with_sufficient_activity]
     max_peak_count = max(all_peak_counts)

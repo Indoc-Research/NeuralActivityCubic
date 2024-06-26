@@ -200,6 +200,7 @@ class AnalysisJob:
                 ) -> None:
         self.number_of_parallel_processes = number_of_parallel_processes
         self.recording = recording
+        self.parent_dir_path = self.recording.filepath.parent
         self.roi = roi
         self.roi_based = (self.roi != None)
 
@@ -218,7 +219,7 @@ class AnalysisJob:
                 #variance: float
                ) -> None:
         self._set_analysis_start_datetime()
-        self.squares = self._create_squares(window_size, self.roi_based)
+        self.squares = self._create_squares(window_size)
         configs = locals()
         configs.pop('self')
         with multiprocessing.Pool(processes = self.number_of_parallel_processes) as pool:
@@ -226,15 +227,12 @@ class AnalysisJob:
         self.processed_squares = processed_squares
 
 
-    
-
-
     def _set_analysis_start_datetime(self) -> None:
             users_local_timezone = datetime.now().astimezone().tzinfo
             self.analysis_start_datetime = datetime.now(users_local_timezone)      
 
 
-    def _create_squares(self, window_size: int, roi_based: bool) -> List[Square]:
+    def _create_squares(self, window_size: int) -> List[Square]:
         self.row_cropping_idx, self.col_cropping_idx = self._get_cropping_indices_to_adjust_for_window_size(window_size)
         upper_left_pixel_idxs_of_squares_in_grid, grid_cell_labels = self._get_positions_for_squares_in_grid(window_size)
         squares = []
@@ -243,16 +241,20 @@ class AnalysisJob:
             square_col_coords_slice = slice(upper_left_col_pixel_idx, upper_left_col_pixel_idx + window_size)
             zstack_within_square = self.recording_zstack[:, square_row_coords_slice, square_col_coords_slice, :]
             squares.append(Square(grid_cell_label, (upper_left_row_pixel_idx, upper_left_col_pixel_idx), zstack_within_square))
-        if roi_based == True:
-            # filter out all squares that don´t overlap with ROI
-            # use shapely polygons? Something like:
-            # filtered_squares = []
-            # for square in squares:
-            #     square_as_polygon = convert_square_to_polygon(square)
-            #     if square.intersects(roi) == True:
-            #        filtered_squares.append(square)
-            # squares = filtered_squares
-            continue
+        if self.roi_based == True:
+            squares_filtered_by_roi = self._filter_squares_based_on_roi(squares)
+            squares = squares_filtered_by_roi
+        return squares
+
+
+    def _filter_squares_based_on_roi(self, squares: List[Square]) -> List[Square]:
+        # filter out all squares that don´t overlap with ROI
+        # use shapely polygons? Something like:
+        # filtered_squares = []
+        # for square in squares:
+        #     square_as_polygon = convert_square_to_polygon(square)
+        #     if square.intersects(roi) == True:
+        #        filtered_squares.append(square)
         return squares
 
     
@@ -276,5 +278,69 @@ class AnalysisJob:
         return upper_left_pixel_idxs_of_squares_in_grid, grid_cell_labels
 
 
-
+    def create_results(self, 
+                       save_overview_png: bool,
+                       save_detailed_results: bool,
+                       minimum_activity_counts: int, 
+                       window_size: int,
+                       signal_average_threshold: float, 
+                       signal_to_noise_ratio: float
+                      ) -> None:
+        self._ensure_results_dir_exists()
+        filtered_squares = [square for square in self.processed_squares if square.peaks_count >= minimum_activity_counts]
+        self.overview_results = results.plot_activity_overview(filtered_squares = filtered_squares, 
+                                                               preview_image = self.recording.preview, 
+                                                               row_cropping_idx = self.row_cropping_idx, 
+                                                               col_cropping_idx = self.col_cropping_idx, 
+                                                               window_size = window_size, 
+                                                               indicate_activity = True,
+                                                               roi = self.roi)
+        if save_overview_png == True:
+            self.overview_results[0].savefig(self.results_dir_path.joinpath('overview.png'))
+        if save_detailed_results == True:
+            self._create_and_save_csv_result_files(filtered_squares)
+            self._create_and_save_individual_traces_pdf_result_file(filtered_squares, window_size)
+    
         
+    def _ensure_results_dir_exists(self) -> None:
+        if hasattr(self, 'results_dir_path') == False:
+            self.results_dir_path = self.parent_dir_path.joinpath(self.analysis_start_datetime.strftime('%Y_%m_%d_%H-%M-%S_NA3_results'))
+            self.results_dir_path.mkdir()
+
+
+    def _create_and_save_csv_result_files(self, filtered_squares: List[Square]) -> None:
+        peak_results_per_square = [results.export_peak_results_df_from_square(square) for square in filtered_squares]
+        df_all_peak_results = pd.concat(peak_results_per_square, ignore_index = True)
+        max_peak_count_across_all_squares = df_all_peak_results.groupby('square coordinates [X / Y]').count()['peak frame index'].max()
+        zfill_factor = int(np.log10(max_peak_count_across_all_squares)) + 1
+        amplitude_and_delta_f_over_f_results_all_squares = []
+        auc_results_all_squares = []
+        for square_coords in df_all_peak_results['square coordinates [X / Y]'].unique():
+            tmp_df_single_square = df_all_peak_results[df_all_peak_results['square coordinates [X / Y]'] == square_coords].copy()
+            amplitude_and_delta_f_over_f_results_all_squares.append(results.create_single_square_amplitude_and_delta_f_over_f_results(tmp_df_single_square, zfill_factor))
+            auc_results_all_squares.append(results.create_single_square_auc_results(tmp_df_single_square, zfill_factor))
+        df_all_amplitude_and_delta_f_over_f_results = pd.concat(amplitude_and_delta_f_over_f_results_all_squares, ignore_index = True)
+        df_all_auc_results = pd.concat(auc_results_all_squares, ignore_index = True)
+        # Once all DataFrames are created successfully, write them to disk 
+        df_all_peak_results.to_csv(self.results_dir_path.joinpath('all_peak_results.csv'), index = False)
+        df_all_amplitude_and_delta_f_over_f_results.to_csv(self.results_dir_path.joinpath('Amplitude_and_dF_over_F_results.csv'), index = False)
+        df_all_auc_results.to_csv(self.results_dir_path.joinpath('AUC_results.csv'), index = False)
+
+
+    def _create_and_save_individual_traces_pdf_result_file(self, filtered_squares: List[Square], window_size: int) -> None:
+            filepath = self.results_dir_path.joinpath('Individual_traces_with_identified_events.pdf')
+            with PdfPages(filepath) as pdf:
+                for indicate_activity in [True, False]:
+                    overview_fig, ax = results.plot_activity_overview(filtered_squares = filtered_squares,
+                                                                      preview_image = self.recording.preview, 
+                                                                      row_cropping_idx = self.row_cropping_idx, 
+                                                                      col_cropping_idx = self.col_cropping_idx, 
+                                                                      window_size = window_size, 
+                                                                      indicate_activity = indicate_activity,
+                                                                      roi = self.roi)
+                    pdf.savefig(overview_fig)
+                    plt.close()
+                for square in filtered_squares:
+                    fig = results.plot_intensity_trace_with_identified_peaks_for_individual_square(square)
+                    pdf.savefig(fig)
+                    plt.close()

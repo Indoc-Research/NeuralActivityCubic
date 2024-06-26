@@ -39,12 +39,16 @@ class App:
     def _load_data_button_clicked(self, change) -> None:
         user_settings = self.view.export_user_settings()
         self.model.load_data(user_settings)
-        representative_recording = self.model.analysis_jobs_queue[0].recording
-        self.view.adjust_widgets_to_loaded_data(total_frames = representative_recording.zstack.shape[0])
+        representative_job = self.model.analysis_jobs_queue[0]
+        self.view.adjust_widgets_to_loaded_data(total_frames = representative_job.recording.zstack.shape[0])
         self.view.main_screen.show_output_screen()
         with self.view.main_screen.output:
             fig = plt.figure(figsize = (600*self.model.pixel_conversion, 400*self.model.pixel_conversion))
-            plt.imshow(self.model.analysis_jobs_queue[self.model.idx_of_representative_analysis_job].recording.preview, cmap = 'gray')
+            if representative_job.roi_based == True:
+                # create overlay image and plot
+                continue
+            else:
+                plt.imshow(representative_job.recording.preview, cmap = 'gray')
             plt.tight_layout()
             plt.show()        
         self.model.add_info_to_logs('All data was loaded successfully!', 100.0)
@@ -70,7 +74,8 @@ class App:
 
     def _run_button_clicked(self, change) -> None:
         self.view.enable_analysis(False)
-
+        user_settings = self.view.export_user_settings()
+        self.model.run_analysis(user_settings)        
 
 
 

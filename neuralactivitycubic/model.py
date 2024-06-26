@@ -1,5 +1,6 @@
 from pathlib import Path
 import multiprocessing
+import json
 import numpy as np
 import pandas as pd
 from datetime import datetime, timezone
@@ -22,7 +23,7 @@ class Model:
     def __init__(self) -> None:
         self.num_processes = multiprocessing.cpu_count()
         self.analysis_job_queue = []
-        self.logs = []
+        self.logs_per_analysis_job_queue_idx = {0: []}
         self.gui_enabled = False
 
 
@@ -63,34 +64,26 @@ class Model:
             self.gui_enabled = False
             for attribute_name in failed_attributes:
                 self.add_info_to_logs(f'Setup of {attribute_name} missing before GUI connection can be enabled.')
-            
-                                                        
-    
-    
-    def setup_connection_to_view(self, update_infos: Callable, show_output_display: Callable, output_display: w.Output) -> None:
-        
-        self.callback_view_show_output_screen = show_output_display
-        self.output_display = output_display
-        self.pixel_conversion = 1/plt.rcParams['figure.dpi']
-        self.gui_enabled = True
 
 
-    def add_info_to_logs(self, message: str, progress_in_percent: Optional[float]=None) -> None:
+    def add_info_to_logs(self, analysis_job_queue_idx: int, message: str, progress_in_percent: Optional[float]=None) -> None:
+        if analysis_job_queue_idx not in self.logs_per_analysis_job_queue_idx.keys():
+            self.logs_per_analysis_job_queue_idx[analysis_job_queue_idx] = []
         time_prefix_in_utc = datetime.now(timezone.utc).strftime('%d-%m-%y %H:%M:%S.%f')
-        self.logs.append(f'{time_prefix_in_utc} (UTC): {message}')
+        self.logs_per_analysis_job_queue_idx[analysis_job_queue_idx].append(f'{time_prefix_in_utc} (UTC): {message}')
         if self.gui_enabled == True:
             self.callback_view_update_infos(message, progress_in_percent)
 
     
     def load_data(self, configs: Dict[str, Any]) -> None:
         validated_configs = self._get_configs_required_for_specific_function(configs, self._assertion_for_load_data)
-        self.add_info_to_logs(message = 'Basic configurations validated successfully.')
+        self.add_info_to_logs(0, message = 'Basic configurations validated successfully.')
         if validated_configs['batch_mode'] == False:
             if validated_configs['roi_mode'] == False:
-                self.add_info_to_logs(message = 'Starting to load data...')
+                self.add_info_to_logs(0, message = 'Starting to load data...')
                 self._add_new_recording_without_rois_to_analysis_job_queue(validated_configs['data_source_path'])
             else: #'roi_mode' == True:
-                self.add_info_to_logs(message = 'Starting to load data...')
+                self.add_info_to_logs(0, message = 'Starting to load data...')
                 self._add_new_recording_with_rois_to_analysis_job_queue(validated_configs['data_source_path'])
         else: #'batch_mode' == True:
             all_subdirs = [subdir_path for subdir_path in validated_configs['data_source_path'].iterdir() if subdir_path.is_dir()]
@@ -98,14 +91,14 @@ class Model:
             progress_step_size = 100 / total_step_count
             if validated_configs['roi_mode'] == False:
                 for idx, subdir_path in enumerate(all_subdirs):
-                    self.add_info_to_logs(message = 'Starting to load data...')
+                    self.add_info_to_logs(idx, message = 'Starting to load data...')
                     self._add_new_recording_without_rois_to_analysis_job_queue(subdir_path)
-                    self.add_info_to_logs(message = f'Successfully loaded {idx+1} out of {total_step_count} recordings.', progress = min((idx+1)*progress_step_size, 100.0))
+                    self.add_info_to_logs(idx, message = f'Successfully loaded {idx+1} out of {total_step_count} recordings.', progress = min((idx+1)*progress_step_size, 100.0))
             else: #'roi_mode' == True:
                 for idx, subdir_path in enumerate(all_subdirs):
-                    self.add_info_to_logs(message = 'Starting to load data...')
+                    self.add_info_to_logs(idx, message = 'Starting to load data...')
                     self._add_new_recording_with_rois_to_analysis_job_queue(subdir_path)
-                    self.add_info_to_logs(message = f'Successfully loaded {idx+1} out of {total_step_count} recordings.', progress = min((idx+1)*progress_step_size, 100.0))
+                    self.add_info_to_logs(idx, message = f'Successfully loaded {idx+1} out of {total_step_count} recordings.', progress = min((idx+1)*progress_step_size, 100.0))
 
     
     def _assertion_for_load_data(self, batch_mode: bool, roi_mode: bool, data_source_path: Path) -> None:
@@ -126,18 +119,27 @@ class Model:
             self.analysis_job_queue.append(AnalysisJob(recording, roi))
     
 
-    def run_analysis(self, configs: Dict[str, Any], output_widget_to_display_plots: Optional[w.Output]=None, progress_bar_widget: Optional[w.ProgressBar]=None) -> None:
+    def run_analysis(self, configs: Dict[str, Any]) -> None:
         sample_job_to_validate_configs = self.analysis_job_queue[0]
-        validated_configs_for_analysis = self._get_configs_required_for_specific_function(sample_job_to_validate_configs.run_analysis)
-        validated_configs_for_result_creation = self._get_configs_required_for_specific_function(sample_job_to_validate_configs.create_results)
-        for analysis_job in self.analysis_job_queue:
+        validated_configs_for_analysis = self._get_configs_required_for_specific_function(configs, sample_job_to_validate_configs.run_analysis)
+        validated_configs_for_result_creation = self._get_configs_required_for_specific_function(configs, sample_job_to_validate_configs.create_results)
+        self.add_info_to_logs(0, 'Configurations validated successfully.')
+        total_step_count = len(self.analysis_job_queue)
+        progress_step_size = 100 / total_step_count
+        for idx, analysis_job in enumerate(self.analysis_job_queue):
+            self.add_info_to_logs(idx, f'Starting to process analysis job {idx + 1} out of {total_step_count} total job(s).')
             analysis_job.run_analysis(**validated_configs_for_analysis)
             analysis_job.create_results(**validated_configs_for_result_creation)
-            if output_widget_to_display_plots != None:
-                with output_widget_to_display_plots:
-                    output_widget_to_display_plots.clear_output()
-                    analysis_job.
-
+            if self.gui_enabled == True:
+                self.callback_view_show_output_screen()
+                with self.view_output:
+                    overview_results_fig, overview_results_ax = analysis_job.overview_results
+                    overview_results_fig.set_figheight(400 * self.pixel_conversion)
+                    overview_results_fig.tight_layout()
+                    plt.show(overview_results_fig)
+            self.add_info_to_logs(idx, f'Successfully finished analysis job {idx + 1} out of {total_step_count} total job(s).', (idx + 1)*progress_step_size)
+            self._save_logs_of_current_job(idx, analysis_job.results_dir_path)
+            self._save_user_settings_as_json(configs, analysis_job.results_dir_path)
 
 
     def _get_configs_required_for_specific_function(self, all_configs: Dict[str, Any], function_to_execute: Callable) -> Dict[str, Any]:
@@ -169,13 +171,17 @@ class Model:
             )
 
 
+    def _save_logs_of_current_job(self, analysis_job_queue_idx: int, results_dir_path: Path) -> None:
+        filepath = results_dir_path.joinpath('logs.txt')
+        with open(filepath , 'w+') as logs_file:
+            for log_message in self.logs_per_analysis_job_queue_idx[analysis_job_queue_idx]:
+                logs_file.write(f'{log_message}\n')
 
 
-
-
-
-
-
+    def _save_user_settings_as_json(self, configs: Dict[str, Any], results_dir_path: Path) -> None:
+        filepath = results_dir_path.joinpath('user_settings.json')
+        with open(filepath, 'w+') as user_settings_json: 
+            json.dump(configs, user_settings_json)
 
 
     
@@ -308,6 +314,8 @@ class Model:
         return upper_left_pixel_idxs_of_squares_in_grid, grid_cell_labels
     """
 
+
+    """
     def create_overview_results(self,
                                 minimum_activity_counts: int,
                                 window_size: int,
@@ -373,7 +381,7 @@ class Model:
         df_all_peak_results.to_csv(self.results_subdir_path.joinpath('all_peak_results.csv'), index = False)
         df_all_amplitude_and_delta_f_over_f_results.to_csv(self.results_subdir_path.joinpath('Amplitude_and_dF_over_F_results.csv'), index = False)
         df_all_auc_results.to_csv(self.results_subdir_path.joinpath('AUC_results.csv'), index = False)
-
+    """
 
     
 
