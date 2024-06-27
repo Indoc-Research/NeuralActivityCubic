@@ -84,8 +84,12 @@ def plot_activity_overview(squares_with_sufficient_activity: List[Square],
                     verticalalignment = 'center', 
                     fontsize = peak_text_fontsize)
     ax.grid(color = 'gray', linestyle = '--', linewidth = 1)
-    plt.hlines([0, row_cropping_idx], xmin=0, xmax=col_cropping_idx, color = 'cyan', linewidth = 2)
-    plt.vlines([0, col_cropping_idx], ymin=0, ymax=row_cropping_idx, color = 'cyan', linewidth = 2)
+    if roi == None:
+        plt.hlines([0, row_cropping_idx], xmin=0, xmax=col_cropping_idx, color = 'cyan', linewidth = 2)
+        plt.vlines([0, col_cropping_idx], ymin=0, ymax=row_cropping_idx, color = 'cyan', linewidth = 2)
+    else:
+        roi_boundary_coords_for_plotting = np.asarray(roi.boundary_coords)
+        plt.plot(roi_boundary_coords_for_plotting[:, 1], roi_boundary_coords_for_plotting[:, 0], c = 'cyan', linewidth = 2)
     ax.set_xticks(np.arange(0, preview_image.shape[1], window_size), labels = [])
     ax.set_xticks(np.arange(window_size/2, col_cropping_idx + window_size/2, window_size), 
                   labels = np.arange(1, col_cropping_idx/window_size + 1, 1, dtype='int'), 

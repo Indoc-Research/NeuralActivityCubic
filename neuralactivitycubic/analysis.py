@@ -44,15 +44,31 @@ class Square:
         self.upper_left_corner_coords = upper_left_corner_coords
         self.frames_zstack = frames_zstack
         self.center_coords = self._get_center_coords()
+        self.as_polygon = self._create_square_as_polygon()
         self.peaks_count = 0
 
-
+    
     def _get_center_coords(self) -> Tuple[int, int]:
         square_height = self.frames_zstack.shape[1]
         square_width = self.frames_zstack.shape[2]
         return (self.upper_left_corner_coords[0] + int(square_height/2), self.upper_left_corner_coords[1] + int(square_width/2))
 
-        
+    def _create_square_as_polygon(self) -> Polygon:
+        square_rows = self.frames_zstack.shape[1]
+        square_cols = self.frames_zstack.shape[2]
+        upper_left_corner_row_coord = self.upper_left_corner_coords[0]
+        upper_left_corner_col_coord = self.upper_left_corner_coords[1]
+        all_corner_coords = [[upper_left_corner_row_coord, upper_left_corner_col_coord],
+                             [upper_left_corner_row_coord, upper_left_corner_col_coord + square_cols],
+                             [upper_left_corner_row_coord + square_cols, upper_left_corner_col_coord + square_cols],
+                             [upper_left_corner_row_coord + square_cols, upper_left_corner_col_coord]]
+        square_as_polygon = Polygon(all_corner_coords)
+        assert square_as_polygon.is_valid, (
+            f'Something went wrong when trying to create a Polygon for Square [{self.grid_col_label}/{self.self.grid_row_label}]!'
+        )
+        return square_as_polygon
+
+    
     def compute_mean_intensity_timeseries(self, limit_analysis_to_frame_interval: bool, start_frame_idx: int, end_frame_idx: int) -> None:
         if limit_analysis_to_frame_interval == True:
             self.mean_intensity_over_time = np.mean(self.frames_zstack[start_frame_idx:end_frame_idx], axis = (1,2,3))
@@ -248,14 +264,8 @@ class AnalysisJob:
 
 
     def _filter_squares_based_on_roi(self, squares: List[Square]) -> List[Square]:
-        # filter out all squares that don´t overlap with ROI
-        # use shapely polygons? Something like:
-        # filtered_squares = []
-        # for square in squares:
-        #     square_as_polygon = convert_square_to_polygon(square)
-        #     if square.intersects(roi) == True:
-        #        filtered_squares.append(square)
-        return squares
+        filtered_squares = [square for square in squares if square.as_polygon.intersects(self.roi.as_polygon)]
+        return filtered_squares
 
     
     def _get_cropping_indices_to_adjust_for_window_size(self, window_size: int) -> Tuple[int, int]:

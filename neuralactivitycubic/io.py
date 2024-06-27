@@ -1,6 +1,8 @@
 import imageio.v3 as iio
 from pathlib import Path
 import numpy as np
+from shapely import Polygon
+import roifile
 from abc import ABC, abstractmethod
 from typing import List, Dict
 
@@ -56,15 +58,15 @@ class Recording:
 
 class ROI:
 
-    def __init__(self, filepath: Path, loaded_data: np.ndarray) -> None:
+    def __init__(self, filepath: Path, loaded_data: List[Tuple[int, int]]) -> None:
         self.filepath = filepath
         self.boundary_coords = loaded_data
-        self.roi_as_polygon = self._convert_to_valid_polygon()
+        self.as_polygon = self._convert_to_valid_polygon()
 
 
-    def _convert_to_valid_polygon(self) -> None: #Polygon:
-        # conversion should happen here
-        roi_as_polygon = self.boundary_coords
+    def _convert_to_valid_polygon(self) -> Polygon:
+        roi_as_polygon = Polygon(self.boundary_coords)
+        assert roi_as_polygon.is_valid, f'Something went wrong when trying to create a Polygon out of your ROI: {self.filepath}.'
         return roi_as_polygon
 
 
@@ -178,45 +180,45 @@ class RecordingLoaderFactory:
 class ROILoader(ABC):
 
     @abstractmethod
-    def _get_boundary_coords(self) -> np.ndarray: 
+    def _get_boundary_coords(self) -> List[Tuple[int, int]]: 
         # To be implemented in individual subclasses
-        # Shape of returned numpy array: [(x or row coord, y or col coord)]
+        # Return a list of Tuples, where each tuple represents one boundary point: (row_coord, col_coord)
         pass
-        
 
+    
     def __init__(self, filepath: Path) -> None:
         self.filepath = filepath
 
     
-    def load_boundary_coords(self) -> np.ndarray: 
+    def load_boundary_coords(self) -> List[Tuple[int, int]]: 
         boundary_coords = self._get_boundary_coords()
-        polygon = self._convert_to_shapely_polygon(boundary_coords)
-        self._assert_valid_shape(polygon)
-        self.roi_as_polygon = polygon
+        boundary_coords = self._add_first_boundary_point_also_add_end_to_close_roi(boundary_coords)
         return boundary_coords
 
 
-    def _convert_to_shapely_polygon(self, boundary_coords: np.ndarray) -> None: #Polygon:
-        polygon = boundary_coords
-        # conversion should happen here
-        return polygon
+    def _add_first_boundary_point_also_add_end_to_close_roi(self, boundary_coords: List[Tuple[int, int]]) -> List[Tuple[int, int]]:
+        first_boundary_point_coords = boundary_coords[0]
+        boundary_coords.append(first_boundary_point_coords)
+        return boundary_coords
 
-
-    def _assert_valid_shape(self, polygon) -> None:
-        # assertion that polygon has a valid shape should be performed here
-        # IS THIS ACTUALLY NEEDED???
-        pass
 
 
 
 class ImageJROILoader(ROILoader):
 
-    def _get_boundary_coords(self) -> np.ndarray:
-        # read filepath and extract boundary coords of ROI
-        # ensure that it´s only a single ROI
-        placeholder_for_file_content = self.filepath
-        return placeholder_for_file_content
-        
+    def _get_boundary_coords(self) -> List[Tuple[int, int]]:
+        roi_file_content = roifile.ImagejRoi.fromfile(self.filepath)
+        assert type(roi_file_content) != list, (
+            'NeuralActivityCubic can currently only handle loading ROI files that contain exactly one ROI per file. '
+            f'However, the ROI file you selected ("{self.filepath}") contains more than a single ROI! Please adjust '
+            'the file accordingly and retry.'
+        )
+        row_coords = roi_file_content.coordinates()[:, 1]
+        col_coords = roi_file_content.coordinates()[:, 0]
+        boundary_row_col_coords = list(zip(row_coords, col_coords))
+        return boundary_row_col_coords
+
+
 
 
 class ROILoaderFactory:
