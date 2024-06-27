@@ -3,13 +3,14 @@ from matplotlib.transforms import Bbox
 import numpy as np
 import pandas as pd
 
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 from pathlib import Path
 from matplotlib.text import Text
 from matplotlib.figure import Figure
 from matplotlib.axes._axes import Axes 
 
 from .analysis import Square
+from .input import ROI
 
 
 def _get_text_bounding_box_size_in_data_dimensions(text: Text, fig: Figure, ax: Axes) -> Tuple[float, float]:
@@ -41,12 +42,16 @@ def _get_adjusted_fontsize(preview_image: np.ndarray, window_size: int, max_peak
     return adjusted_fontsize
 
 
-def plot_window_size_preview(preview_image: np.ndarray, row_cropping_idx: int, col_cropping_idx: int, window_size: int) -> Tuple[Figure, Axes]:
+def plot_window_size_preview(preview_image: np.ndarray, window_size: int, row_cropping_idx: int, col_cropping_idx: int, roi: Optional[ROI]=None) -> Tuple[Figure, Axes]:
     fig, ax = plt.subplots()
     ax.imshow(preview_image, cmap="gray", vmin = np.percentile(preview_image, 2.5), vmax = np.percentile(preview_image, 97.5))
     ax.grid(color = 'gray', linestyle = '--', linewidth = 1)
-    plt.hlines([0, row_cropping_idx], xmin=0, xmax=col_cropping_idx, color = 'cyan', linewidth = 2)
-    plt.vlines([0, col_cropping_idx], ymin=0, ymax=row_cropping_idx, color = 'cyan', linewidth = 2)
+    if roi == None:
+        plt.hlines([0, row_cropping_idx], xmin=0, xmax=col_cropping_idx, color = 'cyan', linewidth = 2)
+        plt.vlines([0, col_cropping_idx], ymin=0, ymax=row_cropping_idx, color = 'cyan', linewidth = 2)
+    else:
+        roi_boundary_coords_for_plotting = np.asarray(roi.boundary_coords)
+        plt.plot(roi_boundary_coords_for_plotting[:, 1], roi_boundary_coords_for_plotting[:, 0], c = 'cyan', linewidth = 2)
     ax.set_xticks(np.arange(0, preview_image.shape[1], window_size), labels = [])
     ax.set_xticks(np.arange(window_size/2, col_cropping_idx + window_size/2, window_size), 
                   labels = np.arange(1, col_cropping_idx/window_size + 1, 1, dtype='int'), minor = True)
@@ -67,7 +72,7 @@ def plot_activity_overview(squares_with_sufficient_activity: List[Square],
                            col_cropping_idx: int, 
                            window_size: int, 
                            indicate_activity: bool=False,
-                           roi: Optional[io.ROI]=None
+                           roi: Optional[ROI]=None
                           ) -> Tuple[Figure, Axes]:
     all_peak_counts = [square.peaks_count for square in squares_with_sufficient_activity]
     max_peak_count = max(all_peak_counts)

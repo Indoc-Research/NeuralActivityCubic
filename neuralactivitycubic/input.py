@@ -4,11 +4,13 @@ import numpy as np
 from shapely import Polygon
 import roifile
 from abc import ABC, abstractmethod
-from typing import List, Dict, Union, Optional
+from typing import List, Dict, Tuple, Union, Optional, Any
 
+#################################
+###### Source Data Handler ######
+#################################
 
-
-class InputData(ABC):
+class Data(ABC):
 
     @abstractmethod
     def inject_loaded_data(self, loaded_data: Any) -> None:
@@ -18,7 +20,7 @@ class InputData(ABC):
         self.filepath = filepath
 
 
-class Recording(InputData):
+class Recording(Data):
 
     def inject_loaded_data(self, loaded_data: np.ndarray) -> None:
         self.zstack = loaded_data
@@ -64,9 +66,7 @@ class Recording(InputData):
         return raw_image
 
 
-
-
-class ROI(InputData):
+class ROI(Data):
 
     def inject_loaded_data(self, loaded_data: List[Tuple[int, int]]) -> None:
         self.boundary_coords = loaded_data
@@ -78,6 +78,11 @@ class ROI(InputData):
         assert roi_as_polygon.is_valid, f'Something went wrong when trying to create a Polygon out of your ROI: {self.filepath}.'
         return roi_as_polygon
 
+
+
+################################
+###### Source Data Loader ######
+################################
 
 
 class DataLoader(ABC):
@@ -112,7 +117,7 @@ class RecordingLoader(DataLoader):
         all_frames = self._load_all_frames()
         recording = Recording(self.filepath)
         recording.inject_loaded_data(all_frames)
-        return Recording
+        return recording
 
 
     def _validate_shape_and_convert_to_grayscale_if_possible(self, zstack: np.ndarray) -> np.ndarray:
@@ -146,53 +151,11 @@ class RecordingLoader(DataLoader):
         return zstack[:, :, :, 0:1]
         
         
-        
-
-
 class AVILoader(RecordingLoader):
 
     def _get_all_frames(self) -> np.ndarray: 
         return iio.imread(self.filepath)
         
-
-
-
-class RecordingLoaderFactory:
-
-    @property
-    def supported_extensions_per_recording_loader_subclass(self) -> Dict[RecordingLoader, List[str]]:
-        supported_extensions_per_recording_loader = {AVILoader: ['.avi']}
-        return supported_extensions_per_recording_loader
-
-    @property
-    def all_supported_extensions(self) -> List[str]:
-        all_supported_extensions = []
-        for value in self.supported_extensions_per_recording_loader.values():
-            all_supported_extensions += value
-        return all_supported_extensions
-
-    def get_loader(self, filepath: Path) -> RecordingLoader:
-        self._assert_validity_of_filepath(filepath)
-        recording_loader = self._get_loader_for_file_extension(filepath)
-        return recording_loader
-        
-
-    def _assert_validity_of_filepath(self, filepath: Path) -> None:
-        assert isinstance(filepath, Path), f'filepath must be an instance of a pathlib.Path. However, you passed {filepath}, which is of type {type(filepath)}'
-        assert filepath.exists(), f'The filepath you provided ({filepath}) does not seem to exist!'
-        
-
-    def _get_loader_for_file_extension(self, filepath: Path) -> RecordingLoader:
-        matching_loader = None
-        for loader_subclass, supported_extensions in self.supported_extensions_per_recording_loader_subclass.items():
-            if filepath.suffix in supported_extensions:
-                matching_loader = loader_subclass(filepath)
-                break
-        if matching_loader == None:
-            raise NotImplementedError('It seems like there is no RecordingLoader implemented for the specific filetype you´re trying to load - sorry!')
-        return matching_loader
-
-
 
 
 class ROILoader(DataLoader):
@@ -218,8 +181,6 @@ class ROILoader(DataLoader):
         return boundary_coords
 
 
-
-
 class ImageJROILoader(ROILoader):
 
     def _get_boundary_coords(self) -> List[Tuple[int, int]]:
@@ -235,24 +196,30 @@ class ImageJROILoader(ROILoader):
         return boundary_row_col_coords
 
 
-class ROILoaderFactory:
+##############################
+###### Loader Factories ######
+##############################
+
+class DataLoaderFactory(ABC):
 
     @property
-    def supported_extensions_per_roi_loader_subclass(self) -> Dict[ROILoader, List[str]]:
-        supported_extensions_per_roi_loader = {ImageJROILoader: ['.roi']}
-        return supported_extensions_per_roi_loader
+    @abstractmethod
+    def supported_extensions_per_data_loader(self) -> Dict[DataLoader, List[str]]:
+        pass
 
+    
     @property
     def all_supported_extensions(self) -> List[str]:
         all_supported_extensions = []
-        for value in self.supported_extensions_per_roi_loader.values():
+        for value in self.supported_extensions_per_data_loader.values():
             all_supported_extensions += value
         return all_supported_extensions
 
-    def get_loader(self, filepath: Path) -> ROILoader:
+    
+    def get_loader(self, filepath: Path) -> DataLoader:
         self._assert_validity_of_filepath(filepath)
-        roi_loader = self._get_loader_for_file_extension(filepath)
-        return roi_loader
+        data_loader = self._get_loader_for_file_extension(filepath)
+        return data_loader
         
 
     def _assert_validity_of_filepath(self, filepath: Path) -> None:
@@ -260,21 +227,54 @@ class ROILoaderFactory:
         assert filepath.exists(), f'The filepath you provided ({filepath}) does not seem to exist!'
         
 
-    def _get_loader_for_file_extension(self, filepath: Path) -> ROILoader:
+    def _get_loader_for_file_extension(self, filepath: Path) -> DataLoader:
         matching_loader = None
-        for loader_subclass, supported_extensions in self.supported_extensions_per_roi_loader.items():
+        for loader_subclass, supported_extensions in self.supported_extensions_per_data_loader.items():
             if filepath.suffix in supported_extensions:
                 matching_loader = loader_subclass(filepath)
                 break
         if matching_loader == None:
-            raise NotImplementedError('It seems like there is no ROILoader implemented for the specific filetype you´re trying to load - sorry!')
+            raise NotImplementedError('It seems like there is no DataLoader implemented for the specific filetype you´re trying to load - sorry!')
         return matching_loader
 
 
+class RecordingLoaderFactory(DataLoaderFactory):
+
+    @property
+    def supported_extensions_per_data_loader(self) -> Dict[RecordingLoader, List[str]]:
+        supported_extensions_per_data_loader = {AVILoader: ['.avi']}
+        return supported_extensions_per_data_loader
 
 
-class RecordingRoiCombiLoader(DataLoader):
 
+class ROILoaderFactory(DataLoaderFactory):
+
+    @property
+    def supported_extensions_per_data_loader(self) -> Dict[ROILoader, List[str]]:
+        supported_extensions_per_data_loader = {ImageJROILoader: ['.roi']}
+        return supported_extensions_per_data_loader
+
+
+
+def get_filepaths_with_supported_extension_in_dirpath(dirpath: Path, all_supported_extensions: List[str], max_results: Optional[int]=None) -> List[Path]:
+    all_filepaths_with_supported_extension = []
+    for elem in dirpath.iterdir():
+        if elem.is_file() == True:
+            if elem.suffix in all_supported_extensions:
+                all_filepaths_with_supported_extension.append(elem)
+    if type(max_results) == int:
+        assert len(all_filepaths_with_supported_extension) <= max_results, (
+            f'There are more than {max_results} file(s) of supported type in {dirpath}, '
+            f'but only a maximum of {max_results} are allowed. Please remove at least '
+            f'{len(all_filepaths_with_supported_extension) - max_results} of the following' 
+            f'files and try again: {all_filepaths_with_supported_extension}'
+        )
+    return all_filepaths_with_supported_extension
+
+
+######################################
+###### Handler for Combinations ######
+######################################
 
 class RecLoaderROILoaderCombinator:
 
@@ -286,39 +286,23 @@ class RecLoaderROILoaderCombinator:
     def get_all_recording_and_roi_loader_combos(self) -> List[Tuple[RecordingLoader, ROILoader]]:
         recording_loader = self._get_the_recording_loader()
         all_roi_loaders = self._get_all_roi_loaders()
-        rec_roi_loader_combos = [(recording_loader, roi_loader) for roi_loader in all_roi_loaders]
+        if len(all_roi_loaders) > 0:
+            rec_roi_loader_combos = [(recording_loader, roi_loader) for roi_loader in all_roi_loaders]
+        else:
+            rec_roi_loader_combos = [(recording_loader, None)]
         return rec_roi_loader_combos
     
 
     def _get_the_recording_loader(self) -> RecordingLoader:
         recording_loader_factory = RecordingLoaderFactory()
-        recording_filepath = self._get_filepaths_with_supported_extension_in_dirpath(recording_loader_factory.all_supported_extensions, 1)[0]
+        recording_filepath = get_filepaths_with_supported_extension_in_dirpath(self.dir_path, recording_loader_factory.all_supported_extensions, 1)[0]
         recording_loader = recording_loader_factory.get_loader(recording_filepath)
         return recording_loader
 
 
     def _get_all_roi_loaders(self) -> List[ROILoader]:
         roi_loader_factory = ROILoaderFactory()
-        all_roi_filepaths = self._get_filepaths_with_supported_extension_in_dirpath(roi_loader_factory.all_supported_extensions)
+        all_roi_filepaths = get_filepaths_with_supported_extension_in_dirpath(self.dir_path, roi_loader_factory.all_supported_extensions)
         all_roi_loaders = [roi_loader_factory.get_loader(filepath) for filepath in all_roi_filepaths]
         return all_roi_loaders
-
-
-
-        
-
-    def _get_filepaths_with_supported_extension_in_dirpath(self, all_supported_extensions: List[str], max_results: Optional[int]=None) -> List[Path]:
-        all_filepaths_with_supported_extension = []
-        for elem in self.dirpath.iterdir():
-            if elem.is_file() == True:
-                if elem.suffix in all_supported_extensions:
-                    all_filepaths_with_supported_extension.append(elem)
-        if type(max_results) == int:
-            assert len(all_filepaths_with_supported_extension) <= , (
-                f'There are more than {max_results} file(s) of supported type in {self.dirpath}, '
-                f'but only a maximum of {max_results} are allowed. Please remove at least '
-                f'{len(all_filepaths_with_supported_extension) - max_results} of the following' 
-                f'files and try again: {all_filepaths_with_supported_extension}'
-            )
-        return all_filepaths_with_supported_extension
 
