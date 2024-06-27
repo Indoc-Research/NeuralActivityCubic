@@ -4,13 +4,23 @@ import numpy as np
 from shapely import Polygon
 import roifile
 from abc import ABC, abstractmethod
-from typing import List, Dict
+from typing import List, Dict, Union, Optional
 
 
-class Recording:
 
-    def __init__(self, filepath: Path, loaded_data: np.ndarray) -> None:
+class InputData(ABC):
+
+    @abstractmethod
+    def inject_loaded_data(self, loaded_data: Any) -> None:
+        pass
+
+    def __init__(self, filepath: Path) -> None:
         self.filepath = filepath
+
+
+class Recording(InputData):
+
+    def inject_loaded_data(self, loaded_data: np.ndarray) -> None:
         self.zstack = loaded_data
         self.estimated_bit_depth = self._estimate_bit_depth()
         self.preview = self._create_brightness_and_contrast_enhanced_preview()
@@ -56,10 +66,9 @@ class Recording:
 
 
 
-class ROI:
+class ROI(InputData):
 
-    def __init__(self, filepath: Path, loaded_data: List[Tuple[int, int]]) -> None:
-        self.filepath = filepath
+    def inject_loaded_data(self, loaded_data: List[Tuple[int, int]]) -> None:
         self.boundary_coords = loaded_data
         self.as_polygon = self._convert_to_valid_polygon()
 
@@ -71,7 +80,19 @@ class ROI:
 
 
 
-class RecordingLoader(ABC):
+class DataLoader(ABC):
+
+    @abstractmethod
+    def load_data(self) -> Union[Data, Tuple[Data, Data]]:
+        # This method will be called when the data should be loaded for analysis
+        pass
+
+    def __init__(self, filepath: Path) -> None:
+        self.filepath = filepath
+
+
+
+class RecordingLoader(DataLoader):
 
 
     @abstractmethod
@@ -79,21 +100,18 @@ class RecordingLoader(ABC):
         # To be implemented in individual subclasses
         # Shape of returned numpy array: [frames, rows, cols, color_channels]
         pass
-        
-
-    def __init__(self, filepath: Path) -> None:
-        self.filepath = filepath
 
 
-    def load_all_frames(self) -> np.ndarray: 
+    def _load_all_frames(self) -> np.ndarray: 
         all_frames = self._get_all_frames()
         all_frames = self._validate_shape_and_convert_to_grayscale_if_possible(all_frames)
         return all_frames
 
 
-    def load_as_recording(self) -> Recording:
-        all_frames = self.load_all_frames()
-        recording = Recording(self.filepath, all_frames)
+    def load_data(self) -> Recording:
+        all_frames = self._load_all_frames()
+        recording = Recording(self.filepath)
+        recording.inject_loaded_data(all_frames)
         return Recording
 
 
@@ -177,7 +195,7 @@ class RecordingLoaderFactory:
 
 
 
-class ROILoader(ABC):
+class ROILoader(DataLoader):
 
     @abstractmethod
     def _get_boundary_coords(self) -> List[Tuple[int, int]]: 
@@ -186,14 +204,12 @@ class ROILoader(ABC):
         pass
 
     
-    def __init__(self, filepath: Path) -> None:
-        self.filepath = filepath
-
-    
-    def load_boundary_coords(self) -> List[Tuple[int, int]]: 
+    def load_data(self) -> ROI: 
         boundary_coords = self._get_boundary_coords()
         boundary_coords = self._add_first_boundary_point_also_add_end_to_close_roi(boundary_coords)
-        return boundary_coords
+        roi = ROI(self.filepath)
+        roi.inject_loaded_data(boundary_coords)
+        return roi
 
 
     def _add_first_boundary_point_also_add_end_to_close_roi(self, boundary_coords: List[Tuple[int, int]]) -> List[Tuple[int, int]]:
@@ -217,8 +233,6 @@ class ImageJROILoader(ROILoader):
         col_coords = roi_file_content.coordinates()[:, 0]
         boundary_row_col_coords = list(zip(row_coords, col_coords))
         return boundary_row_col_coords
-
-
 
 
 class ROILoaderFactory:
@@ -259,33 +273,38 @@ class ROILoaderFactory:
 
 
 
-class RecordingRoiCombiLoader:
-
-    def __init__(self, dirpath: Path) -> None:
-        self.dirpath = dirpath
+class RecordingRoiCombiLoader(DataLoader):
 
 
-    def get_a_recording_loader(self) -> None:
+class RecLoaderROILoaderCombinator:
+
+        
+    def __init__(self, dir_path: Path) -> None:
+        self.dir_path = dir_path
+
+    
+    def get_all_recording_and_roi_loader_combos(self) -> List[Tuple[RecordingLoader, ROILoader]]:
+        recording_loader = self._get_the_recording_loader()
+        all_roi_loaders = self._get_all_roi_loaders()
+        rec_roi_loader_combos = [(recording_loader, roi_loader) for roi_loader in all_roi_loaders]
+        return rec_roi_loader_combos
+    
+
+    def _get_the_recording_loader(self) -> RecordingLoader:
         recording_loader_factory = RecordingLoaderFactory()
-        self.recording_filepath = self._get_filepath_of_supported_recording_in_dirpath(recording_loader_factory.all_supported_extensions, 1)[0]
-        self.recording_loader = recording_loader_factory.get_loader(self.recording_filepath)
+        recording_filepath = self._get_filepaths_with_supported_extension_in_dirpath(recording_loader_factory.all_supported_extensions, 1)[0]
+        recording_loader = recording_loader_factory.get_loader(recording_filepath)
+        return recording_loader
 
 
-    def get_all_roi_loaders(self) -> None:
+    def _get_all_roi_loaders(self) -> List[ROILoader]:
         roi_loader_factory = ROILoaderFactory()
-        self.all_roi_filepaths = self._get_filepath_of_supported_recording_in_dirpath(roi_loader_factory.all_supported_extensions)
-        self.all_roi_loaders = []
-        for roi_filepath in self.all_roi_filepaths:
-            self.all_roi_loaders.append(roi_loader_factory.get_loader(roi_filepath))
+        all_roi_filepaths = self._get_filepaths_with_supported_extension_in_dirpath(roi_loader_factory.all_supported_extensions)
+        all_roi_loaders = [roi_loader_factory.get_loader(filepath) for filepath in all_roi_filepaths]
+        return all_roi_loaders
 
 
-    def load_all_recording_roi_combos(self) -> List[Tuple[Recording, ROI]]:
-        recording_roi_combos = []
-        recording = self.recording_loader.load_as_recording()
-        for roi_loader in self.all_roi_loaders:
-            roi = roi_loader.load_as_roi()
-            recording_roi_combos.append((recording, roi))
-        return recording_roi_combos
+
         
 
     def _get_filepaths_with_supported_extension_in_dirpath(self, all_supported_extensions: List[str], max_results: Optional[int]=None) -> List[Path]:

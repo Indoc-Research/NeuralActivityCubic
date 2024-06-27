@@ -211,14 +211,21 @@ class AnalysisJob:
 
     def __init__(self, 
                  number_of_parallel_processes: int,
-                 recording: Recording, 
-                 roi: Optional[ROI]=None
+                 recording_loader: RecordingLoader, 
+                 roi_loader: Optional[ROILoader]=None
                 ) -> None:
         self.number_of_parallel_processes = number_of_parallel_processes
-        self.recording = recording
-        self.parent_dir_path = self.recording.filepath.parent
-        self.roi = roi
-        self.roi_based = (self.roi != None)
+        self.recording_loader = recording_loader
+        self.parent_dir_path = self.recording_loader.filepath.parent
+        self.roi_loader = roi_loader
+        self.roi_based = (self.roi_loader != None)
+
+
+    def load_data_into_memory(self) -> None:
+        if hasattr(self, 'recording') == False:
+            self.recording = self.recording_loader.load_data()
+            if self.roi_based == True:
+                self.roi = self.roi_loader.load_data()
 
     
     def run_analysis(self,
@@ -235,6 +242,7 @@ class AnalysisJob:
                 #variance: float
                ) -> None:
         self._set_analysis_start_datetime()
+        self.load_data_into_memory()
         self.squares = self._create_squares(window_size)
         configs = locals()
         configs.pop('self')

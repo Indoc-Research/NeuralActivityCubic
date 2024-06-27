@@ -24,7 +24,6 @@ class App:
         self.model.setup_connection_to_display_results(self.view.main_screen.show_output_screen, self.view.main_screen.output, self.pixel_conversion)
 
 
-
     def _bind_buttons_of_view_to_functions_of_model(self) -> None:
         self.view.io_panel.run_analysis_button.on_click(self._run_button_clicked)
         self.view.io_panel.load_recording_button.on_click(self._load_recording_button_clicked)
@@ -40,6 +39,7 @@ class App:
         user_settings = self.view.export_user_settings()
         self.model.load_data(user_settings)
         representative_job = self.model.analysis_jobs_queue[0]
+        representative_job.load_data
         self.view.adjust_widgets_to_loaded_data(total_frames = representative_job.recording.zstack.shape[0])
         self.view.main_screen.show_output_screen()
         with self.view.main_screen.output:

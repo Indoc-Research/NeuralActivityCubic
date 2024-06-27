@@ -75,8 +75,8 @@ class Model:
             self.callback_view_update_infos(message, progress_in_percent)
 
     
-    def load_data(self, configs: Dict[str, Any]) -> None:
-        validated_configs = self._get_configs_required_for_specific_function(configs, self._assertion_for_load_data)
+    def create_analysis_jobs(self, configs: Dict[str, Any]) -> None:
+        validated_configs = self._get_configs_required_for_specific_function(configs, self._assertion_for_create_analysis_jobs)
         self.add_info_to_logs(0, message = 'Basic configurations validated successfully.')
         if validated_configs['batch_mode'] == False:
             if validated_configs['roi_mode'] == False:
@@ -101,22 +101,21 @@ class Model:
                     self.add_info_to_logs(idx, message = f'Successfully loaded {idx+1} out of {total_step_count} recordings.', progress = min((idx+1)*progress_step_size, 100.0))
 
     
-    def _assertion_for_load_data(self, batch_mode: bool, roi_mode: bool, data_source_path: Path) -> None:
+    def _assertion_for_create_analysis_jobs(self, batch_mode: bool, roi_mode: bool, data_source_path: Path) -> None:
         # just a convenience function to use the existing config validation and filtering methods
         pass
         
 
     def _add_new_recording_without_rois_to_analysis_job_queue(self, recording_filepath) -> None:
         recording_loader = RecordingLoaderFactory().get_loader(recording_filepath)
-        recording = recording_loader.load_as_recording()
-        self.analysis_job_queue.append(AnalysisJob(recording))
+        self.analysis_job_queue.append(AnalysisJob(self.num_processes, recording_loader))
 
 
     def _add_new_recording_with_rois_to_analysis_job_queue(self, dir_path) -> None:
         rec_roi_loader = RecordingROICombiLoader(dir_path)
-        recording_roi_combos = rec_roi_loader.load_all_recording_roi_combos()
-        for recording, roi in recording_roi_combos:
-            self.analysis_job_queue.append(AnalysisJob(recording, roi))
+        recording_and_roi_loader_combos = rec_roi_loader.get_all_recording_and_roi_loader_combos()
+        for recording_loader, roi_loader in recording_and_roi_loader_combos:
+            self.analysis_job_queue.append(AnalysisJob(self.num_processes, recording_loader, roi_loader))
     
 
     def run_analysis(self, configs: Dict[str, Any]) -> None:
