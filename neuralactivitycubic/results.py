@@ -75,7 +75,10 @@ def plot_activity_overview(squares_with_sufficient_activity: List[Square],
                            roi: Optional[ROI]=None
                           ) -> Tuple[Figure, Axes]:
     all_peak_counts = [square.peaks_count for square in squares_with_sufficient_activity]
-    max_peak_count = max(all_peak_counts)
+    if len(all_peak_counts) > 0:
+        max_peak_count = max(all_peak_counts)
+    else:
+        max_peak_count = 0
     peak_text_fontsize = _get_adjusted_fontsize(preview_image, window_size, max_peak_count)
     fig, ax = plt.subplots()
     ax.imshow(preview_image, cmap="gray", vmin = np.percentile(preview_image, 2.5), vmax = np.percentile(preview_image, 97.5))

@@ -56,11 +56,11 @@ class Model:
                 failed_attributes.append(attribute_name)
         if len(confirmed_attributes) == len(checklist_expected_attributes_with_type.keys()):
             self.gui_enabled = True
-            self.add_info_to_logs('All required setups confirmed, GUI connection was be enabled.')
+            self.add_info_to_logs(0, 'All required setups confirmed, GUI connection was be enabled.')
         else:
             self.gui_enabled = False
             for attribute_name in failed_attributes:
-                self.add_info_to_logs(f'Setup of {attribute_name} missing before GUI connection can be enabled.')
+                self.add_info_to_logs(0, f'Setup of {attribute_name} missing before GUI connection can be enabled.')
 
 
     def add_info_to_logs(self, analysis_job_queue_idx: int, message: str, progress_in_percent: Optional[float]=None) -> None:
@@ -73,6 +73,7 @@ class Model:
 
     
     def create_analysis_jobs(self, configs: Dict[str, Any]) -> None:
+        self._ensure_data_from_previous_jobs_was_removed()
         validated_configs = self._get_configs_required_for_specific_function(configs, self._assertion_for_create_analysis_jobs)
         self.add_info_to_logs(0, message = 'Basic configurations validated successfully.')
         if validated_configs['batch_mode'] == False:
@@ -98,6 +99,11 @@ class Model:
                     self._add_new_recording_with_rois_to_analysis_job_queue(subdir_path)
                     self.add_info_to_logs(idx, f'Successfully loaded {idx+1} out of {total_step_count} recordings.', min((idx+1)*progress_step_size, 100.0))
 
+
+    def _ensure_data_from_previous_jobs_was_removed(self) -> None:
+        self.analysis_job_queue = []
+        self.logs_per_analysis_job_queue_idx = {0: []}        
+
     
     def _assertion_for_create_analysis_jobs(self, batch_mode: bool, roi_mode: bool, data_source_path: Path) -> None:
         # just a convenience function to use the existing config validation and filtering methods
@@ -107,7 +113,6 @@ class Model:
     def _add_new_recording_without_rois_to_analysis_job_queue(self, filepath: Path, batch_mode: bool) -> None:
         rec_loader_factory = RecordingLoaderFactory()
         if batch_mode == True:
-            print(rec_loader_factory.all_supported_extensions)
             recording_filepath = get_filepaths_with_supported_extension_in_dirpath(filepath, rec_loader_factory.all_supported_extensions, 1)[0]
         else:
             recording_filepath = filepath
@@ -183,8 +188,14 @@ class Model:
 
     def _save_user_settings_as_json(self, configs: Dict[str, Any], results_dir_path: Path) -> None:
         filepath = results_dir_path.joinpath('user_settings.json')
+        configs_preformatted_for_json = {}
+        for key, value in configs.items():
+            if isinstance(value, Path):
+                configs_preformatted_for_json[key] = value.as_posix()
+            else:
+                configs_preformatted_for_json[key] = value
         with open(filepath, 'w+') as user_settings_json: 
-            json.dump(configs, user_settings_json)
+            json.dump(configs_preformatted_for_json, user_settings_json)
 
 
     def preview_window_size(self, configs: Dict[str, Any]) -> Tuple[Figure, Axes]:

@@ -24,9 +24,8 @@ class App:
 
 
     def _bind_buttons_of_view_to_functions_of_model(self) -> None:
-        self.view.io_panel.run_analysis_button.on_click(self._run_button_clicked)
-        self.view.io_panel.load_data_button.on_click(self._load_data_button_clicked)
-        self.view.io_panel.load_roi_button.on_click(self._load_roi_button_clicked)
+        self.view.source_data_panel.load_source_data_button.on_click(self._load_data_button_clicked)
+        self.view.analysis_settings_panel.run_analysis_button.on_click(self._run_button_clicked)
         self.view.analysis_settings_panel.preview_window_size_button.on_click(self._preview_window_size_button_clicked)
 
     
@@ -44,14 +43,14 @@ class App:
         with self.view.main_screen.output:
             fig = plt.figure(figsize = (600*self.pixel_conversion, 400*self.pixel_conversion))
             if representative_job.roi_based == True:
-                roi_boundary_coords = np.asarray(roi.boundary_coords)
+                roi_boundary_coords = np.asarray(representative_job.roi.boundary_coords)
                 plt.plot(roi_boundary_coords[:, 1], roi_boundary_coords[:, 0], c = 'cyan', linewidth = 2)
                 plt.imshow(representative_job.recording.preview, cmap = 'gray')
             else:
                 plt.imshow(representative_job.recording.preview, cmap = 'gray')
             plt.tight_layout()
             plt.show()        
-        self.model.add_info_to_logs('All data was loaded successfully!', 100.0)
+        self.model.add_info_to_logs(0, 'All data was loaded successfully!', 100.0)
         self.view.enable_analysis()
 
 
