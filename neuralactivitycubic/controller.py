@@ -42,7 +42,7 @@ class App:
         self.view.adjust_widgets_to_loaded_data(total_frames = representative_job.recording.zstack.shape[0])
         self.view.main_screen.show_output_screen()
         with self.view.main_screen.output:
-            fig = plt.figure(figsize = (600*self.model.pixel_conversion, 400*self.model.pixel_conversion))
+            fig = plt.figure(figsize = (600*self.pixel_conversion, 400*self.pixel_conversion))
             if representative_job.roi_based == True:
                 roi_boundary_coords = np.asarray(roi.boundary_coords)
                 plt.plot(roi_boundary_coords[:, 1], roi_boundary_coords[:, 0], c = 'cyan', linewidth = 2)
@@ -58,15 +58,15 @@ class App:
     def _run_button_clicked(self, change) -> None:
         self.view.enable_analysis(False)
         user_settings = self.view.export_user_settings()
-        self.model.run_analysis(user_settings)        
+        self.model.run_analysis(user_settings)      
         self.view.enable_analysis(True)
 
 
     def _preview_window_size_button_clicked(self, change) -> None:
         self.view.main_screen.show_output_screen()
         with self.view.main_screen.output:
-            validated_user_settings_preview = self._get_validated_user_settings_required_for_model_function(self.model.preview_window_size)
-            preview_fig, preview_ax = self.model.preview_window_size(**validated_user_settings_preview)
-            preview_fig.set_figheight(400 * self.px_conversion)
+            user_settings = self.view.export_user_settings()
+            preview_fig, preview_ax = self.model.preview_window_size(user_settings)
+            preview_fig.set_figheight(400 * self.pixel_conversion)
             preview_fig.tight_layout()
             plt.show(preview_fig)

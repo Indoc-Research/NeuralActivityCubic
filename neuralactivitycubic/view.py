@@ -70,10 +70,10 @@ class IOPanel:
 
 
     def _build_widget(self):
-        io_recording_box = self._build_io_recording_box()
-        io_roi_box = self._build_io_roi_box()
+        io_source_data_box = self._build_source_data_box()
+        #io_roi_box = self._build_io_roi_box()
         io_results_box = self._build_io_results_box()
-        return w.HBox([io_recording_box, io_roi_box, io_results_box], layout = w.Layout(width = '100%'))
+        return w.HBox([io_source_data_box, io_results_box], layout = w.Layout(width = '100%'))
 
 
     def _build_io_results_box(self) -> w.VBox:
@@ -101,7 +101,7 @@ class IOPanel:
         return io_results_box
     
 
-
+    """
     def _build_io_roi_box(self) -> w.VBox:
         # Create and configure all elements:
         io_roi_info = w.HTML(value="<p style='font-size:16px; font-style:italic; text-align:center;'>ROIs to focus on (optional)</p>")
@@ -127,7 +127,7 @@ class IOPanel:
                              self._get_spacer()],
                             layout = w.Layout(width = '33%', max_height = '400px', align_items='center', border_right = '1px dashed'))
         return io_roi_box
-
+        """
     
     def _change_roi_processing_config(self, change) -> None:
         if change['name'] == 'value':
@@ -173,57 +173,53 @@ class IOPanel:
 
     
 
-    def _build_io_recording_box(self) -> w.VBox:
+    def _build_io_source_data_box(self) -> w.VBox:
         # Create and configure all elements:
-        io_recording_info = w.HTML(value="<p style='font-size:16px; font-weight:bold; text-align:center;'>Recording data to analyze</p>")
-        self.user_settings_enable_batch_processing = w.Checkbox(description = 'Enable batch processing', value = False, style = {'description_width': 'initial'})
-        self.user_settings_recording_filepath = FileChooser(title = 'Please select the recording file:', layout = w.Layout(width = '90%'))
-        self.user_settings_recording_filepath.rows = 4
-        self.user_settings_idx_of_representative_recording_in_batch = w.BoundedIntText(description = 'Index of representative recording in batch to preview:', 
-                                                                                       value = 0,
-                                                                                       min = 0,
-                                                                                       max = 10000,
-                                                                                       step = 1,
-                                                                                       style = {'description_width': 'initial'},
-                                                                                       layout = w.Layout(visibility = 'hidden', width = '90%'))
-        self.load_recording_button = w.Button(description = 'Load recording data', disabled = True, tooltip = 'Please select which recording data to load!', layout = w.Layout(width = '90%'))
+        io_source_data_info = w.HTML(value="<p style='font-size:16px; font-weight:bold; text-align:center;'>General settings</p>")
+        self.user_settings_batch_mode = w.Checkbox(description = 'Enable batch processing', value = False, style = {'description_width': 'initial'})
+        self.user_settings_roi_mode = w.Checkbox(description = 'Limit analysis to ROIs', value = False, style = {'description_width': 'initial'})
+        self.user_settings_source_data_path = FileChooser(title = 'Please select the recording file:', layout = w.Layout(width = '90%'))
+        self.user_settings_source_data_path.rows = 4
+        self.load_source_data_button = w.Button(description = 'Load data according to current settings', disabled = True, tooltip = 'Please select which source data to load!', layout = w.Layout(width = '90%'))
         # Enable event handling:
-        self.user_settings_enable_batch_processing.observe(self._change_batch_processing_config)
-        self.user_settings_recording_filepath.register_callback(self._recording_filepath_chosen)
+        self.user_settings_batch_mode.observe(self._change_batch_mode_config)
+        self.user_settings_roi_mode.observe(self._change_roi_mode_config)
+        self.user_settings_source_data_path.register_callback(self._source_data_path_chosen)
         # Arrange elements:
-        io_recording_box = w.VBox([io_recording_info,
-                                   self.user_settings_enable_batch_processing,
-                                   self.user_settings_idx_of_representative_recording_in_batch,
+        io_source_data_box = w.VBox([io_source_data_info,
+                                   self.user_settings_batch_mode,
                                    self.user_settings_recording_filepath,
-                                   self.load_recording_button,
+                                   self.load_source_data_button,
                                    self._get_spacer()],
                                   layout = w.Layout(width = '33%', max_height = '400px', align_items='center', border_right = '1px dashed', border_bottom = '1px dashed'))
         return io_recording_box
 
+
+    def _change_roi_mode_config(self, change) -> None:
+        if self.user_settings_batch_mode.value == True:
+            pass
+        else: # batch_mode == False
+            if change['name'] == 'value':
+                self._change_widget_state(self.load_source_data_button, disabled = True, tooltip = 'Please select which source data to load!')
+                self.user_settings_source_data_path.reset()           
+                if change['new'] == True: # roi_mode == True
+                    self.user_settings_source_data_path.show_only_dirs = True
+                    self.user_settings_source_data_path.title = 'Please select the directory that contains the recording and all ROI files:'
+                else: # roi_mode == False
+                    self.user_settings_source_data_path.show_only_dirs = False
+                    self.user_settings_source_data_path.title = 'Please select the recording file:'                
+
     
-    def _change_batch_processing_config(self, change) -> None:
+    def _change_batch_mode_config(self, change) -> None:
         if change['name'] == 'value':
-            self._change_widget_state(self.load_recording_button, disabled = True, tooltip = 'Please select which data to load!')
-            self.user_settings_recording_filepath.reset()
-            # Apply changes also for relevant widgets in ROI IO Box:
-            self._change_widget_state(self.load_roi_button, disabled = True, tooltip = 'Please select which data to load!')
-            self.user_settings_roi_filepath.reset()
-            if change['new'] == True:
-                self._change_widget_state(self.user_settings_idx_of_representative_recording_in_batch, visibility = 'visible')
-                self.user_settings_recording_filepath.show_only_dirs = True
-                self.user_settings_recording_filepath.title = 'Please select the directory that contains all recordings:'
-                # Apply changes also for relevant widgets in ROI IO Box:
-                self._change_widget_state(self.indicate_status_of_batch_processing, description = 'enabled', button_style = 'success')
-                self.user_settings_roi_filepath.show_only_dirs = True
-                self.user_settings_roi_filepath.title = 'Please select the directory that contains all ROI files:'
-            else:
-                self._change_widget_state(self.user_settings_idx_of_representative_recording_in_batch, visibility = 'hidden')
-                self.user_settings_recording_filepath.show_only_dirs = False
-                self.user_settings_recording_filepath.title = 'Please select the recording file:'
-                # Apply changes also for relevant widgets in ROI IO Box:
-                self._change_widget_state(self.indicate_status_of_batch_processing, description = 'disabled', button_style = '')
-                self.user_settings_roi_filepath.show_only_dirs = False
-                self.user_settings_roi_filepath.title = 'Please select the ROI file:'                  
+            self._change_widget_state(self.load_source_data_button, disabled = True, tooltip = 'Please select which source data to load!')
+            self.user_settings_source_data_path.reset()
+            if change['new'] == True: # batch_mode == True
+                self.user_settings_source_data_path.show_only_dirs = True
+                self.user_settings_source_data_path.title = 'Please select the parent directory that contains subdirectories with the individual source data:'
+            else: #batch_mode == False
+                fake_change = {'name': 'value', 'new': self.user_settings_roi_mode.value}
+                self._change_roi_mode_config(fake_change)                          
 
                     
 
@@ -250,27 +246,25 @@ class IOPanel:
             widget.button_style = button_style
 
 
-    def _recording_filepath_chosen(self, file_chooser_obj) -> None:
+    def _source_data_path_chosen(self, file_chooser_obj) -> None:
         if file_chooser_obj.value != None:
-            filepath = Path(file_chooser_obj.value)
-            if self.user_settings_enable_batch_processing.value == True:
-                if filepath.is_dir() == True:
-                    self._change_widget_state(self.load_recording_button, disabled = False, tooltip = 'Click to load the selected data')
+            source_data_path = Path(file_chooser_obj.value)
+            if (self.user_settings_batch_mode.value == True) or (self.user_settings_roi_mode.value == True):
+                if source_data_path.is_dir() == True:
+                    self._change_widget_state(self.load_source_data_button, disabled = False, tooltip = 'Click to load the selected source data')
                 else:
-                    self.user_settings_recording_filepath.reset()
-                    self._change_widget_state(self.load_recording_button, disabled = True, tooltip = 'Please select which data to load!')
-                    message = 'You have to select a directory if batch processing is enabled!'
+                    self.user_settings_source_data_path.reset()
+                    self._change_widget_state(self.load_source_data_button, disabled = True, tooltip = 'Please select which source data to load!')
+                    message = 'You have to select a directory if batch processing or ROI-focused analysis are enabled!'
                     self.user_info_panel.add_new_logs(message)
-            if self.user_settings_enable_batch_processing.value == False:
-                if filepath.is_file() == True:
-                    self._change_widget_state(self.load_recording_button, disabled = False, tooltip = 'Click to load the selected data')
+            if (self.user_settings_batch_mode.value == False) or (self.user_settings_roi_mode.value == False):
+                if source_data_path.is_file() == True:
+                    self._change_widget_state(self.load_source_data_button, disabled = False, tooltip = 'Click to load the selected source data')
                 else:
                     self.user_settings_recording_filepath.reset()
-                    self._change_widget_state(self.load_recording_button, disabled = True, tooltip = 'Please select which data to load!')
-                    message = ('You have to select a file if batch processing is disabled! '
-                               'If you want to analyze multiple recording files within a directory '
-                               '- with the same settings - consider enabling batch mode.')
-                    self.user_info_panel.add_new_logs(message)                
+                    self._change_widget_state(self.load_recording_button, disabled = True, tooltip = 'Please select which source data to load!')
+                    message = 'You have to select a single file if neither batch processing nor ROI-focused analysis are enabled!'
+                    self.user_info_panel.add_new_logs(message)               
                 
             
     def _get_spacer(self, height: str='10px', width: str='99%') -> w.HTML:
