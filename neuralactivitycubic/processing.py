@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
+from matplotlib.axes._axes import Axes 
 from datetime import datetime, timezone
 
 from typing import Optional, Tuple, Dict, List, Any
@@ -42,6 +44,17 @@ class AnalysisJob:
             self.recording = self.recording_loader.load_data()
             if self.roi_based == True:
                 self.roi = self.roi_loader.load_data()
+
+
+    def preview_window_size(self, window_size: int) -> Tuple[Figure, Axes]:
+        self.load_data_into_memory()
+        self._create_squares(window_size)
+        if self.roi_based == True:
+            roi = self.roi
+        else: 
+            roi = None
+        fig, ax = results.plot_window_size_preview(self.recording.preview, window_size, self.row_cropping_idx, self.col_cropping_idx, roi)
+        return fig, ax
 
     
     def run_analysis(self,

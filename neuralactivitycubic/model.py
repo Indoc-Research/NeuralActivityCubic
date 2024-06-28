@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 import ipywidgets as w
 import matplotlib.pyplot as plt
 import inspect
+import multiprocessing
 
 from .processing import AnalysisJob
 from .input import RecordingLoaderFactory, ROILoaderFactory, RecLoaderROILoaderCombinator, get_filepaths_with_supported_extension_in_dirpath
@@ -186,11 +187,9 @@ class Model:
             json.dump(configs, user_settings_json)
 
 
-    def preview_window_size(self, window_size: int) -> Tuple[Figure, Axes]:
-        job_for_preview = self.model.analysis_job_queue[0]
-        job_for_preview._create_squares(window_size)
-        if job_for_preview.roi_based == True:
-            roi = job_for_preview.roi
-        else:
-            roi = None
-        return results.plot_window_size_preview(job_for_preview.recording.preview, window_size, job_for_preview.row_cropping_idx, job_for_preview.col_cropping_idx, roi)
+    def preview_window_size(self, configs: Dict[str, Any]) -> Tuple[Figure, Axes]:
+        job_for_preview = self.analysis_job_queue[0]
+        validated_configs_for_preview = self._get_configs_required_for_specific_function(configs, job_for_preview.preview_window_size)
+        preview_fig, preview_ax = job_for_preview.preview_window_size(**validated_configs_for_preview)
+        return preview_fig, preview_ax
+
