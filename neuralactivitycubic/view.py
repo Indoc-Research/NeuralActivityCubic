@@ -96,7 +96,7 @@ class SourceDataPanel:
     
     def _build_widget(self) -> w.HBox:
         # Create and configure all elements:
-        io_source_data_info = w.HTML(value="<p style='font-size:16px; font-weight:bold; text-align:center;'>General settings</p>")
+        io_source_data_info = w.HTML(value="<p style='font-size:16px; font-weight:bold; text-align:center;'>General Settings</p>")
         self.user_settings_batch_mode = w.Checkbox(description = 'Enable batch processing', value = False, style = {'description_width': '0px'}, layout = {'width': '180px'})
         self.user_settings_roi_mode = w.Checkbox(description = 'Limit analysis to ROIs', value = False, style = {'description_width': '0px'}, layout = {'width': '180px'})
         processing_modes_box = w.VBox([self.user_settings_batch_mode, self.user_settings_roi_mode])
@@ -167,110 +167,6 @@ class SourceDataPanel:
                     message = 'You have to select a single file if neither batch processing nor ROI-focused analysis are enabled!'
                     self.user_info_panel.add_new_logs(message)
 
-    
-    """
-    def _build_widget(self) -> w.VBox:
-        io_results_info = w.HTML(value="<p style='font-size:16px; font-weight:bold; text-align:center;'>Results output</p>")
-        self.user_settings_save_overview_png = w.Checkbox(description = 'Save overview plot', value = True, style = {'description_width': 'initial'})
-        self.user_settings_save_detailed_results = w.Checkbox(description = 'Save detailed results', value = True, style = {'description_width': 'initial'})
-        self.user_settings_results_filepath = FileChooser(title = 'Please select directory in which the output files shall be saved:',
-                                                          show_only_dirs = True,
-                                                          select_default = True,
-                                                          layout = w.Layout(width = '90%'))
-        self.user_settings_results_filepath.rows = 4
-        self.run_analysis_button = w.Button(description = 'Run analysis',
-                                            disabled = True,
-                                            tooltip = 'You have to load some data first, before you can run the analysis!',
-                                            button_style = '',
-                                            icon = 'rocket',
-                                            layout = w.Layout(width = '90%'))
-        io_results_box = w.VBox([io_results_info,
-                                 self.user_settings_save_overview_png,
-                                 self.user_settings_save_detailed_results,
-                                 self.user_settings_results_filepath,
-                                 self.run_analysis_button,
-                                 self._get_spacer()],
-                                layout = w.Layout(width = '33%', max_height = '400px', align_items='center'))
-        return io_results_box
-    
-
-    def _build_io_roi_box(self) -> w.VBox:
-        # Create and configure all elements:
-        io_roi_info = w.HTML(value="<p style='font-size:16px; font-style:italic; text-align:center;'>ROIs to focus on (optional)</p>")
-        self.user_settings_enable_rois = w.Checkbox(description = 'Enable ROI-based processing', value = False, style = {'description_width': 'initial'})
-        self.batch_processing_info = w.Label(value = 'Batch processing is:', layout = w.Layout(visibility = 'hidden'))
-        self.indicate_status_of_batch_processing = w.Button(description = 'disabled',
-                                                            disabled = True,
-                                                            tooltip = 'Please enable/disable batch processing in the "Recording data to analyze" section!',
-                                                            layout = w.Layout(width = 'auto', visibility = 'hidden'))
-        batch_processing_info_box = w.HBox([self.batch_processing_info, self.indicate_status_of_batch_processing], layout = w.Layout(width = '99%', justify_content = 'center'))
-        self.user_settings_roi_filepath = FileChooser(title = 'Please select the ROI file:', layout = w.Layout(width = '90%'))
-        self.user_settings_roi_filepath.rows = 4
-        self.load_roi_button = w.Button(description = 'Load ROI data', disabled = True, tooltip = 'Please select which ROI data to load!', layout = w.Layout(width = '90%'))               
-        # Enable event handling:
-        self.user_settings_enable_rois.observe(self._change_roi_processing_config)
-        self.user_settings_roi_filepath.register_callback(self._roi_filepath_chosen)
-        # Arrange elements:
-        io_roi_box = w.VBox([io_roi_info,
-                             self.user_settings_enable_rois,
-                             batch_processing_info_box,
-                             self.user_settings_roi_filepath,
-                             self.load_roi_button,
-                             self._get_spacer()],
-                            layout = w.Layout(width = '33%', max_height = '400px', align_items='center', border_right = '1px dashed'))
-        return io_roi_box
-
-    
-    def _change_roi_processing_config(self, change) -> None:
-        if change['name'] == 'value':
-            if change['new'] == True:
-                self._change_widget_state(self.batch_processing_info, visibility = 'visible')
-                self._change_widget_state(self.indicate_status_of_batch_processing, visibility = 'visible')
-                if self.user_settings_enable_batch_processing.value == True:
-                    self._change_widget_state(self.indicate_status_of_batch_processing, description = 'enabled', button_style = 'success')
-                    self.user_settings_roi_filepath.show_only_dirs = True
-                    self.user_settings_roi_filepath.title = 'Please select the directory that contains all ROI files:'
-                else:
-                    self._change_widget_state(self.indicate_status_of_batch_processing, description = 'disabled', button_style = '')
-                    self.user_settings_roi_filepath.show_only_dirs = False
-                    self.user_settings_roi_filepath.title = 'Please select the ROI file:'  
-            else:
-                self._change_widget_state(self.batch_processing_info, visibility = 'hidden')
-                self._change_widget_state(self.indicate_status_of_batch_processing, visibility = 'hidden')
-                self._change_widget_state(self.load_roi_button, disabled = True, tooltip = 'Please select which ROI data to load!')
-                self.user_settings_roi_filepath.reset()
-
-            
-    def _roi_filepath_chosen(self, file_chooser_obj) -> None:
-        if file_chooser_obj.value != None:
-            filepath = Path(file_chooser_obj.value)
-            if self.user_settings_enable_batch_processing.value == True:
-                if filepath.is_dir() == True:
-                    self._change_widget_state(self.load_roi_button, disabled = False, tooltip = 'Click to load the selected data')
-                else:
-                    self.user_settings_roi_filepath.reset()
-                    self._change_widget_state(self.load_roi_button, disabled = True, tooltip = 'Please select which data to load!')
-                    message = 'You have to select a directory if batch processing is enabled!'
-                    self.user_info_panel.add_new_logs(message)
-            if self.user_settings_enable_batch_processing.value == False:
-                if filepath.is_file() == True:
-                    self._change_widget_state(self.load_roi_button, disabled = False, tooltip = 'Click to load the selected data')
-                else:
-                    self.user_settings_roi_filepath.reset()
-                    self._change_widget_state(self.load_roi_button, disabled = True, tooltip = 'Please select which data to load!')
-                    message = ('You have to select a file if batch processing is disabled! '
-                               'If you want to analyze multiple recording files within a directory '
-                               '- with the same settings - consider enabling batch mode.')
-                    self.user_info_panel.add_new_logs(message) 
-
-
-    def _get_spacer(self, height: str='10px', width: str='99%') -> w.HTML:
-        # consider making a general function in view.py
-        return w.HTML(layout = w.Layout(height = height, width = width))
-    """
-    
-
-
 
 
 class AnalysisSettingsPanel:
@@ -323,7 +219,7 @@ class AnalysisSettingsPanel:
 
         
         dashed_separator_line = w.HTML(value = "<hr style='border: none; border-bottom: 1px dashed;'>", layout = w.Layout(width = '95%'))
-        optional_info = w.Label(value = 'Optional settings:', style = {'text_align': 'left', 'font_weight': 'bold'}, layout = w.Layout(width = '90%'))
+        optional_info = w.Label(value = 'Optional Settings:', style = {'text_align': 'left', 'font_weight': 'bold'}, layout = w.Layout(width = '90%'))
         self.user_settings_include_variance = w.Checkbox(description = 'include variance', value = False, indent = False, disabled = True, 
                                                          layout = w.Layout(width = '35%'), style = {'description_width': 'initial'})
         self.user_settings_variance = w.BoundedFloatText(description = 'Variance:', disabled = True,
@@ -351,7 +247,7 @@ class AnalysisSettingsPanel:
         optional_settings = w.VBox([optional_variance_widgets, vertical_spacer, optional_interval_widgets, vertical_spacer, optional_octave_widgets],
                                      layout = w.Layout(width = '90%', align_items = 'flex-start', align_content = 'flex-start', justify_content = 'flex-start'))
 
-        results_info = w.Label(value = 'Results settings:', style = {'text_align': 'left', 'font_weight': 'bold'}, layout = w.Layout(width = '90%'))
+        results_info = w.Label(value = 'Results Settings:', style = {'text_align': 'left', 'font_weight': 'bold'}, layout = w.Layout(width = '90%'))
         self.user_settings_save_overview_png = w.Checkbox(description = 'Save overview plot', value = True, disabled = True, style = {'description_width': 'initial'})
         self.user_settings_save_detailed_results = w.Checkbox(description = 'Save detailed results', value = True, disabled = True, style = {'description_width': 'initial'})
         self.run_analysis_button = w.Button(description = 'Run Analysis',
