@@ -164,22 +164,23 @@ class AnalysisJob:
 
 
     def _create_and_save_csv_result_files(self, filtered_squares: List[Square]) -> None:
-        peak_results_per_square = [results.export_peak_results_df_from_square(square) for square in filtered_squares]
-        df_all_peak_results = pd.concat(peak_results_per_square, ignore_index = True)
-        max_peak_count_across_all_squares = df_all_peak_results.groupby('square coordinates [X / Y]').count()['peak frame index'].max()
-        zfill_factor = int(np.log10(max_peak_count_across_all_squares)) + 1
-        amplitude_and_delta_f_over_f_results_all_squares = []
-        auc_results_all_squares = []
-        for square_coords in df_all_peak_results['square coordinates [X / Y]'].unique():
-            tmp_df_single_square = df_all_peak_results[df_all_peak_results['square coordinates [X / Y]'] == square_coords].copy()
-            amplitude_and_delta_f_over_f_results_all_squares.append(results.create_single_square_amplitude_and_delta_f_over_f_results(tmp_df_single_square, zfill_factor))
-            auc_results_all_squares.append(results.create_single_square_auc_results(tmp_df_single_square, zfill_factor))
-        df_all_amplitude_and_delta_f_over_f_results = pd.concat(amplitude_and_delta_f_over_f_results_all_squares, ignore_index = True)
-        df_all_auc_results = pd.concat(auc_results_all_squares, ignore_index = True)
-        # Once all DataFrames are created successfully, write them to disk 
-        df_all_peak_results.to_csv(self.results_dir_path.joinpath('all_peak_results.csv'), index = False)
-        df_all_amplitude_and_delta_f_over_f_results.to_csv(self.results_dir_path.joinpath('Amplitude_and_dF_over_F_results.csv'), index = False)
-        df_all_auc_results.to_csv(self.results_dir_path.joinpath('AUC_results.csv'), index = False)
+        if len(filtered_squares) > 0:
+            peak_results_per_square = [results.export_peak_results_df_from_square(square) for square in filtered_squares]
+            df_all_peak_results = pd.concat(peak_results_per_square, ignore_index = True)
+            max_peak_count_across_all_squares = df_all_peak_results.groupby('square coordinates [X / Y]').count()['peak frame index'].max()
+            zfill_factor = int(np.log10(max_peak_count_across_all_squares)) + 1
+            amplitude_and_delta_f_over_f_results_all_squares = []
+            auc_results_all_squares = []
+            for square_coords in df_all_peak_results['square coordinates [X / Y]'].unique():
+                tmp_df_single_square = df_all_peak_results[df_all_peak_results['square coordinates [X / Y]'] == square_coords].copy()
+                amplitude_and_delta_f_over_f_results_all_squares.append(results.create_single_square_amplitude_and_delta_f_over_f_results(tmp_df_single_square, zfill_factor))
+                auc_results_all_squares.append(results.create_single_square_auc_results(tmp_df_single_square, zfill_factor))
+            df_all_amplitude_and_delta_f_over_f_results = pd.concat(amplitude_and_delta_f_over_f_results_all_squares, ignore_index = True)
+            df_all_auc_results = pd.concat(auc_results_all_squares, ignore_index = True)
+            # Once all DataFrames are created successfully, write them to disk 
+            df_all_peak_results.to_csv(self.results_dir_path.joinpath('all_peak_results.csv'), index = False)
+            df_all_amplitude_and_delta_f_over_f_results.to_csv(self.results_dir_path.joinpath('Amplitude_and_dF_over_F_results.csv'), index = False)
+            df_all_auc_results.to_csv(self.results_dir_path.joinpath('AUC_results.csv'), index = False)
 
 
     def _create_and_save_individual_traces_pdf_result_file(self, filtered_squares: List[Square], window_size: int) -> None:
