@@ -152,7 +152,14 @@ class AnalysisJob:
         
     def _ensure_results_dir_exists(self) -> None:
         if hasattr(self, 'results_dir_path') == False:
-            self.results_dir_path = self.parent_dir_path.joinpath(self.analysis_start_datetime.strftime('%Y_%m_%d_%H-%M-%S_NA3_results'))
+            prefix_with_datetime = self.analysis_start_datetime.strftime('%Y_%m_%d_%H-%M-%S_results_for')
+            recording_filename_without_extension = self.recording.filepath.name.replace(self.recording.filepath.suffix, '')
+            if self.roi_based == False:
+                results_dir_name = f'{prefix_with_datetime}_{recording_filename_without_extension}'
+            else:
+                roi_filename_without_extension = self.roi.filepath.name.replace(self.roi.filepath.suffix, '')
+                results_dir_name = f'{prefix_with_datetime}_{recording_filename_without_extension}_with_{roi_filename_without_extension}'
+            self.results_dir_path = self.parent_dir_path.joinpath(results_dir_name)
             self.results_dir_path.mkdir()
 
 

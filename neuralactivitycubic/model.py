@@ -147,7 +147,7 @@ class Model:
                     plt.show(overview_results_fig)
             self.add_info_to_logs(idx, f'Successfully finished analysis job {idx + 1} out of {total_step_count} total job(s).', (idx + 1)*progress_step_size)
             self._save_logs_of_current_job(idx, analysis_job.results_dir_path)
-            self._save_user_settings_as_json(configs, analysis_job.results_dir_path)
+            self._save_user_settings_as_json(configs, analysis_job)
 
 
     def _get_configs_required_for_specific_function(self, all_configs: Dict[str, Any], function_to_execute: Callable) -> Dict[str, Any]:
@@ -186,8 +186,13 @@ class Model:
                 logs_file.write(f'{log_message}\n')
 
 
-    def _save_user_settings_as_json(self, configs: Dict[str, Any], results_dir_path: Path) -> None:
-        filepath = results_dir_path.joinpath('user_settings.json')
+    def _save_user_settings_as_json(self, configs: Dict[str, Any], analysis_job: AnalysisJob) -> None:
+        filepath = analysis_job.results_dir_path.joinpath('user_settings.json')
+        configs['recording_filepath'] = analysis_job.recording.filepath
+        if analysis_job.roi_based == True:
+            configs['roi_filepath'] = analysis_job.roi.filepath
+        else:
+            configs['roi_filepath'] = None
         configs_preformatted_for_json = {}
         for key, value in configs.items():
             if isinstance(value, Path):
