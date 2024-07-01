@@ -74,3 +74,8 @@ class App:
             preview_fig.set_figheight(400 * self.pixel_conversion)
             preview_fig.tight_layout()
             plt.show(preview_fig)
+
+
+def open_gui() -> None:
+    na3 = App()
+    return na3.launch()
