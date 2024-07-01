@@ -83,6 +83,8 @@ class UserInfoPanel:
                                                     f'However, you passed {progress_in_percent}, which is of type {type(progress_in_percent)}.')
         if progress_in_percent == 100.0:
             self.progress_bar.bar_style = 'success'
+        else:
+            self.progress_bar.bar_style = ''
         self.progress_bar.value = progress_in_percent
 
 

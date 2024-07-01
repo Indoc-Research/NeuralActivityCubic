@@ -20,7 +20,7 @@ class Model:
     def __init__(self) -> None:
         self.num_processes = multiprocessing.cpu_count()
         self.analysis_job_queue = []
-        self.logs_per_analysis_job_queue_idx = {-1: []}
+        self.logs = []
         self.gui_enabled = False
 
 
@@ -56,26 +56,24 @@ class Model:
                 failed_attributes.append(attribute_name)
         if len(confirmed_attributes) == len(checklist_expected_attributes_with_type.keys()):
             self.gui_enabled = True
-            self.add_info_to_logs(-1, 'NA3 GUI initialization completed. Start by selecting and loading source data.')
+            self.add_info_to_logs('NA3 GUI initialization completed. Start by selecting and loading source data.', True)
         else:
             self.gui_enabled = False
             for attribute_name in failed_attributes:
-                self.add_info_to_logs(-1, f'Setup of {attribute_name} missing before GUI connection can be enabled.')
+                self.add_info_to_logs(f'Setup of {attribute_name} missing before GUI connection can be enabled.')
 
 
-    def add_info_to_logs(self, analysis_job_queue_idx: int, message: str, progress_in_percent: Optional[float]=None) -> None:
-        if analysis_job_queue_idx not in self.logs_per_analysis_job_queue_idx.keys():
-            self.logs_per_analysis_job_queue_idx[analysis_job_queue_idx] = []
+    def add_info_to_logs(self, message: str, display_in_gui: bool=False, progress_in_percent: Optional[float]=None) -> None:
         time_prefix_in_utc = datetime.now(timezone.utc).strftime('%d-%m-%y %H:%M:%S.%f')
-        self.logs_per_analysis_job_queue_idx[analysis_job_queue_idx].append(f'{time_prefix_in_utc} (UTC): {message}')
-        if self.gui_enabled == True:
+        self.logs.append(f'{time_prefix_in_utc} (UTC): {message}')
+        if (display_in_gui == True) and (self.gui_enabled == True): 
             self.callback_view_update_infos(message, progress_in_percent)
 
     
     def create_analysis_jobs(self, configs: Dict[str, Any]) -> None:
         self._ensure_data_from_previous_jobs_was_removed()
         validated_configs = self._get_configs_required_for_specific_function(configs, self._assertion_for_create_analysis_jobs)
-        self.add_info_to_logs(-1, message = 'Basic configurations for data import validated. Starting creation of analysis job(s)...')
+        self.add_info_to_logs('Basic configurations for data import validated. Starting creation of analysis job(s)...', True)
         if validated_configs['batch_mode'] == False:
             if validated_configs['roi_mode'] == False:
                 self._add_new_recording_without_rois_to_analysis_job_queue(validated_configs['data_source_path'], validated_configs['batch_mode'])
@@ -89,22 +87,20 @@ class Model:
             if validated_configs['roi_mode'] == False:
                 for idx, subdir_path in enumerate(all_subdirs):
                     self._add_new_recording_without_rois_to_analysis_job_queue(subdir_path, validated_configs['batch_mode'])
-                    self.add_info_to_logs(-1, f'Job creation for {subdir_path} completed.', min((idx+1)*progress_step_size, 100.0))
+                    self.add_info_to_logs(f'Job creation for {subdir_path} completed.', True, min((idx+1)*progress_step_size, 100.0))
             else: #'roi_mode' == True:
                 for idx, subdir_path in enumerate(all_subdirs):
                     self._add_new_recording_with_rois_to_analysis_job_queue(subdir_path)
-                    self.add_info_to_logs(-1, f'Job creation for {subdir_path} completed.', min((idx+1)*progress_step_size, 100.0))
-        self.add_info_to_logs(-1, 'Job creation(s) completed. Please continue with configuration of the Analysis Settings.', 100.0)
+                    self.add_info_to_logs(f'Job creation(s) for {subdir_path} completed.', True, min((idx+1)*progress_step_size, 100.0))
+        self.add_info_to_logs('All job creation(s) completed.', True, 100.0)
         
 
     def _ensure_data_from_previous_jobs_was_removed(self) -> None:
         if len(self.analysis_job_queue) > 0:
-            message = 'Loading of new source data. All previously created jobs and their job-specific logs will be deleted. These session logs are continued for consistency.'
-            self.add_info_to_logs(-1, message)
+            self.add_info_to_logs('Loading of new source data. All previously created jobs & logs will be deleted.', True)
             self.analysis_job_queue = []
-            general_session_logs = self.logs_per_analysis_job_queue_idx[-1]
-            self.logs_per_analysis_job_queue_idx = {-1: general_session_logs}
-            self.add_info_to_logs(-1, 'All previous jobs and job-specific logs were deleted. Session logs continue here.')
+            self.logs = []
+            self._check_if_gui_setup_is_completed()
 
     
     def _assertion_for_create_analysis_jobs(self, batch_mode: bool, roi_mode: bool, data_source_path: Path) -> None:
@@ -114,14 +110,22 @@ class Model:
 
     def _add_new_recording_without_rois_to_analysis_job_queue(self, filepath: Path, batch_mode: bool) -> None:
         rec_loader_factory = RecordingLoaderFactory()
-        job_idx = len(self.analysis_job_queue) - 1
+        job_idx = len(self.analysis_job_queue)
         if batch_mode == True:
-            self.add_info_to_logs(-1, message = f'Looking for a valid recording file in {filepath}...')
-            recording_filepath = get_filepaths_with_supported_extension_in_dirpath(filepath, rec_loader_factory.all_supported_extensions, 1)[0]
-            self.add_info_to_logs(-1, message = f'Valid recording file found at: {recording_filepath} !')
+            self.add_info_to_logs(f'Looking for a valid recording file in {filepath}...', True)
+            valid_filepaths = get_filepaths_with_supported_extension_in_dirpath(filepath, rec_loader_factory.all_supported_extensions, 1)
+            if len(valid_filepaths) == 0:
+                self.add_info_to_logs(f'Could not find any recording files of supported type at {filepath}!', True)
+            elif len(valid_filepaths) >  1:
+                too_many_files_message = (f'Found more than a single recording file of supported type at {filepath}, i.e.: {valid_filepaths}. '
+                                          f'However, only a single file was expected. NA3 continues with {valid_filepaths[0]} and will ignore the other files.')
+                self.add_info_to_logs(too_many_files_message, True)
+                recording_filepath = valid_filepaths[0]
+            else:
+                recording_filepath = valid_filepaths[0]
         else:
             recording_filepath = filepath
-        self.add_info_to_logs(-1, message = f'Starting to create a job for: {recording_filepath}')
+        self.add_info_to_logs(f'Starting to create a job for: {recording_filepath}', True)
         try:
             recording_loader = rec_loader_factory.get_loader(recording_filepath)
         except NotImplementedError:
@@ -129,17 +133,21 @@ class Model:
                        f'Currently supported file types for recordings are: {rec_loader_factory.all_supported_extensions}.')
             if batch_mode == True:
                 message += 'For your convenience, this job is skipped and NA3 continues with the next one instead.'
-            self.add_info_to_logs(-1, message = message)
+            self.add_info_to_logs(message, True)
+        except Exception as e:
+            message = 'Job creation failed due to an unexpected error: '
+            all_unexpected_exceptions = [exception_message for exception_message in e.args]
+            for unexpected_exception in all_unexpected_exceptions:
+                message += f'"{unexpected_exception}"; '
+            self.add_info_to_logs(message, True)
+            self.add_info_to_logs('Continuing with next job, if available.', True)
         else: # no errors in try
             self.analysis_job_queue.append(AnalysisJob(self.num_processes, recording_loader))
-            message = (f'Successfully created job for: {recording_filepath} at index #{job_idx}. '
-                       'Detailed logs for this job will be continued in a job-specific log file, which you can find in the corresponding results folder.')
-            self.add_info_to_logs(-1, message = message)
-            self.add_info_to_logs(job_idx, f'Start of detailed logs of successfully created job for: {recording_filepath} at index #{job_idx}.')
+            self.add_info_to_logs(f'Successfully created job for: {recording_filepath} at index #{job_idx}.', True)
 
 
     def _add_new_recording_with_rois_to_analysis_job_queue(self, dir_path) -> None:
-        self.add_info_to_logs(-1, message = f'Looking for a recording file and ROI files in {dir_path}...')
+        self.add_info_to_logs(f'Looking for a recording file and ROI files in {dir_path} and trying to create corresponding jobs...', True)
         rec_roi_loader = RecLoaderROILoaderCombinator(dir_path)
         try:
             recording_and_roi_loader_combos = rec_roi_loader.get_all_recording_and_roi_loader_combos()
@@ -148,35 +156,38 @@ class Model:
             message = (f'Job creation failed! Could not find a supported recording file in "{dir_path}"! '
                        f'Currently supported file types for recordings are: {rec_loader_factory.all_supported_extensions}. '
                         'For your convenience, this job is skipped and NA3 continues with the next one instead.')
-            self.add_info_to_logs(-1, message = message)        
+            self.add_info_to_logs(message, True)
+        except Exception as e:
+            message = 'Job creation failed due to an unexpected error: '
+            all_unexpected_exceptions = [exception_message for exception_message in e.args]
+            for unexpected_exception in all_unexpected_exceptions:
+                message += f'"{unexpected_exception}"; '
+            self.add_info_to_logs(message, True)
+            self.add_info_to_logs('Continuing with next job, if available.', True)
         else: # no errors in try
             for recording_loader, roi_loader in recording_and_roi_loader_combos:
-                job_idx = len(self.analysis_job_queue) - 1
+                job_idx = len(self.analysis_job_queue)
                 self.analysis_job_queue.append(AnalysisJob(self.num_processes, recording_loader, roi_loader))
-                message = (f'Successfully created job for: {recording_loader.filepath} with {roi_loader.filepath} at index #{job_idx}. '
-                           'Detailed logs for this job will be continued in a job-specific log file, which you can find in the corresponding results folder.')
-                self.add_info_to_logs(-1, message = message)
-                self.add_info_to_logs(job_idx, f'Start of detailed logs of successfully created job for: {recording_filepath} with {roi_loader.filepath} at index #{job_idx}.')
+                self.add_info_to_logs(f'Successfully created job for: {recording_loader.filepath} with {roi_loader.filepath} at index #{job_idx}.', True)
     
 
     def run_analysis(self, configs: Dict[str, Any]) -> None:
         sample_job_to_validate_configs = self.analysis_job_queue[0]
         validated_configs_for_analysis = self._get_configs_required_for_specific_function(configs, sample_job_to_validate_configs.run_analysis)
         validated_configs_for_result_creation = self._get_configs_required_for_specific_function(configs, sample_job_to_validate_configs.create_results)
-        self.add_info_to_logs(-1, 'Configurations for Analysis Settings and Result Creation validated successfully.', 0.01)
-        self.add_info_to_logs(-1, 'Starting analysis. Please find more detailed logs in job-specific log files.')
+        self.add_info_to_logs('Configurations for Analysis Settings and Result Creation validated successfully.', True)
+        self.add_info_to_logs(f'Analysis Settings are:')
+        for key, value in validated_configs_for_analysis.items():
+            self.add_info_to_logs(f'{key}: {str(value)}')     
+        self.add_info_to_logs('Starting analysis...', True)
         total_step_count = len(self.analysis_job_queue)
         progress_step_size = 100 / total_step_count
-        for idx, analysis_job in enumerate(self.analysis_job_queue):
-            job_idx = idx + 1
-            self.add_info_to_logs(-1, f'Starting to process analysis job with index #{job_idx}.')
-            self.add_info_to_logs(job_idx, f'Starting to process analysis job with following settings:')
-            for key, value in validated_configs_for_analysis.items():
-                self.add_info_to_logs(job_idx, f'{key}: {str(value)}')
+        for job_idx, analysis_job in enumerate(self.analysis_job_queue):
+            self.add_info_to_logs(f'Starting to process analysis job with index #{job_idx}.')
             analysis_job.run_analysis(**validated_configs_for_analysis)
-            self.add_info_to_logs(job_idx, f'Analysis successfully completed. Continue with creation of results.. ')
+            self.add_info_to_logs(f'Analysis successfully completed. Continue with creation of results.. ')
             analysis_job.create_results(**validated_configs_for_result_creation)
-            self.add_info_to_logs(job_idx, f'Results successfully created at: {analysis_job.results_dir_path}')
+            self.add_info_to_logs(f'Results successfully created at: {analysis_job.results_dir_path}')
             if self.gui_enabled == True:
                 self.callback_view_show_output_screen()
                 with self.view_output:
@@ -185,11 +196,14 @@ class Model:
                     overview_results_fig.tight_layout()
                     plt.show(overview_results_fig)
             self._save_user_settings_as_json(configs, analysis_job)
-            self.add_info_to_logs(job_idx, f'Successfully finished processing of analysis job with index #{job_idx}.')
-            self._save_logs_of_current_job(job_idx, analysis_job.results_dir_path)
-            self.add_info_to_logs(-1, f'Finished processing of job with index #{job_idx} ({idx + 1} out of {total_step_count} total job(s))', min(( #continue here!
+            self.add_info_to_logs(f'Successfully finished processing of analysis job with index #{job_idx}. {job_idx + 1} of {total_step_count} total job(s) completed.', 
+                                  True,
+                                  min((job_idx+1)*progress_step_size, 100.0))
+            self._save_logs_at_current_moment(analysis_job.results_dir_path)
+        self.add_info_to_logs('Updating all log files to contain all logs as final step. All valid logs files will end with this message.')
+        for job_idx, analysis_job in enumerate(self.analysis_job_queue):
+            self._save_logs_at_current_moment(analysis_job.results_dir_path)
             
-
 
     def _get_configs_required_for_specific_function(self, all_configs: Dict[str, Any], function_to_execute: Callable) -> Dict[str, Any]:
         filtered_and_validated_configs = {}
@@ -220,10 +234,10 @@ class Model:
             )
 
 
-    def _save_logs_of_current_job(self, analysis_job_queue_idx: int, results_dir_path: Path) -> None:
+    def _save_logs_at_current_moment(self, results_dir_path: Path) -> None:
         filepath = results_dir_path.joinpath('logs.txt')
         with open(filepath , 'w+') as logs_file:
-            for log_message in self.logs_per_analysis_job_queue_idx[analysis_job_queue_idx]:
+            for log_message in self.logs:
                 logs_file.write(f'{log_message}\n')
 
 
