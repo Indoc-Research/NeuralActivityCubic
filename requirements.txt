@@ -5,7 +5,6 @@ imageio==2.31.4
 imageio-ffmpeg==0.4.9
 matplotlib==3.8.0
 scipy==1.11.4
-numpy==1.26.2
 pandas==2.2.1
 pybaselines==1.1.0
 roifile==2024.5.24

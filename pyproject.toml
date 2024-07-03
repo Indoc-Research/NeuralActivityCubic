@@ -1,0 +1,28 @@
+[project]
+name = "neuralactivitycubic"
+version = "0.0.1"
+authors = [
+  { name="Dennis Doll", email="ddoll@indocresearch.org" },
+  { name="Matvey Loshakov", email="mloshakov@indocresearch.org" }
+]
+description = "Computation of local and signal-close-to-noise calcium activity"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU Affero General Public License v3",
+    "Operating System :: OS Independent",
+]
+dynamic = ["dependencies"]
+
+[build-system]
+requires = ["setuptools>=70.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[project.urls]
+Homepage = "https://github.com/Indoc-Research/NeuralActivityCubic"
+Issues = "https://github.com/Indoc-Research/NeuralActivityCubic/issues"
+
