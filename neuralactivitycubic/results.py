@@ -42,7 +42,12 @@ def _get_adjusted_fontsize(preview_image: np.ndarray, window_size: int, max_peak
     return adjusted_fontsize
 
 
-def plot_window_size_preview(preview_image: np.ndarray, window_size: int, row_cropping_idx: int, col_cropping_idx: int, roi: Optional[ROI]=None) -> Tuple[Figure, Axes]:
+def plot_rois_preview(preview_image: np.ndarray, rois = List[ROI]) -> Tuple[Figure, Axes]:
+    # ToDo
+    pass
+
+
+def plot_window_size_preview(preview_image: np.ndarray, window_size: int, row_cropping_idx: int, col_cropping_idx: int, focus_area: Optional[ROI]=None) -> Tuple[Figure, Axes]:
     fig, ax = plt.subplots()
     ax.imshow(preview_image, cmap="gray", vmin = np.percentile(preview_image, 2.5), vmax = np.percentile(preview_image, 97.5))
     ax.grid(color = 'gray', linestyle = '--', linewidth = 1)
@@ -50,8 +55,8 @@ def plot_window_size_preview(preview_image: np.ndarray, window_size: int, row_cr
         plt.hlines([0, row_cropping_idx], xmin=0, xmax=col_cropping_idx, color = 'cyan', linewidth = 2)
         plt.vlines([0, col_cropping_idx], ymin=0, ymax=row_cropping_idx, color = 'cyan', linewidth = 2)
     else:
-        roi_boundary_coords_for_plotting = np.asarray(roi.boundary_coords)
-        plt.plot(roi_boundary_coords_for_plotting[:, 1], roi_boundary_coords_for_plotting[:, 0], c = 'cyan', linewidth = 2)
+        focus_area_boundary_coords_for_plotting = np.asarray(focus_area.boundary_coords)
+        plt.plot(focus_area_boundary_coords_for_plotting[:, 1], focus_area_boundary_coords_for_plotting[:, 0], c = 'cyan', linewidth = 2)
     ax.set_xticks(np.arange(0, preview_image.shape[1], window_size), labels = [])
     ax.set_xticks(np.arange(window_size/2, col_cropping_idx + window_size/2, window_size), 
                   labels = np.arange(1, col_cropping_idx/window_size + 1, 1, dtype='int'), minor = True)

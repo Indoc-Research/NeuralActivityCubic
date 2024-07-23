@@ -75,20 +75,20 @@ class Model:
         validated_configs = self._get_configs_required_for_specific_function(configs, self._assertion_for_create_analysis_jobs)
         self.add_info_to_logs('Basic configurations for data import validated. Starting creation of analysis job(s)...', True)
         if validated_configs['batch_mode'] == False:
-            if validated_configs['roi_mode'] == False:
+            if validated_configs['focus_area'] == False:
                 self._add_new_recording_without_rois_to_analysis_job_queue(validated_configs['data_source_path'], validated_configs['batch_mode'])
-            else: #'roi_mode' == True:
+            else: #'focus_area' == True:
                 self._add_new_recording_with_rois_to_analysis_job_queue(validated_configs['data_source_path'])
         else: #'batch_mode' == True:
             all_subdirs = [subdir for subdir in validated_configs['data_source_path'].iterdir() if subdir.is_dir() and (subdir.name.startswith('.') == False)]
             all_subdirs.sort()
             total_step_count = len(all_subdirs)
             progress_step_size = 100 / total_step_count
-            if validated_configs['roi_mode'] == False:
+            if validated_configs['focus_area'] == False:
                 for idx, subdir_path in enumerate(all_subdirs):
                     self._add_new_recording_without_rois_to_analysis_job_queue(subdir_path, validated_configs['batch_mode'])
                     self.add_info_to_logs(f'Job creation for {subdir_path} completed.', True, min((idx+1)*progress_step_size, 100.0))
-            else: #'roi_mode' == True:
+            else: #'focus_area' == True:
                 for idx, subdir_path in enumerate(all_subdirs):
                     self._add_new_recording_with_rois_to_analysis_job_queue(subdir_path)
                     self.add_info_to_logs(f'Job creation(s) for {subdir_path} completed.', True, min((idx+1)*progress_step_size, 100.0))
@@ -103,7 +103,7 @@ class Model:
             self._check_if_gui_setup_is_completed()
 
     
-    def _assertion_for_create_analysis_jobs(self, batch_mode: bool, roi_mode: bool, data_source_path: Path) -> None:
+    def _assertion_for_create_analysis_jobs(self, roi_mode: bool, batch_mode: bool, focus_area: bool, data_source_path: Path) -> None:
         # just a convenience function to use the existing config validation and filtering methods
         pass
         
