@@ -99,18 +99,24 @@ class SourceDataPanel:
     def _build_widget(self) -> w.HBox:
         # Create and configure all elements:
         io_source_data_info = w.HTML(value="<p style='font-size:16px; font-weight:bold; text-align:center;'>General Settings</p>")
-        self.user_settings_batch_mode = w.Checkbox(description = 'Enable batch processing', value = False, style = {'description_width': '0px'}, layout = {'width': '180px'})
-        self.user_settings_roi_mode = w.Checkbox(description = 'Limit analysis to ROIs', value = False, style = {'description_width': '0px'}, layout = {'width': '180px'})
-        processing_modes_box = w.VBox([self.user_settings_batch_mode, self.user_settings_roi_mode])
+        self.user_settings_batch_mode = w.Checkbox(description = 'Enable batch processing', value = False, indent = False) #style = {'description_width': '0px'}, layout = {'width': '180px'}
+        self.user_settings_focus_area = w.Checkbox(description = 'Limit analysis to focus area', value = False, indent = False) #style = {'description_width': '0px'}, layout = {'width': '180px'}
+        self.user_settings_roi_mode = w.Dropdown(options = [('Use adjustable grid to create ROIs (congruent squares)', 'grid'), ('Load predefined ROIs from source data', 'rois')],
+                                                 description = 'ROIs:',
+                                                 value = 'grid',
+                                                 style = {'description_width': 'initial'}, 
+                                                 layout = {'width': 'initial'})
+        processing_modes_box = w.VBox([self.user_settings_roi_mode, w.HBox([self.user_settings_batch_mode, self.user_settings_focus_area])], layout = {'width': '30%'})
         self.user_settings_data_source_path = FileChooser(title = 'Please select the recording file:', layout = w.Layout(width = '50%'))
         self.user_settings_data_source_path.rows = 4
         self.load_source_data_button = w.Button(description = 'Load Data', 
                                                 disabled = True, 
                                                 tooltip = 'Please first select which source data to load!', 
-                                                layout = w.Layout(width = '20%', height = '55px'))
+                                                layout = w.Layout(width = '15%', height = '55px'))
         vertical_spacer = w.HTML(value = '', layout = w.Layout(height = '5px'))
         # Enable event handling:
         self.user_settings_batch_mode.observe(self._change_batch_mode_config)
+        self.user_settings_focus_area.observe(self._change_focus_area_config)
         self.user_settings_roi_mode.observe(self._change_roi_mode_config)
         self.user_settings_data_source_path.register_callback(self._data_source_path_chosen)
         # Arrange elements:
@@ -123,16 +129,25 @@ class SourceDataPanel:
 
 
     def _change_roi_mode_config(self, change) -> None:
+        if self.user_settings_roi_mode.value == 'grid':
+            self.user_settings_focus_area = change_widget_state(self.user_settings_focus_area, disabled = False)
+        else:
+            self.user_settings_focus_area = change_widget_state(self.user_settings_focus_area, value = False, disabled = True, tooltip = 'Only supported if ROIs are created via grid')
+            fake_change = {'name': 'value', 'new': self.user_settings_focus_area.value}
+            self._change_focus_area_config(fake_change)             
+        
+
+    def _change_focus_area_config(self, change) -> None:
         if self.user_settings_batch_mode.value == True:
             pass
         else: # batch_mode == False
             if change['name'] == 'value':
                 self.load_source_data_button = change_widget_state(self.load_source_data_button, disabled = True, tooltip = 'Please select which source data to load!')
                 self.user_settings_data_source_path.reset()           
-                if change['new'] == True: # roi_mode == True
+                if change['new'] == True: # focus_area == True
                     self.user_settings_data_source_path.show_only_dirs = True
                     self.user_settings_data_source_path.title = 'Please select the directory that contains the recording and all ROI files:'
-                else: # roi_mode == False
+                else: # focus_area == False
                     self.user_settings_data_source_path.show_only_dirs = False
                     self.user_settings_data_source_path.title = 'Please select the recording file:'                
 
@@ -145,14 +160,14 @@ class SourceDataPanel:
                 self.user_settings_data_source_path.show_only_dirs = True
                 self.user_settings_data_source_path.title = 'Please select the parent directory that contains subdirectories with the individual source data:'
             else: #batch_mode == False
-                fake_change = {'name': 'value', 'new': self.user_settings_roi_mode.value}
-                self._change_roi_mode_config(fake_change)                          
+                fake_change = {'name': 'value', 'new': self.user_settings_focus_area.value}
+                self._change_focus_area_config(fake_change)                          
 
 
     def _data_source_path_chosen(self, file_chooser_obj) -> None:
         if file_chooser_obj.value != None:
             source_data_path = Path(file_chooser_obj.value)
-            if (self.user_settings_batch_mode.value == True) or (self.user_settings_roi_mode.value == True):
+            if (self.user_settings_batch_mode.value == True) or (self.user_settings_focus_area.value == True):
                 if source_data_path.is_dir() == True:
                     self.load_source_data_button = change_widget_state(self.load_source_data_button, disabled = False, tooltip = 'Click to load the selected source data')
                 else:
