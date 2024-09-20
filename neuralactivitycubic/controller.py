@@ -1,5 +1,6 @@
 from .model import Model
 from .view import WidgetsInterface
+from . import results
 from PIL import Image
 import matplotlib.pyplot as plt
 from pathlib import Path
@@ -40,22 +41,26 @@ class App:
             self.model.add_info_to_logs('Failed to create any analysis job(s). Please inspect logs for more details!', True)
             self.view.user_info_panel.progress_bar.bar_style = 'danger'
         else:
-            representative_job = self.model.analysis_job_queue[0]
-            representative_job.load_data_into_memory()
-            self.view.adjust_widgets_to_loaded_data(total_frames = representative_job.recording.zstack.shape[0])
-            self.view.main_screen.show_output_screen()
-            with self.view.main_screen.output:
-                fig = plt.figure(figsize = (600*self.pixel_conversion, 400*self.pixel_conversion))
-                if representative_job.roi_based == True:
-                    roi_boundary_coords = np.asarray(representative_job.roi.boundary_coords)
-                    plt.plot(roi_boundary_coords[:, 1], roi_boundary_coords[:, 0], c = 'cyan', linewidth = 2)
-                    plt.imshow(representative_job.recording.preview, cmap = 'gray')
-                else:
-                    plt.imshow(representative_job.recording.preview, cmap = 'gray')
-                plt.tight_layout()
-                plt.show()
+            self._display_preview_of_representative_job(window_size = user_settings['window_size'])
             self.model.add_info_to_logs(f'Data import completed! {len(self.model.analysis_job_queue)} job(s) in queue.', True, 100.0)
             self.view.enable_analysis()
+
+    
+    def _display_preview_of_representative_job(self, window_size: int) -> None:
+        representative_job = self.model.analysis_job_queue[0]
+        representative_job.load_data_into_memory(window_size)
+        self.view.adjust_widgets_to_loaded_data(total_frames = representative_job.recording.zstack.shape[0])
+        self.view.main_screen.show_output_screen()
+        with self.view.main_screen.output:
+            fig = plt.figure(figsize = (600*self.pixel_conversion, 400*self.pixel_conversion))
+            if representative_job.focus_area_enabled == True:
+                results.plot_roi_boundaries(representative_job.focus_area, 'cyan', 'solid', 2)
+            if representative_job.rois_source == 'file':
+                for roi in representative_job.all_rois:
+                    results.plot_roi_boundaries(roi, 'magenta', 'solid', 1)                 
+            plt.imshow(representative_job.recording.preview, cmap = 'gray')
+            plt.tight_layout()
+            plt.show()
 
 
     def _run_button_clicked(self, change) -> None:
