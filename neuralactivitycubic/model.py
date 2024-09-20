@@ -7,9 +7,9 @@ import inspect
 import multiprocessing
 
 from .processing import AnalysisJob
-from .input import RecordingLoaderFactory, ROILoaderFactory, RecLoaderROILoaderCombinator, get_filepaths_with_supported_extension_in_dirpath
+from .input import RecordingLoaderFactory, ROILoaderFactory, RecordingLoader, ROILoader, get_filepaths_with_supported_extension_in_dirpath, FocusAreaPathRestrictions
 
-from typing import Tuple, Dict, Callable, Optional, Any
+from typing import Tuple, Dict, Callable, Optional, Any, List, Union
 from matplotlib.figure import Figure
 from matplotlib.axes._axes import Axes 
 
@@ -69,31 +69,27 @@ class Model:
         if (display_in_gui == True) and (self.gui_enabled == True): 
             self.callback_view_update_infos(message, progress_in_percent)
 
-    
+
     def create_analysis_jobs(self, configs: Dict[str, Any]) -> None:
         self._ensure_data_from_previous_jobs_was_removed()
         validated_configs = self._get_configs_required_for_specific_function(configs, self._assertion_for_create_analysis_jobs)
         self.add_info_to_logs('Basic configurations for data import validated. Starting creation of analysis job(s)...', True)
-        if validated_configs['batch_mode'] == False:
-            if validated_configs['roi_mode'] == False:
-                self._add_new_recording_without_rois_to_analysis_job_queue(validated_configs['data_source_path'], validated_configs['batch_mode'])
-            else: #'roi_mode' == True:
-                self._add_new_recording_with_rois_to_analysis_job_queue(validated_configs['data_source_path'])
-        else: #'batch_mode' == True:
-            all_subdirs = [subdir for subdir in validated_configs['data_source_path'].iterdir() if subdir.is_dir() and (subdir.name.startswith('.') == False)]
-            all_subdirs.sort()
-            total_step_count = len(all_subdirs)
+        data_source_path, roi_mode, focus_area_enabled = validated_configs['data_source_path'], validated_configs['roi_mode'], validated_configs['focus_area_enabled']
+        if validated_configs['batch_mode'] == True:
+            all_subdir_paths_with_rec_file = self._get_all_subdir_paths_with_rec_file(data_source_path)
+            all_subdir_paths_with_rec_file.sort()
+            total_step_count = len(all_subdir_paths_with_rec_file)
             progress_step_size = 100 / total_step_count
-            if validated_configs['roi_mode'] == False:
-                for idx, subdir_path in enumerate(all_subdirs):
-                    self._add_new_recording_without_rois_to_analysis_job_queue(subdir_path, validated_configs['batch_mode'])
-                    self.add_info_to_logs(f'Job creation for {subdir_path} completed.', True, min((idx+1)*progress_step_size, 100.0))
-            else: #'roi_mode' == True:
-                for idx, subdir_path in enumerate(all_subdirs):
-                    self._add_new_recording_with_rois_to_analysis_job_queue(subdir_path)
-                    self.add_info_to_logs(f'Job creation(s) for {subdir_path} completed.', True, min((idx+1)*progress_step_size, 100.0))
+            for idx, subdir_path in enumerate(all_subdir_paths_with_rec_file):
+                self.add_info_to_logs(f'Starting with Job creation(s) for {subdir_path} ...', True)
+                self._create_and_add_analysis_jobs_to_queue_for_single_rec(subdir_path, roi_mode, focus_area_enabled)
+                self.add_info_to_logs(f'Finished Job creation(s) for {subdir_path}!', True, min((idx+1)*progress_step_size, 100.0))
+        else:
+            self.add_info_to_logs(f'Starting with Job creation(s) for {data_source_path} ...', True)
+            self._create_and_add_analysis_jobs_to_queue_for_single_rec(data_source_path, roi_mode, focus_area_enabled)
+            self.add_info_to_logs(f'Finished Job creation(s) for {data_source_path}!', True, 100.0)
         self.add_info_to_logs('All job creation(s) completed.', True, 100.0)
-        
+
 
     def _ensure_data_from_previous_jobs_was_removed(self) -> None:
         if len(self.analysis_job_queue) > 0:
@@ -101,74 +97,116 @@ class Model:
             self.analysis_job_queue = []
             self.logs = []
             self._check_if_gui_setup_is_completed()
+            
 
-    
-    def _assertion_for_create_analysis_jobs(self, batch_mode: bool, roi_mode: bool, data_source_path: Path) -> None:
+    def _assertion_for_create_analysis_jobs(self, roi_mode: str, batch_mode: bool, focus_area_enabled: bool, data_source_path: Path) -> None:
         # just a convenience function to use the existing config validation and filtering methods
         pass
-        
 
-    def _add_new_recording_without_rois_to_analysis_job_queue(self, filepath: Path, batch_mode: bool) -> None:
+
+    def _get_all_subdir_paths_with_rec_file(self, top_level_dir_path: Path) -> List[Path]:
         rec_loader_factory = RecordingLoaderFactory()
-        job_idx = len(self.analysis_job_queue)
-        if batch_mode == True:
-            self.add_info_to_logs(f'Looking for a valid recording file in {filepath}...', True)
-            valid_filepaths = get_filepaths_with_supported_extension_in_dirpath(filepath, rec_loader_factory.all_supported_extensions, 1)
+        supported_extensions_for_recordings = rec_loader_factory.all_supported_extensions
+        all_subdir_paths_that_contain_a_supported_recording_file = []
+        for elem in top_level_dir_path.iterdir():
+            if elem.name.startswith('.') == False:
+                if elem.is_dir():
+                    supported_recording_filepaths = [elem_2 for elem_2 in elem.iterdir() if elem_2.suffix in supported_extensions_for_recordings]
+                    if len(supported_recording_filepaths) > 0:
+                        all_subdir_paths_that_contain_a_supported_recording_file.append(elem)
+        return all_subdir_paths_that_contain_a_supported_recording_file
+
+
+    def _create_and_add_analysis_jobs_to_queue_for_single_rec(self, data_source_path: Path, roi_mode: str, focus_area_enabled: bool) -> None:
+        recording_loader = self._get_recording_loader(data_source_path)
+        if roi_mode == 'file':
+            roi_loaders = self._get_all_roi_loaders(data_source_path)
+        else:
+            roi_loaders = None
+        if focus_area_enabled == True:
+            focus_area_dir_path = self._get_focus_area_dir_path(data_source_path)
+            if focus_area_dir_path == None:
+                analysis_job = self._create_single_analysis_job(recording_loader, roi_loaders)
+                self.analysis_job_queue.append(analysis_job)
+                self.add_info_to_logs(f'Successfully created a single job for {data_source_path} at queue position: #{len(self.analysis_job_queue)}.', True)
+            else:
+                all_focus_area_loaders = self._get_all_roi_loaders(focus_area_dir_path)
+                assert len(all_focus_area_loaders) > 0, f'Focus Area analysis enabled, but no focus area ROIs could be found. Please revisit your source data and retry!'
+                for idx, focus_area_loader in enumerate(all_focus_area_loaders):
+                    analysis_job_with_focus_area = self._create_single_analysis_job(recording_loader, roi_loaders, focus_area_loader)
+                    self.analysis_job_queue.append(analysis_job_with_focus_area)
+                    job_creation_message = (f'Successfully created {idx + 1} out of {len(all_focus_area_loaders)} job(s) for {data_source_path} '
+                                            f'at queue position: #{len(self.analysis_job_queue)}.')
+                    self.add_info_to_logs(job_creation_message, True)
+        else:
+            analysis_job = self._create_single_analysis_job(recording_loader, roi_loaders)
+            self.analysis_job_queue.append(analysis_job)
+            self.add_info_to_logs(f'Successfully created a single job for {data_source_path} at queue position: #{len(self.analysis_job_queue)}.', True)
+
+
+    def _get_recording_loader(self, data_source_path) -> RecordingLoader:
+        rec_loader_factory = RecordingLoaderFactory()
+        if data_source_path.is_dir() == True:
+            self.add_info_to_logs(f'Looking for a valid recording file in {data_source_path}...', True)
+            valid_filepaths = get_filepaths_with_supported_extension_in_dirpath(data_source_path, rec_loader_factory.all_supported_extensions, 1)
             if len(valid_filepaths) == 0:
-                self.add_info_to_logs(f'Could not find any recording files of supported type at {filepath}!', True)
+                self.add_info_to_logs(f'Could not find any recording files of supported type at {data_source_path}!', True)
             elif len(valid_filepaths) >  1:
-                too_many_files_message = (f'Found more than a single recording file of supported type at {filepath}, i.e.: {valid_filepaths}. '
-                                          f'However, only a single file was expected. NA3 continues with {valid_filepaths[0]} and will ignore the other files.')
-                self.add_info_to_logs(too_many_files_message, True)
                 recording_filepath = valid_filepaths[0]
+                too_many_files_message = (f'Found more than a single recording file of supported type at {data_source_path}, i.e.: {valid_filepaths}. '
+                                          f'However, only a single file was expected. NA3 continues with {recording_filepath} and will ignore the other files.')
+                self.add_info_to_logs(too_many_files_message, True)
             else:
                 recording_filepath = valid_filepaths[0]
+                self.add_info_to_logs(f'Found recording file of supported type at: {recording_filepath}.', True)
         else:
-            recording_filepath = filepath
-        self.add_info_to_logs(f'Starting to create a job for: {recording_filepath}', True)
-        try:
-            recording_loader = rec_loader_factory.get_loader(recording_filepath)
-        except NotImplementedError:
-            message = (f'Job creation failed! The data you selected ("{recording_filepath}") is not a supported recording file type! '
-                       f'Currently supported file types for recordings are: {rec_loader_factory.all_supported_extensions}.')
-            if batch_mode == True:
-                message += 'For your convenience, this job is skipped and NA3 continues with the next one instead.'
-            self.add_info_to_logs(message, True)
-        except Exception as e:
-            message = 'Job creation failed due to an unexpected error: '
-            all_unexpected_exceptions = [exception_message for exception_message in e.args]
-            for unexpected_exception in all_unexpected_exceptions:
-                message += f'"{unexpected_exception}"; '
-            self.add_info_to_logs(message, True)
-            self.add_info_to_logs('Continuing with next job, if available.', True)
-        else: # no errors in try
-            self.analysis_job_queue.append(AnalysisJob(self.num_processes, recording_loader))
-            self.add_info_to_logs(f'Successfully created job for: {recording_filepath} at index #{job_idx}.', True)
+            recording_filepath = data_source_path
+            self.add_info_to_logs(f'Found recording file of supported type at: {recording_filepath}.', True)
+        recording_loader = rec_loader_factory.get_loader(recording_filepath)
+        return recording_loader
 
 
-    def _add_new_recording_with_rois_to_analysis_job_queue(self, dir_path) -> None:
-        self.add_info_to_logs(f'Looking for a recording file and ROI files in {dir_path} and trying to create corresponding jobs...', True)
-        rec_roi_loader = RecLoaderROILoaderCombinator(dir_path)
-        try:
-            recording_and_roi_loader_combos = rec_roi_loader.get_all_recording_and_roi_loader_combos()
-        except NotImplementedError:
-            rec_loader_factory = RecordingLoaderFactory()
-            message = (f'Job creation failed! Could not find a supported recording file in "{dir_path}"! '
-                       f'Currently supported file types for recordings are: {rec_loader_factory.all_supported_extensions}. '
-                        'For your convenience, this job is skipped and NA3 continues with the next one instead.')
-            self.add_info_to_logs(message, True)
-        except Exception as e:
-            message = 'Job creation failed due to an unexpected error: '
-            all_unexpected_exceptions = [exception_message for exception_message in e.args]
-            for unexpected_exception in all_unexpected_exceptions:
-                message += f'"{unexpected_exception}"; '
-            self.add_info_to_logs(message, True)
-            self.add_info_to_logs('Continuing with next job, if available.', True)
-        else: # no errors in try
-            for recording_loader, roi_loader in recording_and_roi_loader_combos:
-                job_idx = len(self.analysis_job_queue)
-                self.analysis_job_queue.append(AnalysisJob(self.num_processes, recording_loader, roi_loader))
-                self.add_info_to_logs(f'Successfully created job for: {recording_loader.filepath} with {roi_loader.filepath} at index #{job_idx}.', True)
+    def _get_all_roi_loaders(self, data_source_path: Path) -> List[ROILoader]:
+        assert data_source_path.is_dir(), f'You must provide a directory as source data when using ROI mode or enabling Focus Areas. Please revisit your input data and retry.'
+        roi_loader_factory = ROILoaderFactory()
+        all_filepaths_with_supported_filetype_extensions = get_filepaths_with_supported_extension_in_dirpath(data_source_path, roi_loader_factory.all_supported_extensions)
+        all_roi_loaders = [roi_loader_factory.get_loader(roi_filepath) for roi_filepath in all_filepaths_with_supported_filetype_extensions]
+        return all_roi_loaders
+
+
+    def _get_focus_area_dir_path(self, data_source_path: Path) -> Path:
+        focus_area_path_restrictions = FocusAreaPathRestrictions()
+        supported_dir_names = focus_area_path_restrictions.supported_dir_names
+        if data_source_path.is_dir():
+            source_dir_path = data_source_path
+        else:
+            source_dir_path = data_source_path.parent
+        dirs_with_valid_name = [elem for elem in source_dir_path.iterdir() if (elem.name in supported_dir_names) & (elem.is_dir() == True)]
+        if len(dirs_with_valid_name) == 0:
+            no_dir_found_message = (f'You enabled Focus Area but a correspondingly named directory could not be found in {source_dir_path}. '
+                                    f'Please use one of the following for the name of the directory that contains the Focus Area ROIs: {supported_dir_names}. '
+                                    'In absence of such a directory, analysis is continued without using the Focus Area mode for this data.')
+            self.add_info_to_logs(no_dir_found_message, True)
+            focus_area_dir_path = None
+        elif len(dirs_with_valid_name) > 1:
+            too_many_dirs = (f'More than a single Focus Area directory was found in the following parent directory: {source_dir_path}, i.e.: '
+                             f'{dirs_with_valid_name}. However, only the use of a single one that contains all your Focus Area ROIS is '
+                             f'currently supported. {dirs_with_valid_name[0]} will be used for this analysis, while the other(s): {dirs_with_valid_name[1:]} '
+                             'will be ignored to continue processing.')
+            self.add_info_to_logs(too_many_dirs, True)
+            focus_area_dir_path = dirs_with_valid_name[0]
+        else:
+            focus_area_dir_path = dirs_with_valid_name[0]
+        return focus_area_dir_path
+
+
+    def _create_single_analysis_job(self, recording_loader: RecordingLoader, roi_loaders: Union[List[ROILoader], None], focus_area_loader: Optional[ROILoader]=None) -> AnalysisJob:
+        data_loaders = {'recording': recording_loader}
+        if roi_loaders != None:
+            data_loaders['rois'] = roi_loaders
+        if focus_area_loader != None:
+            data_loaders['focus_area'] = focus_area_loader
+        return AnalysisJob(self.num_processes, data_loaders)
     
 
     def run_analysis(self, configs: Dict[str, Any]) -> None:
@@ -191,10 +229,10 @@ class Model:
             if self.gui_enabled == True:
                 self.callback_view_show_output_screen()
                 with self.view_output:
-                    overview_results_fig, overview_results_ax = analysis_job.overview_results
-                    overview_results_fig.set_figheight(400 * self.pixel_conversion)
-                    overview_results_fig.tight_layout()
-                    plt.show(overview_results_fig)
+                    activity_overview_fig = analysis_job.activity_overview_plot[0]
+                    activity_overview_fig.set_figheight(400 * self.pixel_conversion)
+                    activity_overview_fig.tight_layout()
+                    plt.show(activity_overview_fig)
             self._save_user_settings_as_json(configs, analysis_job)
             self.add_info_to_logs(f'Successfully finished processing of analysis job with index #{job_idx}. {job_idx + 1} of {total_step_count} total job(s) completed.', 
                                   True,
@@ -244,10 +282,13 @@ class Model:
     def _save_user_settings_as_json(self, configs: Dict[str, Any], analysis_job: AnalysisJob) -> None:
         filepath = analysis_job.results_dir_path.joinpath('user_settings.json')
         configs['recording_filepath'] = analysis_job.recording.filepath
-        if analysis_job.roi_based == True:
-            configs['roi_filepath'] = analysis_job.roi.filepath
+        if analysis_job.focus_area_enabled == True:
+            configs['focus_area_filepath'] = analysis_job.focus_area.filepath
         else:
-            configs['roi_filepath'] = None
+            configs['focus_area_filepath'] = None
+        if analysis_job.rois_source == 'file':
+            for idx, roi in enumerate(analysis_job.all_rois):
+                configs[f'filepath_analyzed_roi_#{idx + 1}'] = roi.filepath.as_posix()
         configs_preformatted_for_json = {}
         for key, value in configs.items():
             if isinstance(value, Path):

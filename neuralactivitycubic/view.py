@@ -99,18 +99,24 @@ class SourceDataPanel:
     def _build_widget(self) -> w.HBox:
         # Create and configure all elements:
         io_source_data_info = w.HTML(value="<p style='font-size:16px; font-weight:bold; text-align:center;'>General Settings</p>")
-        self.user_settings_batch_mode = w.Checkbox(description = 'Enable batch processing', value = False, style = {'description_width': '0px'}, layout = {'width': '180px'})
-        self.user_settings_roi_mode = w.Checkbox(description = 'Limit analysis to ROIs', value = False, style = {'description_width': '0px'}, layout = {'width': '180px'})
-        processing_modes_box = w.VBox([self.user_settings_batch_mode, self.user_settings_roi_mode])
+        self.user_settings_batch_mode = w.Checkbox(description = 'Enable batch processing', value = False, indent = False)
+        self.user_settings_focus_area_enabled = w.Checkbox(description = 'Limit analysis to focus area', value = False, indent = False)
+        self.user_settings_roi_mode = w.Dropdown(options = [('Use adjustable grid to create ROIs (congruent squares)', 'grid'), ('Load predefined ROIs from source data', 'file')],
+                                                 description = 'ROIs:',
+                                                 value = 'grid',
+                                                 style = {'description_width': 'initial'}, 
+                                                 layout = {'width': 'initial'})
+        processing_modes_box = w.VBox([self.user_settings_roi_mode, w.HBox([self.user_settings_batch_mode, self.user_settings_focus_area_enabled])], layout = {'width': '33%'})
         self.user_settings_data_source_path = FileChooser(title = 'Please select the recording file:', layout = w.Layout(width = '50%'))
-        self.user_settings_data_source_path.rows = 4
+        self.user_settings_data_source_path.rows = 8
         self.load_source_data_button = w.Button(description = 'Load Data', 
                                                 disabled = True, 
                                                 tooltip = 'Please first select which source data to load!', 
-                                                layout = w.Layout(width = '20%', height = '55px'))
+                                                layout = w.Layout(width = '12%', height = '55px'))
         vertical_spacer = w.HTML(value = '', layout = w.Layout(height = '5px'))
         # Enable event handling:
         self.user_settings_batch_mode.observe(self._change_batch_mode_config)
+        self.user_settings_focus_area_enabled.observe(self._change_focus_area_config)
         self.user_settings_roi_mode.observe(self._change_roi_mode_config)
         self.user_settings_data_source_path.register_callback(self._data_source_path_chosen)
         # Arrange elements:
@@ -122,53 +128,72 @@ class SourceDataPanel:
         return w.HBox([general_settings_box], layout = w.Layout(width = '100%', justify_content = 'center'))
 
 
+    def _change_user_settings_data_source_path_configs(self, show_dirs_only: bool, title: str, reset: bool) -> None:
+        if reset == True:
+            self.user_settings_data_source_path.reset()
+            self.load_source_data_button = change_widget_state(self.load_source_data_button, disabled = True, tooltip = 'Please select which source data to load!')
+        self.user_settings_data_source_path.show_only_dirs = show_dirs_only
+        self.user_settings_data_source_path.title = title
+        
+    
     def _change_roi_mode_config(self, change) -> None:
-        if self.user_settings_batch_mode.value == True:
-            pass
-        else: # batch_mode == False
-            if change['name'] == 'value':
-                self.load_source_data_button = change_widget_state(self.load_source_data_button, disabled = True, tooltip = 'Please select which source data to load!')
-                self.user_settings_data_source_path.reset()           
-                if change['new'] == True: # roi_mode == True
-                    self.user_settings_data_source_path.show_only_dirs = True
-                    self.user_settings_data_source_path.title = 'Please select the directory that contains the recording and all ROI files:'
-                else: # roi_mode == False
-                    self.user_settings_data_source_path.show_only_dirs = False
-                    self.user_settings_data_source_path.title = 'Please select the recording file:'                
+        if change['name'] == 'value':
+            if change['new'] == 'file':
+                show_only_dirs = True
+                if self.user_settings_batch_mode.value == True:
+                    title = 'Please select the parent directory that contains subdirectories with the individual source data:'
+                elif self.user_settings_focus_area_enabled.value == True:
+                    title = 'Please select the directory that contains the recording, all ROI files, and a directory with focus area ROI(s):'
+                else:
+                    title = 'Please select the directory that contains the recording and all ROI files:'
+            else:
+                if self.user_settings_batch_mode.value == True:
+                    title = 'Please select the parent directory that contains subdirectories with the individual source data:'
+                    show_only_dirs = True
+                elif self.user_settings_focus_area_enabled.value == True:
+                    title = 'Please select the directory that contains the recording and a directory with focus area ROI(s):'
+                    show_only_dirs = True
+                else:
+                    title = 'Please select the recording file:'
+                    show_only_dirs = False
+            reset = self.user_settings_data_source_path.show_only_dirs != show_only_dirs
+            self._change_user_settings_data_source_path_configs(show_only_dirs, title, reset)
+           
+        
+
+    def _change_focus_area_config(self, change) -> None:
+        if change['name'] == 'value':
+            roi_mode = self.user_settings_roi_mode.value
+            fake_change = {'name': 'value', 'new': roi_mode}
+            self._change_roi_mode_config(fake_change)
+           
 
     
     def _change_batch_mode_config(self, change) -> None:
         if change['name'] == 'value':
-            self.load_source_data_button = change_widget_state(self.load_source_data_button, disabled = True, tooltip = 'Please select which source data to load!')
-            self.user_settings_data_source_path.reset()
-            if change['new'] == True: # batch_mode == True
-                self.user_settings_data_source_path.show_only_dirs = True
-                self.user_settings_data_source_path.title = 'Please select the parent directory that contains subdirectories with the individual source data:'
-            else: #batch_mode == False
-                fake_change = {'name': 'value', 'new': self.user_settings_roi_mode.value}
-                self._change_roi_mode_config(fake_change)                          
+            roi_mode = self.user_settings_roi_mode.value
+            fake_change = {'name': 'value', 'new': roi_mode}
+            self._change_roi_mode_config(fake_change)                     
 
 
     def _data_source_path_chosen(self, file_chooser_obj) -> None:
         if file_chooser_obj.value != None:
+            enable_loading = False
             source_data_path = Path(file_chooser_obj.value)
-            if (self.user_settings_batch_mode.value == True) or (self.user_settings_roi_mode.value == True):
+            if self.user_settings_roi_mode.value == 'file':
                 if source_data_path.is_dir() == True:
-                    self.load_source_data_button = change_widget_state(self.load_source_data_button, disabled = False, tooltip = 'Click to load the selected source data')
-                else:
-                    self.user_settings_data_source_path.reset()
-                    self.load_source_data_button = change_widget_state(self.load_source_data_button, disabled = True, tooltip = 'Please select which source data to load!')
-                    message = 'You have to select a directory if batch processing or ROI-focused analysis are enabled!'
-                    self.user_info_panel.add_new_logs(message)
+                    enable_loading = True
             else:
-                if source_data_path.is_file() == True:
-                    self.load_source_data_button = change_widget_state(self.load_source_data_button, disabled = False, tooltip = 'Click to load the selected source data')
+                if (self.user_settings_batch_mode.value == True) or (self.user_settings_focus_area_enabled.value == True):
+                    if source_data_path.is_dir() == True:
+                        enable_loading = True
                 else:
-                    self.user_settings_data_source_path.reset()
-                    self.load_source_data_button = change_widget_state(self.load_source_data_button, disabled = True, tooltip = 'Please select which source data to load!')
-                    message = 'You have to select a single file if neither batch processing nor ROI-focused analysis are enabled!'
-                    self.user_info_panel.add_new_logs(message)
-
+                    if source_data_path.is_file() == True:
+                        enable_loading = True
+            if enable_loading == True:
+                self.load_source_data_button = change_widget_state(self.load_source_data_button, disabled = False, tooltip = 'Click to load the selected source data')
+            else:
+                self.load_source_data_button = change_widget_state(self.load_source_data_button, disabled = True, tooltip = 'Please select which source data to load!')
 
 
 class AnalysisSettingsPanel:
@@ -224,8 +249,8 @@ class AnalysisSettingsPanel:
         optional_info = w.Label(value = 'Optional Settings:', style = {'text_align': 'left', 'font_weight': 'bold'}, layout = w.Layout(width = '90%'))
         self.user_settings_include_variance = w.Checkbox(description = 'include variance', value = False, indent = False, disabled = True, 
                                                          layout = w.Layout(width = '35%'), style = {'description_width': 'initial'})
-        self.user_settings_variance = w.BoundedFloatText(description = 'Variance:', disabled = True,
-                                                         value = 3.0, min = 0.0, max = 30.0, step = 0.1,
+        self.user_settings_variance = w.BoundedIntText(description = 'Variance:', disabled = True,
+                                                         value = 15, min = 5, max = 200, step = 5,
                                                          style = {'description_width': 'initial'},
                                                          layout = w.Layout(width = '65%', visibility = 'hidden'))
         self.user_settings_limit_analysis_to_frame_interval = w.Checkbox(description = 'analyze interval', indent = False, 
@@ -283,7 +308,7 @@ class AnalysisSettingsPanel:
         return analysis_settings_box
 
     
-    def enable_analysis_settings(self, enable_all_widgets: bool=True) -> None:
+    def enable_analysis_settings(self, enable_all_widgets: bool, roi_mode: str) -> None:
         if enable_all_widgets == True:
             self.run_analysis_button = change_widget_state(self.run_analysis_button, 
                                                            disabled = False, 
@@ -298,6 +323,9 @@ class AnalysisSettingsPanel:
                 attribute_obj.disabled = not enable_all_widgets
             elif attribute_name == 'preview_window_size_button':
                 attribute_obj.disabled = not enable_all_widgets
+        if roi_mode == 'file':
+            self.preview_window_size_button.disabled = True
+            self.user_settings_window_size.disabled = True
     
 
     def _include_variance_config_changed(self, change) -> None:
@@ -359,7 +387,7 @@ class MainScreen:
         if clear_output == True:
             self.output.clear_output()
         self.widget.children = self.output_screen.children
-        self.current_screen = 'output'   
+        self.current_screen = 'output'
 
 
 
@@ -373,6 +401,24 @@ class WidgetsInterface:
         self.widget = w.VBox([self.source_data_panel.widget, 
                               w.HBox([self.analysis_settings_panel.widget, self.main_screen.widget]),
                               self.user_info_panel.widget], layout = w.Layout(align_items = 'stretch', border = '1px solid'))
+        self._setup_observer_for_roi_mode_config_change()
+
+
+    def _setup_observer_for_roi_mode_config_change(self) -> None:
+        self.source_data_panel.user_settings_roi_mode.observe(self._enable_window_size_widgets)
+
+
+    def _enable_window_size_widgets(self, change) -> None:
+        if change['name'] == 'value':
+            if change['new'] == 'file':
+                change_widget_state(self.analysis_settings_panel.user_settings_window_size, disabled = True)
+                change_widget_state(self.analysis_settings_panel.preview_window_size_button, disabled = True)
+            else:
+                if self.analysis_settings_panel.user_settings_signal_to_noise_ratio.disabled == True:
+                    pass
+                else:
+                    change_widget_state(self.analysis_settings_panel.user_settings_window_size, disabled = False)
+                    change_widget_state(self.analysis_settings_panel.preview_window_size_button, disabled = False)                
 
 
     def update_infos(self, logs_message: Optional[str]=None, progress_in_percent: Optional[float]=None) -> None:
@@ -410,4 +456,5 @@ class WidgetsInterface:
 
 
     def enable_analysis(self, enable: bool=True) -> None:
-        self.analysis_settings_panel.enable_analysis_settings(enable)     
+        roi_mode = self.source_data_panel.user_settings_roi_mode.value
+        self.analysis_settings_panel.enable_analysis_settings(enable, roi_mode)     
