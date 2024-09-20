@@ -6,6 +6,17 @@ import roifile
 from abc import ABC, abstractmethod
 from typing import List, Dict, Tuple, Union, Optional, Any
 
+
+
+class FocusAreaPathRestrictions:
+    
+    @property
+    def supported_dir_names(self) -> List[str]:
+        supported_dir_names =  ['focus_area', 'focus_areas', 'focus-area', 'focus-areas', 'focus area', 'focus areas',
+                                'Focus_Area', 'Focus_Areas', 'Focus-Area', 'Focus-Areas', 'Focus Area', 'Focus Areas']
+        return supported_dir_names
+    
+
 #################################
 ###### Source Data Handler ######
 #################################
@@ -13,16 +24,18 @@ from typing import List, Dict, Tuple, Union, Optional, Any
 class Data(ABC):
 
     @abstractmethod
-    def inject_loaded_data(self, loaded_data: Any) -> None:
+    def _parse_loaded_data(self, loaded_data: Any) -> None:
         pass
 
-    def __init__(self, filepath: Path) -> None:
+    def __init__(self, filepath: Path, loaded_data: Any) -> None:
         self.filepath = filepath
+        self._parse_loaded_data(loaded_data)
+        
 
 
 class Recording(Data):
 
-    def inject_loaded_data(self, loaded_data: np.ndarray) -> None:
+    def _parse_loaded_data(self, loaded_data: np.ndarray) -> None:
         self.zstack = loaded_data
         self.estimated_bit_depth = self._estimate_bit_depth()
         self.preview = self._create_brightness_and_contrast_enhanced_preview()
@@ -66,17 +79,23 @@ class Recording(Data):
         return raw_image
 
 
+
 class ROI(Data):
 
-    def inject_loaded_data(self, loaded_data: List[Tuple[int, int]]) -> None:
-        self.boundary_coords = loaded_data
+    def _parse_loaded_data(self, loaded_data: List[Tuple[int, int]]) -> None:
+        self.boundary_row_col_coords = loaded_data
         self.as_polygon = self._convert_to_valid_polygon()
 
 
     def _convert_to_valid_polygon(self) -> Polygon:
-        roi_as_polygon = Polygon(self.boundary_coords)
+        roi_as_polygon = Polygon(self.boundary_row_col_coords)
         assert roi_as_polygon.is_valid, f'Something went wrong when trying to create a Polygon out of your ROI: {self.filepath}.'
         return roi_as_polygon
+
+
+    def add_label_id(self, label_id: str) -> None:
+        assert type(label_id) == str, f'"label_id" must be a string. However, you passed {label_id} which is of type {type(label_id)}.'
+        setattr(self, 'label_id', label_id)
 
 
 
@@ -88,12 +107,72 @@ class ROI(Data):
 class DataLoader(ABC):
 
     @abstractmethod
-    def load_data(self) -> Union[Data, Tuple[Data, Data]]:
+    def load_and_parse_file_content(self) -> Union[Data, List[Data]]:
         # This method will be called when the data should be loaded for analysis
         pass
 
     def __init__(self, filepath: Path) -> None:
         self.filepath = filepath
+
+
+
+class GridWrapperROILoader(DataLoader):
+
+    def set_configs_for_grid_creation(self, image_width: int, image_height: int, window_size: int) -> None:
+        self.configs = {}
+        self._add_to_configs_and_create_as_attribute('image_width', image_width)
+        self._add_to_configs_and_create_as_attribute('image_height', image_height)
+        self._add_to_configs_and_create_as_attribute('window_size', window_size)
+
+
+    def _add_to_configs_and_create_as_attribute(self, attribute_name: str, value: Any) -> None:
+        self.configs[attribute_name] = value
+        setattr(self, attribute_name, self.configs[attribute_name])
+
+    
+    def load_and_parse_file_content(self) -> List[ROI]:
+        row_cropping_idx, col_cropping_idx = self._get_cropping_indices_to_adjust_for_window_size()
+        self._add_to_configs_and_create_as_attribute('row_cropping_idx', row_cropping_idx)
+        self._add_to_configs_and_create_as_attribute('col_cropping_idx', col_cropping_idx)        
+        grid_row_idxs, grid_col_idxs = self._get_row_col_idxs_of_grid()
+        grid_row_labels, grid_col_labels = self._get_row_col_labels_for_rois_in_grid()
+        self._add_to_configs_and_create_as_attribute('max_len_row_label_id', len(str(grid_row_labels[-1])))
+        self._add_to_configs_and_create_as_attribute('max_len_col_label_id', len(str(grid_col_labels[-1])))
+        all_rois = []
+        for row_idx, row_label in zip(grid_row_idxs, grid_row_labels):
+            for col_idx, col_label in zip(grid_col_idxs, grid_col_labels):
+                square_corner_row_col_coords = self._get_boundary_row_col_coords_single_square(row_idx, col_idx)
+                label_id = f'{row_label}/{col_label}'
+                square_roi = ROI(self.filepath, square_corner_row_col_coords)
+                square_roi.add_label_id(label_id)
+                all_rois.append(square_roi)
+        return all_rois     
+
+    
+    def _get_cropping_indices_to_adjust_for_window_size(self) -> Tuple[int, int]:
+        row_cropping_index = (self.image_height // self.window_size) * self.window_size
+        col_cropping_index = (self.image_width // self.window_size) * self.window_size
+        return row_cropping_index, col_cropping_index
+        
+
+    def _get_row_col_idxs_of_grid(self) -> Tuple[np.ndarray, np.ndarray]:
+        grid_row_idxs = np.arange(start = 0, stop = self.row_cropping_idx, step = self.window_size)
+        grid_col_idxs = np.arange(start = 0, stop = self.col_cropping_idx, step = self.window_size)
+        return grid_row_idxs, grid_col_idxs
+
+
+    def _get_row_col_labels_for_rois_in_grid(self) -> Tuple[np.ndarray, np.ndarray]:
+        grid_row_labels = np.arange(start = 1, stop = self.row_cropping_idx / self.window_size + 1, step = 1, dtype = 'int')
+        grid_col_labels = np.arange(start = 1, stop = self.col_cropping_idx / self.window_size + 1, step = 1, dtype = 'int')
+        return grid_row_labels, grid_col_labels
+                
+    
+    def _get_boundary_row_col_coords_single_square(self, upper_left_corner_row_idx: int, upper_left_corner_col_idx: int) -> List[Tuple[(int, int)]]:
+        upper_left_corner = (upper_left_corner_row_idx, upper_left_corner_col_idx)
+        upper_right_corner = (upper_left_corner_row_idx, upper_left_corner_col_idx + self.window_size)
+        lower_right_corner = (upper_left_corner_row_idx + self.window_size, upper_left_corner_col_idx + self.window_size)
+        lower_left_corner = (upper_left_corner_row_idx + self.window_size, upper_left_corner_col_idx)
+        return [upper_left_corner, lower_left_corner, lower_right_corner, upper_right_corner, upper_left_corner]
 
 
 
@@ -113,10 +192,9 @@ class RecordingLoader(DataLoader):
         return all_frames
 
 
-    def load_data(self) -> Recording:
+    def load_and_parse_file_content(self) -> Recording:
         all_frames = self._load_all_frames()
-        recording = Recording(self.filepath)
-        recording.inject_loaded_data(all_frames)
+        recording = Recording(self.filepath, all_frames)
         return recording
 
 
@@ -161,39 +239,55 @@ class AVILoader(RecordingLoader):
 class ROILoader(DataLoader):
 
     @abstractmethod
-    def _get_boundary_coords(self) -> List[Tuple[int, int]]: 
+    def _get_boundary_row_col_coords_for_all_rois_in_source_data(self) -> List[List[Tuple[int, int]]]: 
         # To be implemented in individual subclasses
         # Return a list of Tuples, where each tuple represents one boundary point: (row_coord, col_coord)
         pass
 
     
-    def load_data(self) -> ROI: 
-        boundary_coords = self._get_boundary_coords()
-        boundary_coords = self._add_first_boundary_point_also_add_end_to_close_roi(boundary_coords)
-        roi = ROI(self.filepath)
-        roi.inject_loaded_data(boundary_coords)
-        return roi
+    def load_and_parse_file_content(self) -> List[ROI]:
+        boundary_row_col_coords_for_all_rois = self._get_boundary_row_col_coords_for_all_rois_in_source_data()
+        all_rois = []
+        for boundary_row_col_coords_single_roi in boundary_row_col_coords_for_all_rois:
+            boundary_row_col_coords_single_roi = self._add_first_boundary_point_also_add_end_to_close_roi(boundary_row_col_coords_single_roi)
+            roi = ROI(self.filepath, boundary_row_col_coords_single_roi)
+            all_rois.append(roi)
+        return all_rois
 
 
-    def _add_first_boundary_point_also_add_end_to_close_roi(self, boundary_coords: List[Tuple[int, int]]) -> List[Tuple[int, int]]:
-        first_boundary_point_coords = boundary_coords[0]
-        boundary_coords.append(first_boundary_point_coords)
-        return boundary_coords
+    def _add_first_boundary_point_also_add_end_to_close_roi(self, boundary_row_col_coords: List[Tuple[int, int]]) -> List[Tuple[int, int]]:
+        first_boundary_point_coords = boundary_row_col_coords[0]
+        boundary_row_col_coords.append(first_boundary_point_coords)
+        return boundary_row_col_coords
+
 
 
 class ImageJROILoader(ROILoader):
 
-    def _get_boundary_coords(self) -> List[Tuple[int, int]]:
-        roi_file_content = roifile.ImagejRoi.fromfile(self.filepath)
-        assert type(roi_file_content) != list, (
-            'NeuralActivityCubic can currently only handle loading ROI files that contain exactly one ROI per file. '
-            f'However, the ROI file you selected ("{self.filepath}") contains more than a single ROI! Please adjust '
-            'the file accordingly and retry.'
-        )
-        row_coords = roi_file_content.coordinates()[:, 1]
-        col_coords = roi_file_content.coordinates()[:, 0]
+    
+    def _get_boundary_row_col_coords_for_all_rois_in_source_data(self) -> List[List[Tuple[int, int]]]:
+        roi_file_content = roifile.roiread(self.filepath)
+        if type(roi_file_content) == list:
+            all_rois = self._extract_boundary_row_col_coords_from_roi_set(roi_file_content)
+        else:
+            all_rois = [self._extract_boundary_row_col_coords_from_single_roi(roi_file_content)]
+        return all_rois
+
+
+    def _extract_boundary_row_col_coords_from_roi_set(self, all_imagej_rois: List[roifile.roifile.ImagejRoi]) -> List[List[Tuple[int, int]]]:
+        boundary_coords_all_rois = []
+        for imagej_roi in all_imagej_rois:
+            boundary_row_col_coords_single_roi = self._extract_boundary_row_col_coords_from_single_roi(imagej_roi)
+            boundary_coords_all_rois.append(boundary_row_col_coords_single_roi)
+        return boundary_coords_all_rois
+    
+        
+    def _extract_boundary_row_col_coords_from_single_roi(self, imagej_roi: roifile.roifile.ImagejRoi) -> List[Tuple[int, int]]:
+        row_coords = imagej_roi.coordinates()[:, 1]
+        col_coords = imagej_roi.coordinates()[:, 0]
         boundary_row_col_coords = list(zip(row_coords, col_coords))
         return boundary_row_col_coords
+        
 
 
 ##############################
@@ -238,6 +332,7 @@ class DataLoaderFactory(ABC):
         return matching_loader
 
 
+
 class RecordingLoaderFactory(DataLoaderFactory):
 
     @property
@@ -251,7 +346,7 @@ class ROILoaderFactory(DataLoaderFactory):
 
     @property
     def supported_extensions_per_data_loader(self) -> Dict[ROILoader, List[str]]:
-        supported_extensions_per_data_loader = {ImageJROILoader: ['.roi']}
+        supported_extensions_per_data_loader = {ImageJROILoader: ['.roi', '.zip']}
         return supported_extensions_per_data_loader
 
 

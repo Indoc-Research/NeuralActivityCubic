@@ -1,11 +1,15 @@
 import numpy as np
+import pandas as pd
 from scipy import signal
 from pybaselines import Baseline
 from collections import Counter
-from shapely import Polygon
+from shapely import Polygon, get_coordinates
+from skimage.measure import grid_points_in_poly
 
 from typing import Optional, Tuple, Dict, List, Callable
 from dataclasses import dataclass
+
+from .input import ROI
 
 
 class BaselineEstimatorFactory:
@@ -38,42 +42,33 @@ class Peak:
 
 
 
-class Square:
-    def __init__(self, grid_cell_label: Tuple[int, int], upper_left_corner_coords: Tuple[int, int], frames_zstack: np.ndarray) -> None:
-        self.grid_row_label, self.grid_col_label = grid_cell_label
-        self.upper_left_corner_coords = upper_left_corner_coords
-        self.frames_zstack = frames_zstack
-        self.center_coords = self._get_center_coords()
-        self.as_polygon = self._create_square_as_polygon()
+class AnalysisROI:
+    
+    def __init__(self, roi: ROI, row_col_offset: Tuple[int, int], zstack: np.ndarray):
+        self.label_id = roi.label_id
+        self.as_polygon = roi.as_polygon
+        self.boundary_row_col_coords = roi.boundary_row_col_coords
+        self.row_offset = row_col_offset[0]
+        self.col_offset = row_col_offset[1]
+        self.zstack = zstack
+        self.centroid_row_col_coords = get_coordinates(self.as_polygon.centroid).astype('int')[0]
+        self.as_mask = self._convert_polygon_to_mask()
         self.peaks_count = 0
 
-    
-    def _get_center_coords(self) -> Tuple[int, int]:
-        square_height = self.frames_zstack.shape[1]
-        square_width = self.frames_zstack.shape[2]
-        return (self.upper_left_corner_coords[0] + int(square_height/2), self.upper_left_corner_coords[1] + int(square_width/2))
 
-    def _create_square_as_polygon(self) -> Polygon:
-        square_rows = self.frames_zstack.shape[1]
-        square_cols = self.frames_zstack.shape[2]
-        upper_left_corner_row_coord = self.upper_left_corner_coords[0]
-        upper_left_corner_col_coord = self.upper_left_corner_coords[1]
-        all_corner_coords = [[upper_left_corner_row_coord, upper_left_corner_col_coord],
-                             [upper_left_corner_row_coord, upper_left_corner_col_coord + square_cols],
-                             [upper_left_corner_row_coord + square_cols, upper_left_corner_col_coord + square_cols],
-                             [upper_left_corner_row_coord + square_cols, upper_left_corner_col_coord]]
-        square_as_polygon = Polygon(all_corner_coords)
-        assert square_as_polygon.is_valid, (
-            f'Something went wrong when trying to create a Polygon for Square [{self.grid_col_label}/{self.self.grid_row_label}]!'
-        )
-        return square_as_polygon
+    def _convert_polygon_to_mask(self) -> np.ndarray:
+        roi_row_col_coords = [(row_idx - self.row_offset, col_idx - self.col_offset) for (row_idx, col_idx) in get_coordinates(self.as_polygon).astype('int')]
+        grid_shape = (self.zstack.shape[1], self.zstack.shape[2])
+        mask = grid_points_in_poly(grid_shape, roi_row_col_coords)
+        dimension_adjusted_mask = np.expand_dims(mask, axis = (0, 3))
+        return dimension_adjusted_mask
 
     
     def compute_mean_intensity_timeseries(self, limit_analysis_to_frame_interval: bool, start_frame_idx: int, end_frame_idx: int) -> None:
         if limit_analysis_to_frame_interval == True:
-            self.mean_intensity_over_time = np.mean(self.frames_zstack[start_frame_idx:end_frame_idx], axis = (1,2,3))
+            self.mean_intensity_over_time = np.mean(self.zstack[start_frame_idx:end_frame_idx], axis = (1,2,3), where = self.as_mask)
         else:
-            self.mean_intensity_over_time = np.mean(self.frames_zstack, axis = (1,2,3))
+            self.mean_intensity_over_time = np.mean(self.zstack, axis = (1,2,3), where = self.as_mask)
 
 
     def detect_peaks(self, signal_to_noise_ratio: float, octaves_ridge_needs_to_spann: float, noise_window_size: int) -> None:
@@ -89,7 +84,7 @@ class Square:
                                                          gap_thresh = 0.0,
                                                          noise_perc = 5, # default: 10
                                                          min_snr = signal_to_noise_ratio,
-                                                         window_size = noise_window_size # window size to calculate noise is very narrow (lowest point = noise)
+                                                         window_size = noise_window_size
                                                         )
         frame_idxs_of_peaks_in_padded_signal = frame_idxs_of_peaks_in_padded_signal[((frame_idxs_of_peaks_in_padded_signal >= n_padded_frames) & 
                                                                                      (frame_idxs_of_peaks_in_padded_signal < self.mean_intensity_over_time.shape[0] + n_padded_frames))]
@@ -116,8 +111,8 @@ class Square:
                 area_under_curve_classification['peaks_with_auc'].append(peak)
                 area_under_curve_classification['all_intersection_frame_idxs_pairs'].append(peak.frame_idxs_of_neighboring_intersections)
         self._classify_area_under_curve_types(area_under_curve_classification)
-                                                                                    
 
+    
     def _get_unique_frame_idxs_of_intersections_between_signal_and_baseline(self) -> None:
         quick_estimate_of_intersection_frame_idxs = np.argwhere(np.diff(np.sign(self.mean_intensity_over_time - self.baseline))).flatten()
         intersection_frame_idxs = np.asarray([self._improve_intersection_frame_idx_estimation_by_interpolation(idx) for idx in quick_estimate_of_intersection_frame_idxs])
@@ -188,8 +183,10 @@ class Square:
             peak.delta_f_over_f = peak.amplitude / self.baseline[peak.frame_idx]
 
 
-
-
-
-
-
+    def compute_variance_area(self, variance_window_size: int) -> None:
+        mean_intensity_over_time_as_series = pd.Series(self.mean_intensity_over_time)
+        rolling_means = mean_intensity_over_time_as_series.rolling(window=variance_window_size, min_periods=1).mean().values
+        rolling_variances = mean_intensity_over_time_as_series.rolling(window=variance_window_size, min_periods=1).var().values
+        variance_area_upper_border = rolling_means[1:] + rolling_variances[1:]
+        variance_area_lower_border = rolling_means[1:] - rolling_variances[1:]
+        self.variance_area = np.trapz(variance_area_upper_border - variance_area_lower_border)
