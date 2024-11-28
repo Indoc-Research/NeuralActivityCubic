@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "neuralactivitycubic"
+  site-url: "https://Indoc-Research.github.io/NeuralActivityCubic"
+  description: "Indoc Research approach into NeuralActivityCubic"
+  repo-branch: main
+  repo-url: "https://github.com/Indoc-Research/NeuralActivityCubic"
