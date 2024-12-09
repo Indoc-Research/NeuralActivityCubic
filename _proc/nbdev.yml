@@ -3,7 +3,7 @@ project:
 
 website:
   title: "neuralactivitycubic"
-  site-url: "https://Indoc-Research.github.io/NeuralActivityCubic"
-  description: "Indoc Research approach into NeuralActivityCubic"
+  site-url: "https://ddoll.github.io/NeuralActivityCubic"
+  description: "Computation of local and signal-close-to-noise calcium activity"
   repo-branch: main
-  repo-url: "https://github.com/Indoc-Research/NeuralActivityCubic"
+  repo-url: "https://github.com/ddoll/NeuralActivityCubic"
