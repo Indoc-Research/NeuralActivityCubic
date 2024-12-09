@@ -3,12 +3,14 @@ website:
     contents:
       - index.ipynb
       - section: Tutorials
+        contents:
           - tutorial.ipynb
       - section: API
-      - 00_controller.ipynb
-      - 01_view.ipynb
-      - 02_model.ipynb
-      - 03_input.ipynb
-      - 04_processing.ipynb
-      - 05_analysis.ipynb
-      - 06_results.ipynb
+        contents:
+          - 00_controller.ipynb
+          - 01_view.ipynb
+          - 02_model.ipynb
+          - 03_input.ipynb
+          - 04_processing.ipynb
+          - 05_analysis.ipynb
+          - 06_results.ipynb

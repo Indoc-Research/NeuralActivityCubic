@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Defines the scientific analyses that are executed on ROI-level.">
+<meta name="description" content="Defines data and processing structures.">
 
-<title>analysis – neuralactivitycubic</title>
+<title>model – neuralactivitycubic</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -70,11 +70,11 @@ ul.task-list li input[type="checkbox"] {
 
 
 <link rel="stylesheet" href="styles.css">
-<meta property="og:title" content="analysis – neuralactivitycubic">
-<meta property="og:description" content="Defines the scientific analyses that are executed on ROI-level.">
+<meta property="og:title" content="model – neuralactivitycubic">
+<meta property="og:description" content="Defines data and processing structures.">
 <meta property="og:site_name" content="neuralactivitycubic">
-<meta name="twitter:title" content="analysis – neuralactivitycubic">
-<meta name="twitter:description" content="Defines the scientific analyses that are executed on ROI-level.">
+<meta name="twitter:title" content="model – neuralactivitycubic">
+<meta name="twitter:description" content="Defines data and processing structures.">
 <meta name="twitter:card" content="summary">
 </head>
 
@@ -99,7 +99,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./analysis.html">analysis</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./controller.html">API</a></li><li class="breadcrumb-item"><a href="./model.html">model</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -117,60 +117,76 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">NeuralActivityCubic</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Tutorials</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tutorial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Getting started</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">API</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./controller.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">controller</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./view.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">view</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./model.html" class="sidebar-item-text sidebar-link">
+  <a href="./model.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">model</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./input.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">input</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./processing.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">processing</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./analysis.html" class="sidebar-item-text sidebar-link active">
+  <a href="./analysis.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">analysis</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./results.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">results</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./Untitled.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Untitled.html</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./tutorial.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Tutorial</span></a>
-  </div>
-</li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
@@ -181,23 +197,21 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#baselineestimatorfactory" id="toc-baselineestimatorfactory" class="nav-link active" data-scroll-target="#baselineestimatorfactory">BaselineEstimatorFactory</a></li>
-  <li><a href="#peak" id="toc-peak" class="nav-link" data-scroll-target="#peak">Peak</a></li>
-  <li><a href="#analysisroi" id="toc-analysisroi" class="nav-link" data-scroll-target="#analysisroi">AnalysisROI</a></li>
+  <li><a href="#model" id="toc-model" class="nav-link active" data-scroll-target="#model">Model</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/ddoll/NeuralActivityCubic/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="analysis.html.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/ddoll/NeuralActivityCubic/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="model.html.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./controller.html">API</a></li><li class="breadcrumb-item"><a href="./model.html">model</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">analysis</h1>
+<h1 class="title">model</h1>
 </div>
 
 <div>
   <div class="description">
-    Defines the scientific analyses that are executed on ROI-level.
+    Defines data and processing structures.
   </div>
 </div>
 
@@ -216,34 +230,11 @@ ul.task-list li input[type="checkbox"] {
 
 <!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
 <hr>
-<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/analysis.py#L24" target="_blank" style="float:right; font-size:smaller">source</a></p>
-<section id="baselineestimatorfactory" class="level3">
-<h3 class="anchored" data-anchor-id="baselineestimatorfactory">BaselineEstimatorFactory</h3>
+<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L27" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="model" class="level3">
+<h3 class="anchored" data-anchor-id="model">Model</h3>
 <blockquote class="blockquote">
-<pre><code> BaselineEstimatorFactory ()</code></pre>
-</blockquote>
-<p><em>Initialize self. See help(type(self)) for accurate signature.</em></p>
-<hr>
-<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/analysis.py#L40" target="_blank" style="float:right; font-size:smaller">source</a></p>
-</section>
-<section id="peak" class="level3">
-<h3 class="anchored" data-anchor-id="peak">Peak</h3>
-<blockquote class="blockquote">
-<pre><code> Peak (frame_idx:int, intensity:float, amplitude:Optional[float]=None,
-       delta_f_over_f:Optional[float]=None,
-       has_neighboring_intersections:Optional[bool]=None, frame_idxs_of_ne
-       ighboring_intersections:Optional[Tuple[int,int]]=None,
-       area_under_curve:Optional[float]=None,
-       peak_type:Optional[str]=None)</code></pre>
-</blockquote>
-<hr>
-<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/analysis.py#L52" target="_blank" style="float:right; font-size:smaller">source</a></p>
-</section>
-<section id="analysisroi" class="level3">
-<h3 class="anchored" data-anchor-id="analysisroi">AnalysisROI</h3>
-<blockquote class="blockquote">
-<pre><code> AnalysisROI (roi:neuralactivitycubic.input.ROI,
-              row_col_offset:Tuple[int,int], zstack:numpy.ndarray)</code></pre>
+<pre><code> Model ()</code></pre>
 </blockquote>
 <p><em>Initialize self. See help(type(self)) for accurate signature.</em></p>
 

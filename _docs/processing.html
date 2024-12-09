@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Defines the creation of result data structures.">
+<meta name="description" content="Defines the structure of individual analysis jobs.">
 
-<title>results – neuralactivitycubic</title>
+<title>processing – neuralactivitycubic</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -70,11 +70,11 @@ ul.task-list li input[type="checkbox"] {
 
 
 <link rel="stylesheet" href="styles.css">
-<meta property="og:title" content="results – neuralactivitycubic">
-<meta property="og:description" content="Defines the creation of result data structures.">
+<meta property="og:title" content="processing – neuralactivitycubic">
+<meta property="og:description" content="Defines the structure of individual analysis jobs.">
 <meta property="og:site_name" content="neuralactivitycubic">
-<meta name="twitter:title" content="results – neuralactivitycubic">
-<meta name="twitter:description" content="Defines the creation of result data structures.">
+<meta name="twitter:title" content="processing – neuralactivitycubic">
+<meta name="twitter:description" content="Defines the structure of individual analysis jobs.">
 <meta name="twitter:card" content="summary">
 </head>
 
@@ -99,7 +99,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./results.html">results</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./controller.html">API</a></li><li class="breadcrumb-item"><a href="./processing.html">processing</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -117,60 +117,76 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">NeuralActivityCubic</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Tutorials</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tutorial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Getting started</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">API</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./controller.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">controller</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./view.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">view</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./model.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">model</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./input.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">input</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./processing.html" class="sidebar-item-text sidebar-link">
+  <a href="./processing.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">processing</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./analysis.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">analysis</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./results.html" class="sidebar-item-text sidebar-link active">
+  <a href="./results.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">results</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./Untitled.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Untitled.html</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./tutorial.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Tutorial</span></a>
-  </div>
-</li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
@@ -181,28 +197,22 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#plot_roi_boundaries" id="toc-plot_roi_boundaries" class="nav-link active" data-scroll-target="#plot_roi_boundaries">plot_roi_boundaries</a></li>
-  <li><a href="#plot_window_size_preview" id="toc-plot_window_size_preview" class="nav-link" data-scroll-target="#plot_window_size_preview">plot_window_size_preview</a></li>
-  <li><a href="#plot_activity_overview" id="toc-plot_activity_overview" class="nav-link" data-scroll-target="#plot_activity_overview">plot_activity_overview</a></li>
-  <li><a href="#plot_rois_with_label_id_overview" id="toc-plot_rois_with_label_id_overview" class="nav-link" data-scroll-target="#plot_rois_with_label_id_overview">plot_rois_with_label_id_overview</a></li>
-  <li><a href="#plot_intensity_trace_with_identified_peaks_for_individual_roi" id="toc-plot_intensity_trace_with_identified_peaks_for_individual_roi" class="nav-link" data-scroll-target="#plot_intensity_trace_with_identified_peaks_for_individual_roi">plot_intensity_trace_with_identified_peaks_for_individual_roi</a></li>
-  <li><a href="#export_peak_results_df_from_analysis_roi" id="toc-export_peak_results_df_from_analysis_roi" class="nav-link" data-scroll-target="#export_peak_results_df_from_analysis_roi">export_peak_results_df_from_analysis_roi</a></li>
-  <li><a href="#create_single_roi_amplitude_and_delta_f_over_f_results" id="toc-create_single_roi_amplitude_and_delta_f_over_f_results" class="nav-link" data-scroll-target="#create_single_roi_amplitude_and_delta_f_over_f_results">create_single_roi_amplitude_and_delta_f_over_f_results</a></li>
-  <li><a href="#create_single_roi_auc_results" id="toc-create_single_roi_auc_results" class="nav-link" data-scroll-target="#create_single_roi_auc_results">create_single_roi_auc_results</a></li>
+  <li><a href="#process_analysis_rois" id="toc-process_analysis_rois" class="nav-link active" data-scroll-target="#process_analysis_rois">process_analysis_rois</a></li>
+  <li><a href="#analysisjob" id="toc-analysisjob" class="nav-link" data-scroll-target="#analysisjob">AnalysisJob</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/ddoll/NeuralActivityCubic/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="results.html.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/ddoll/NeuralActivityCubic/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="processing.html.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./controller.html">API</a></li><li class="breadcrumb-item"><a href="./processing.html">processing</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">results</h1>
+<h1 class="title">processing</h1>
 </div>
 
 <div>
   <div class="description">
-    Defines the creation of result data structures.
+    Defines the structure of individual analysis jobs.
   </div>
 </div>
 
@@ -221,98 +231,25 @@ ul.task-list li input[type="checkbox"] {
 
 <!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
 <hr>
-<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/results.py#L27" target="_blank" style="float:right; font-size:smaller">source</a></p>
-<section id="plot_roi_boundaries" class="level3">
-<h3 class="anchored" data-anchor-id="plot_roi_boundaries">plot_roi_boundaries</h3>
+<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/processing.py#L29" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="process_analysis_rois" class="level3">
+<h3 class="anchored" data-anchor-id="process_analysis_rois">process_analysis_rois</h3>
 <blockquote class="blockquote">
-<pre><code> plot_roi_boundaries (roi:Union[neuralactivitycubic.input.ROI,neuralactivi
-                      tycubic.analysis.AnalysisROI], line_color:str,
-                      line_style:str, line_width:Union[int,float])</code></pre>
+<pre><code> process_analysis_rois
+                        (analysis_roi:neuralactivitycubic.analysis.Analysi
+                        sROI, configs:Dict[str,Any])</code></pre>
 </blockquote>
 <hr>
-<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/results.py#L76" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/processing.py#L40" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
-<section id="plot_window_size_preview" class="level3">
-<h3 class="anchored" data-anchor-id="plot_window_size_preview">plot_window_size_preview</h3>
+<section id="analysisjob" class="level3">
+<h3 class="anchored" data-anchor-id="analysisjob">AnalysisJob</h3>
 <blockquote class="blockquote">
-<pre><code> plot_window_size_preview (preview_image:numpy.ndarray,
-                           grid_configs:Dict[str,Any], focus_area_roi:Opti
-                           onal[neuralactivitycubic.input.ROI]=None)</code></pre>
+<pre><code> AnalysisJob (number_of_parallel_processes:int, data_loaders:Dict[str,Unio
+              n[neuralactivitycubic.input.DataLoader,List[neuralactivitycu
+              bic.input.DataLoader]]])</code></pre>
 </blockquote>
-<hr>
-<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/results.py#L174" target="_blank" style="float:right; font-size:smaller">source</a></p>
-</section>
-<section id="plot_activity_overview" class="level3">
-<h3 class="anchored" data-anchor-id="plot_activity_overview">plot_activity_overview</h3>
-<blockquote class="blockquote">
-<pre><code> plot_activity_overview (analysis_rois_with_sufficient_activity:Union[List
-                         [neuralactivitycubic.analysis.AnalysisROI],List[N
-                         ever]], preview_image:numpy.ndarray,
-                         indicate_activity:bool=False, focus_area:Optional
-                         [neuralactivitycubic.input.ROI]=None,
-                         grid_configs:Optional[Dict[str,Any]]=None)</code></pre>
-</blockquote>
-<hr>
-<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/results.py#L206" target="_blank" style="float:right; font-size:smaller">source</a></p>
-</section>
-<section id="plot_rois_with_label_id_overview" class="level3">
-<h3 class="anchored" data-anchor-id="plot_rois_with_label_id_overview">plot_rois_with_label_id_overview</h3>
-<blockquote class="blockquote">
-<pre><code> plot_rois_with_label_id_overview (analysis_rois_with_sufficient_activity:
-                                   Union[List[neuralactivitycubic.analysis
-                                   .AnalysisROI],List[Never]],
-                                   preview_image:numpy.ndarray, focus_area
-                                   :Optional[neuralactivitycubic.input.ROI
-                                   ]=None, grid_configs:Optional[Dict[str,
-                                   Any]]=None)</code></pre>
-</blockquote>
-<hr>
-<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/results.py#L231" target="_blank" style="float:right; font-size:smaller">source</a></p>
-</section>
-<section id="plot_intensity_trace_with_identified_peaks_for_individual_roi" class="level3">
-<h3 class="anchored" data-anchor-id="plot_intensity_trace_with_identified_peaks_for_individual_roi">plot_intensity_trace_with_identified_peaks_for_individual_roi</h3>
-<blockquote class="blockquote">
-<pre><code> plot_intensity_trace_with_identified_peaks_for_individual_roi
-                                                                (analysis_
-                                                                roi:neural
-                                                                activitycu
-                                                                bic.analys
-                                                                is.Analysi
-                                                                sROI)</code></pre>
-</blockquote>
-<hr>
-<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/results.py#L257" target="_blank" style="float:right; font-size:smaller">source</a></p>
-</section>
-<section id="export_peak_results_df_from_analysis_roi" class="level3">
-<h3 class="anchored" data-anchor-id="export_peak_results_df_from_analysis_roi">export_peak_results_df_from_analysis_roi</h3>
-<blockquote class="blockquote">
-<pre><code> export_peak_results_df_from_analysis_roi
-                                           (analysis_roi:neuralactivitycub
-                                           ic.analysis.AnalysisROI)</code></pre>
-</blockquote>
-<hr>
-<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/results.py#L266" target="_blank" style="float:right; font-size:smaller">source</a></p>
-</section>
-<section id="create_single_roi_amplitude_and_delta_f_over_f_results" class="level3">
-<h3 class="anchored" data-anchor-id="create_single_roi_amplitude_and_delta_f_over_f_results">create_single_roi_amplitude_and_delta_f_over_f_results</h3>
-<blockquote class="blockquote">
-<pre><code> create_single_roi_amplitude_and_delta_f_over_f_results
-                                                         (df_all_results_s
-                                                         ingle_roi:pandas.
-                                                         core.frame.DataFr
-                                                         ame,
-                                                         zfill_factor:int)</code></pre>
-</blockquote>
-<hr>
-<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/results.py#L278" target="_blank" style="float:right; font-size:smaller">source</a></p>
-</section>
-<section id="create_single_roi_auc_results" class="level3">
-<h3 class="anchored" data-anchor-id="create_single_roi_auc_results">create_single_roi_auc_results</h3>
-<blockquote class="blockquote">
-<pre><code> create_single_roi_auc_results
-                                (df_all_results_single_roi:pandas.core.fra
-                                me.DataFrame, zfill_factor:int)</code></pre>
-</blockquote>
+<p><em>Initialize self. See help(type(self)) for accurate signature.</em></p>
 
 
 </section>

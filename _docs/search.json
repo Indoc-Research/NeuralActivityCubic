@@ -1,0 +1,196 @@
+[
+  {
+    "objectID": "view.html",
+    "href": "view.html",
+    "title": "view",
+    "section": "",
+    "text": "source\n\nchange_widget_state\n\n change_widget_state (widget:ipywidgets.widgets.widget.Widget,\n                      value:Optional[Any]=None,\n                      description:Optional[str]=None,\n                      disabled:Optional[bool]=None,\n                      visibility:Optional[str]=None,\n                      tooltip:Optional[str]=None,\n                      button_style:Optional[str]=None)\n\n\nsource\n\n\nUserInfoPanel\n\n UserInfoPanel ()\n\nInitialize self. See help(type(self)) for accurate signature.\n\nsource\n\n\nSourceDataPanel\n\n SourceDataPanel (user_info_panel:__main__.UserInfoPanel)\n\nInitialize self. See help(type(self)) for accurate signature.\n\nsource\n\n\nAnalysisSettingsPanel\n\n AnalysisSettingsPanel ()\n\nInitialize self. See help(type(self)) for accurate signature.\n\nsource\n\n\nMainScreen\n\n MainScreen ()\n\nInitialize self. See help(type(self)) for accurate signature.\n\nsource\n\n\nWidgetsInterface\n\n WidgetsInterface ()\n\nInitialize self. See help(type(self)) for accurate signature.",
+    "crumbs": [
+      "API",
+      "view"
+    ]
+  },
+  {
+    "objectID": "model.html",
+    "href": "model.html",
+    "title": "model",
+    "section": "",
+    "text": "source\n\nModel\n\n Model ()\n\nInitialize self. See help(type(self)) for accurate signature.",
+    "crumbs": [
+      "API",
+      "model"
+    ]
+  },
+  {
+    "objectID": "tutorial.html",
+    "href": "tutorial.html",
+    "title": "Getting started",
+    "section": "",
+    "text": "After you successfully completed the installation of neuralactivitycubic (NA³), open JupyterLab in your browser run the following commands in a Jupyter Notebook to open the graphical user interface (GUI) of NA³:\nimport neuralactivitycubic as na3\n\nna3.open_gui()",
+    "crumbs": [
+      "Tutorials",
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "tutorial.html#general-settings",
+    "href": "tutorial.html#general-settings",
+    "title": "Getting started",
+    "section": "General Settings",
+    "text": "General Settings\nlorem ipsum lorem ipsum lorem ipsum\n\nROI modes:\nlorem ipsum lorem ipsum lorem ipsum\n\nGrid (congruent squares):\nlorem ipsum lorem ipsum lorem ipsum\n\n\nPredefined ROIs:\nlorem ipsum lorem ipsum lorem ipsum\n\n\n\nBatch mode:\nlorem ipsum lorem ipsum lorem ipsum\n\n\nFocus areas:\nlorem ipsum lorem ipsum lorem ipsum\n\n\nSource data:\nlorem ipsum lorem ipsum lorem ipsum",
+    "crumbs": [
+      "Tutorials",
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "tutorial.html#analysis-settings",
+    "href": "tutorial.html#analysis-settings",
+    "title": "Getting started",
+    "section": "Analysis Settings:",
+    "text": "Analysis Settings:\nlorem ipsum lorem ipsum lorem ipsum\n\nOptional settings:\nlorem ipsum lorem ipsum lorem ipsum\n\n\nResult settings:\nlorem ipsum lorem ipsum lorem ipsum",
+    "crumbs": [
+      "Tutorials",
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "tutorial.html#generated-results",
+    "href": "tutorial.html#generated-results",
+    "title": "Getting started",
+    "section": "Generated Results:",
+    "text": "Generated Results:\nlorem ipsum lorem ipsum lorem ipsum",
+    "crumbs": [
+      "Tutorials",
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "controller.html",
+    "href": "controller.html",
+    "title": "controller",
+    "section": "",
+    "text": "source\n\nApp\n\n App ()\n\nInitialize self. See help(type(self)) for accurate signature.\n\nsource\n\n\nopen_gui\n\n open_gui ()\n\nStart the interactive widgets interface for NeuralActivityCubic",
+    "crumbs": [
+      "API",
+      "controller"
+    ]
+  },
+  {
+    "objectID": "input.html",
+    "href": "input.html",
+    "title": "input",
+    "section": "",
+    "text": "source",
+    "crumbs": [
+      "API",
+      "input"
+    ]
+  },
+  {
+    "objectID": "input.html#source-data-handler",
+    "href": "input.html#source-data-handler",
+    "title": "input",
+    "section": "Source Data Handler:",
+    "text": "Source Data Handler:\n\nsource\n\nData\n\n Data (filepath:pathlib.Path, loaded_data:Any)\n\nHelper class that provides a standard way to create an ABC using inheritance.\n\nsource\n\n\nRecording\n\n Recording (filepath:pathlib.Path, loaded_data:Any)\n\nHelper class that provides a standard way to create an ABC using inheritance.\n\nsource\n\n\nROI\n\n ROI (filepath:pathlib.Path, loaded_data:Any)\n\nHelper class that provides a standard way to create an ABC using inheritance.",
+    "crumbs": [
+      "API",
+      "input"
+    ]
+  },
+  {
+    "objectID": "input.html#source-data-loader",
+    "href": "input.html#source-data-loader",
+    "title": "input",
+    "section": "Source Data Loader:",
+    "text": "Source Data Loader:\n\nsource\n\nDataLoader\n\n DataLoader (filepath:pathlib.Path)\n\nHelper class that provides a standard way to create an ABC using inheritance.\n\nsource\n\n\nGridWrapperROILoader\n\n GridWrapperROILoader (filepath:pathlib.Path)\n\nHelper class that provides a standard way to create an ABC using inheritance.\n\nsource\n\n\nRecordingLoader\n\n RecordingLoader (filepath:pathlib.Path)\n\nHelper class that provides a standard way to create an ABC using inheritance.\n\nsource\n\n\nAVILoader\n\n AVILoader (filepath:pathlib.Path)\n\nHelper class that provides a standard way to create an ABC using inheritance.\n\nsource\n\n\nROILoader\n\n ROILoader (filepath:pathlib.Path)\n\nHelper class that provides a standard way to create an ABC using inheritance.\n\nsource\n\n\nImageJROILoader\n\n ImageJROILoader (filepath:pathlib.Path)\n\nHelper class that provides a standard way to create an ABC using inheritance.",
+    "crumbs": [
+      "API",
+      "input"
+    ]
+  },
+  {
+    "objectID": "input.html#loader-factories",
+    "href": "input.html#loader-factories",
+    "title": "input",
+    "section": "Loader Factories",
+    "text": "Loader Factories\n\nsource\n\nDataLoaderFactory\n\n DataLoaderFactory ()\n\nHelper class that provides a standard way to create an ABC using inheritance.\n\nsource\n\n\nRecordingLoaderFactory\n\n RecordingLoaderFactory ()\n\nHelper class that provides a standard way to create an ABC using inheritance.\n\nsource\n\n\nROILoaderFactory\n\n ROILoaderFactory ()\n\nHelper class that provides a standard way to create an ABC using inheritance.\n\nsource\n\n\nget_filepaths_with_supported_extension_in_dirpath\n\n get_filepaths_with_supported_extension_in_dirpath (dirpath:pathlib.Path,\n                                                    all_supported_extensio\n                                                    ns:List[str], max_resu\n                                                    lts:Optional[int]=None\n                                                    )\n\n\nsource\n\n\nRecLoaderROILoaderCombinator\n\n RecLoaderROILoaderCombinator (dir_path:pathlib.Path)\n\nInitialize self. See help(type(self)) for accurate signature.",
+    "crumbs": [
+      "API",
+      "input"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "NeuralActivityCubic",
+    "section": "",
+    "text": "This file will become your README and also the index of your documentation.",
+    "crumbs": [
+      "NeuralActivityCubic"
+    ]
+  },
+  {
+    "objectID": "index.html#developer-guide",
+    "href": "index.html#developer-guide",
+    "title": "NeuralActivityCubic",
+    "section": "Developer Guide",
+    "text": "Developer Guide\nIf you are new to using nbdev here are some useful pointers to get you started.\n\nInstall NeuralActivityCubic in Development mode\n# make sure NeuralActivityCubic package is installed in development mode\n$ pip install -e .\n\n# make changes under nbs/ directory\n# ...\n\n# compile to have changes apply to NeuralActivityCubic\n$ nbdev_prepare",
+    "crumbs": [
+      "NeuralActivityCubic"
+    ]
+  },
+  {
+    "objectID": "index.html#usage",
+    "href": "index.html#usage",
+    "title": "NeuralActivityCubic",
+    "section": "Usage",
+    "text": "Usage\n\nInstallation\nInstall latest from the GitHub repository:\n$ pip install git+https://github.com/Indoc-Research/neuralactivitycubic.git\nor from conda\n$ conda install -c Indoc-Research NeuralActivityCubic\nor from pypi\n$ pip install NeuralActivityCubic\n\n\nDocumentation\nDocumentation can be found hosted on this GitHub repository’s pages. Additionally you can find package manager specific guidelines on conda and pypi respectively.",
+    "crumbs": [
+      "NeuralActivityCubic"
+    ]
+  },
+  {
+    "objectID": "index.html#how-to-use",
+    "href": "index.html#how-to-use",
+    "title": "NeuralActivityCubic",
+    "section": "How to use",
+    "text": "How to use\nFill me in please! Don’t forget code examples:\n\n1+1\n\n2",
+    "crumbs": [
+      "NeuralActivityCubic"
+    ]
+  },
+  {
+    "objectID": "results.html",
+    "href": "results.html",
+    "title": "results",
+    "section": "",
+    "text": "source\n\nplot_roi_boundaries\n\n plot_roi_boundaries (roi:Union[neuralactivitycubic.input.ROI,neuralactivi\n                      tycubic.analysis.AnalysisROI], line_color:str,\n                      line_style:str, line_width:Union[int,float])\n\n\nsource\n\n\nplot_window_size_preview\n\n plot_window_size_preview (preview_image:numpy.ndarray,\n                           grid_configs:Dict[str,Any], focus_area_roi:Opti\n                           onal[neuralactivitycubic.input.ROI]=None)\n\n\nsource\n\n\nplot_activity_overview\n\n plot_activity_overview (analysis_rois_with_sufficient_activity:Union[List\n                         [neuralactivitycubic.analysis.AnalysisROI],List[N\n                         ever]], preview_image:numpy.ndarray,\n                         indicate_activity:bool=False, focus_area:Optional\n                         [neuralactivitycubic.input.ROI]=None,\n                         grid_configs:Optional[Dict[str,Any]]=None)\n\n\nsource\n\n\nplot_rois_with_label_id_overview\n\n plot_rois_with_label_id_overview (analysis_rois_with_sufficient_activity:\n                                   Union[List[neuralactivitycubic.analysis\n                                   .AnalysisROI],List[Never]],\n                                   preview_image:numpy.ndarray, focus_area\n                                   :Optional[neuralactivitycubic.input.ROI\n                                   ]=None, grid_configs:Optional[Dict[str,\n                                   Any]]=None)\n\n\nsource\n\n\nplot_intensity_trace_with_identified_peaks_for_individual_roi\n\n plot_intensity_trace_with_identified_peaks_for_individual_roi\n                                                                (analysis_\n                                                                roi:neural\n                                                                activitycu\n                                                                bic.analys\n                                                                is.Analysi\n                                                                sROI)\n\n\nsource\n\n\nexport_peak_results_df_from_analysis_roi\n\n export_peak_results_df_from_analysis_roi\n                                           (analysis_roi:neuralactivitycub\n                                           ic.analysis.AnalysisROI)\n\n\nsource\n\n\ncreate_single_roi_amplitude_and_delta_f_over_f_results\n\n create_single_roi_amplitude_and_delta_f_over_f_results\n                                                         (df_all_results_s\n                                                         ingle_roi:pandas.\n                                                         core.frame.DataFr\n                                                         ame,\n                                                         zfill_factor:int)\n\n\nsource\n\n\ncreate_single_roi_auc_results\n\n create_single_roi_auc_results\n                                (df_all_results_single_roi:pandas.core.fra\n                                me.DataFrame, zfill_factor:int)",
+    "crumbs": [
+      "API",
+      "results"
+    ]
+  },
+  {
+    "objectID": "analysis.html",
+    "href": "analysis.html",
+    "title": "analysis",
+    "section": "",
+    "text": "source\n\nBaselineEstimatorFactory\n\n BaselineEstimatorFactory ()\n\nInitialize self. See help(type(self)) for accurate signature.\n\nsource\n\n\nPeak\n\n Peak (frame_idx:int, intensity:float, amplitude:Optional[float]=None,\n       delta_f_over_f:Optional[float]=None,\n       has_neighboring_intersections:Optional[bool]=None, frame_idxs_of_ne\n       ighboring_intersections:Optional[Tuple[int,int]]=None,\n       area_under_curve:Optional[float]=None,\n       peak_type:Optional[str]=None)\n\n\nsource\n\n\nAnalysisROI\n\n AnalysisROI (roi:neuralactivitycubic.input.ROI,\n              row_col_offset:Tuple[int,int], zstack:numpy.ndarray)\n\nInitialize self. See help(type(self)) for accurate signature.",
+    "crumbs": [
+      "API",
+      "analysis"
+    ]
+  },
+  {
+    "objectID": "processing.html",
+    "href": "processing.html",
+    "title": "processing",
+    "section": "",
+    "text": "source\n\nprocess_analysis_rois\n\n process_analysis_rois\n                        (analysis_roi:neuralactivitycubic.analysis.Analysi\n                        sROI, configs:Dict[str,Any])\n\n\nsource\n\n\nAnalysisJob\n\n AnalysisJob (number_of_parallel_processes:int, data_loaders:Dict[str,Unio\n              n[neuralactivitycubic.input.DataLoader,List[neuralactivitycu\n              bic.input.DataLoader]]])\n\nInitialize self. See help(type(self)) for accurate signature.",
+    "crumbs": [
+      "API",
+      "processing"
+    ]
+  }
+]

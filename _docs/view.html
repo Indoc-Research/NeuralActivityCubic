@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Defines the interface between View &amp; Model.">
+<meta name="description" content="Defines the graphical user interface based on interactive widgets.">
 
-<title>controller – neuralactivitycubic</title>
+<title>view – neuralactivitycubic</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -70,11 +70,11 @@ ul.task-list li input[type="checkbox"] {
 
 
 <link rel="stylesheet" href="styles.css">
-<meta property="og:title" content="controller – neuralactivitycubic">
-<meta property="og:description" content="Defines the interface between View &amp; Model.">
+<meta property="og:title" content="view – neuralactivitycubic">
+<meta property="og:description" content="Defines the graphical user interface based on interactive widgets.">
 <meta property="og:site_name" content="neuralactivitycubic">
-<meta name="twitter:title" content="controller – neuralactivitycubic">
-<meta name="twitter:description" content="Defines the interface between View &amp; Model.">
+<meta name="twitter:title" content="view – neuralactivitycubic">
+<meta name="twitter:description" content="Defines the graphical user interface based on interactive widgets.">
 <meta name="twitter:card" content="summary">
 </head>
 
@@ -99,7 +99,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./controller.html">controller</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./controller.html">API</a></li><li class="breadcrumb-item"><a href="./view.html">view</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -117,60 +117,76 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">NeuralActivityCubic</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Tutorials</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./controller.html" class="sidebar-item-text sidebar-link active">
+  <a href="./tutorial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Getting started</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">API</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./controller.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">controller</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./view.html" class="sidebar-item-text sidebar-link">
+  <a href="./view.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">view</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./model.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">model</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./input.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">input</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./processing.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">processing</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./analysis.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">analysis</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./results.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">results</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./Untitled.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Untitled.html</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./tutorial.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Tutorial</span></a>
-  </div>
-</li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
@@ -181,22 +197,26 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#app" id="toc-app" class="nav-link active" data-scroll-target="#app">App</a></li>
-  <li><a href="#open_gui" id="toc-open_gui" class="nav-link" data-scroll-target="#open_gui">open_gui</a></li>
+  <li><a href="#change_widget_state" id="toc-change_widget_state" class="nav-link active" data-scroll-target="#change_widget_state">change_widget_state</a></li>
+  <li><a href="#userinfopanel" id="toc-userinfopanel" class="nav-link" data-scroll-target="#userinfopanel">UserInfoPanel</a></li>
+  <li><a href="#sourcedatapanel" id="toc-sourcedatapanel" class="nav-link" data-scroll-target="#sourcedatapanel">SourceDataPanel</a></li>
+  <li><a href="#analysissettingspanel" id="toc-analysissettingspanel" class="nav-link" data-scroll-target="#analysissettingspanel">AnalysisSettingsPanel</a></li>
+  <li><a href="#mainscreen" id="toc-mainscreen" class="nav-link" data-scroll-target="#mainscreen">MainScreen</a></li>
+  <li><a href="#widgetsinterface" id="toc-widgetsinterface" class="nav-link" data-scroll-target="#widgetsinterface">WidgetsInterface</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/ddoll/NeuralActivityCubic/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="controller.html.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/ddoll/NeuralActivityCubic/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="view.html.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./controller.html">API</a></li><li class="breadcrumb-item"><a href="./view.html">view</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">controller</h1>
+<h1 class="title">view</h1>
 </div>
 
 <div>
   <div class="description">
-    Defines the interface between View &amp; Model.
+    Defines the graphical user interface based on interactive widgets.
   </div>
 </div>
 
@@ -215,22 +235,63 @@ ul.task-list li input[type="checkbox"] {
 
 <!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
 <hr>
-<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/controller.py#L23" target="_blank" style="float:right; font-size:smaller">source</a></p>
-<section id="app" class="level3">
-<h3 class="anchored" data-anchor-id="app">App</h3>
+<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L19" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="change_widget_state" class="level3">
+<h3 class="anchored" data-anchor-id="change_widget_state">change_widget_state</h3>
 <blockquote class="blockquote">
-<pre><code> App ()</code></pre>
+<pre><code> change_widget_state (widget:ipywidgets.widgets.widget.Widget,
+                      value:Optional[Any]=None,
+                      description:Optional[str]=None,
+                      disabled:Optional[bool]=None,
+                      visibility:Optional[str]=None,
+                      tooltip:Optional[str]=None,
+                      button_style:Optional[str]=None)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L42" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="userinfopanel" class="level3">
+<h3 class="anchored" data-anchor-id="userinfopanel">UserInfoPanel</h3>
+<blockquote class="blockquote">
+<pre><code> UserInfoPanel ()</code></pre>
 </blockquote>
 <p><em>Initialize self. See help(type(self)) for accurate signature.</em></p>
 <hr>
-<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/controller.py#L95" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L97" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
-<section id="open_gui" class="level3">
-<h3 class="anchored" data-anchor-id="open_gui">open_gui</h3>
+<section id="sourcedatapanel" class="level3">
+<h3 class="anchored" data-anchor-id="sourcedatapanel">SourceDataPanel</h3>
 <blockquote class="blockquote">
-<pre><code> open_gui ()</code></pre>
+<pre><code> SourceDataPanel (user_info_panel:__main__.UserInfoPanel)</code></pre>
 </blockquote>
-<p><em>Start the interactive widgets interface for NeuralActivityCubic</em></p>
+<p><em>Initialize self. See help(type(self)) for accurate signature.</em></p>
+<hr>
+<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L204" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="analysissettingspanel" class="level3">
+<h3 class="anchored" data-anchor-id="analysissettingspanel">AnalysisSettingsPanel</h3>
+<blockquote class="blockquote">
+<pre><code> AnalysisSettingsPanel ()</code></pre>
+</blockquote>
+<p><em>Initialize self. See help(type(self)) for accurate signature.</em></p>
+<hr>
+<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L360" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="mainscreen" class="level3">
+<h3 class="anchored" data-anchor-id="mainscreen">MainScreen</h3>
+<blockquote class="blockquote">
+<pre><code> MainScreen ()</code></pre>
+</blockquote>
+<p><em>Initialize self. See help(type(self)) for accurate signature.</em></p>
+<hr>
+<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L395" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="widgetsinterface" class="level3">
+<h3 class="anchored" data-anchor-id="widgetsinterface">WidgetsInterface</h3>
+<blockquote class="blockquote">
+<pre><code> WidgetsInterface ()</code></pre>
+</blockquote>
+<p><em>Initialize self. See help(type(self)) for accurate signature.</em></p>
 
 
 </section>

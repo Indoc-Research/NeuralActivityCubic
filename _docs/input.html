@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="description" content="Defines the import for different source filetypes.">
 
-<title>untitled – neuralactivitycubic</title>
+<title>input – neuralactivitycubic</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,44 +21,10 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/quarto-nav/headroom.min.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -100,16 +67,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
-
-<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
-<script src="https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js" crossorigin="anonymous"></script>
 
 
 <link rel="stylesheet" href="styles.css">
-<meta property="og:title" content="neuralactivitycubic">
+<meta property="og:title" content="input – neuralactivitycubic">
+<meta property="og:description" content="Defines the import for different source filetypes.">
 <meta property="og:site_name" content="neuralactivitycubic">
-<meta name="twitter:title" content="neuralactivitycubic">
+<meta name="twitter:title" content="input – neuralactivitycubic">
+<meta name="twitter:description" content="Defines the import for different source filetypes.">
 <meta name="twitter:card" content="summary">
 </head>
 
@@ -134,7 +99,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./Untitled.html">Untitled.html</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./controller.html">API</a></li><li class="breadcrumb-item"><a href="./input.html">input</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -152,102 +117,292 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">NeuralActivityCubic</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Tutorials</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tutorial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Getting started</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">API</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./controller.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">controller</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./view.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">view</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./model.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">model</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./input.html" class="sidebar-item-text sidebar-link">
+  <a href="./input.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">input</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./processing.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">processing</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./analysis.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">analysis</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./results.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">results</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./Untitled.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Untitled.html</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./tutorial.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Tutorial</span></a>
-  </div>
-</li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="Untitled.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></div>
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#focusareapathrestrictions" id="toc-focusareapathrestrictions" class="nav-link active" data-scroll-target="#focusareapathrestrictions">FocusAreaPathRestrictions</a></li>
+  <li><a href="#source-data-handler" id="toc-source-data-handler" class="nav-link" data-scroll-target="#source-data-handler">Source Data Handler:</a>
+  <ul class="collapse">
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a></li>
+  <li><a href="#recording" id="toc-recording" class="nav-link" data-scroll-target="#recording">Recording</a></li>
+  <li><a href="#roi" id="toc-roi" class="nav-link" data-scroll-target="#roi">ROI</a></li>
+  </ul></li>
+  <li><a href="#source-data-loader" id="toc-source-data-loader" class="nav-link" data-scroll-target="#source-data-loader">Source Data Loader:</a>
+  <ul class="collapse">
+  <li><a href="#dataloader" id="toc-dataloader" class="nav-link" data-scroll-target="#dataloader">DataLoader</a></li>
+  <li><a href="#gridwrapperroiloader" id="toc-gridwrapperroiloader" class="nav-link" data-scroll-target="#gridwrapperroiloader">GridWrapperROILoader</a></li>
+  <li><a href="#recordingloader" id="toc-recordingloader" class="nav-link" data-scroll-target="#recordingloader">RecordingLoader</a></li>
+  <li><a href="#aviloader" id="toc-aviloader" class="nav-link" data-scroll-target="#aviloader">AVILoader</a></li>
+  <li><a href="#roiloader" id="toc-roiloader" class="nav-link" data-scroll-target="#roiloader">ROILoader</a></li>
+  <li><a href="#imagejroiloader" id="toc-imagejroiloader" class="nav-link" data-scroll-target="#imagejroiloader">ImageJROILoader</a></li>
+  </ul></li>
+  <li><a href="#loader-factories" id="toc-loader-factories" class="nav-link" data-scroll-target="#loader-factories">Loader Factories</a>
+  <ul class="collapse">
+  <li><a href="#dataloaderfactory" id="toc-dataloaderfactory" class="nav-link" data-scroll-target="#dataloaderfactory">DataLoaderFactory</a></li>
+  <li><a href="#recordingloaderfactory" id="toc-recordingloaderfactory" class="nav-link" data-scroll-target="#recordingloaderfactory">RecordingLoaderFactory</a></li>
+  <li><a href="#roiloaderfactory" id="toc-roiloaderfactory" class="nav-link" data-scroll-target="#roiloaderfactory">ROILoaderFactory</a></li>
+  <li><a href="#get_filepaths_with_supported_extension_in_dirpath" id="toc-get_filepaths_with_supported_extension_in_dirpath" class="nav-link" data-scroll-target="#get_filepaths_with_supported_extension_in_dirpath">get_filepaths_with_supported_extension_in_dirpath</a></li>
+  <li><a href="#recloaderroiloadercombinator" id="toc-recloaderroiloadercombinator" class="nav-link" data-scroll-target="#recloaderroiloadercombinator">RecLoaderROILoaderCombinator</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/ddoll/NeuralActivityCubic/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="input.html.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
+    </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content" id="quarto-document-content">
 
-
-
-
-<div id="f36cff49-554c-4592-a14c-8fe440f49e33" class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> neuralactivitycubic <span class="im">as</span> na3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./controller.html">API</a></li><li class="breadcrumb-item"><a href="./input.html">input</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">input</h1>
 </div>
+
+<div>
+  <div class="description">
+    Defines the import for different source filetypes.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
 <!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
-<div id="f3b82371-1637-4349-87c0-ac9c475337f2" class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>na3.__version__</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<pre><code>'0.0.3'</code></pre>
-</div>
-</div>
-<div id="03030c45-7a4c-4893-b76e-3d86d5139a88" class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> neuralactivitycubic.controller <span class="im">import</span> open_gui</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div id="75a395ef-7d28-4a98-8716-2399e45a5ce7" class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>open_gui()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"6d3df11ed0864eeca4702d1d8598191d","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
-</script>
-</div>
-</div>
+<hr>
+<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L20" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="focusareapathrestrictions" class="level3">
+<h3 class="anchored" data-anchor-id="focusareapathrestrictions">FocusAreaPathRestrictions</h3>
+<blockquote class="blockquote">
+<pre><code> FocusAreaPathRestrictions ()</code></pre>
+</blockquote>
+<p><em>Initialize self. See help(type(self)) for accurate signature.</em></p>
+</section>
+<section id="source-data-handler" class="level2">
+<h2 class="anchored" data-anchor-id="source-data-handler">Source Data Handler:</h2>
+<hr>
+<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L29" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="data" class="level3">
+<h3 class="anchored" data-anchor-id="data">Data</h3>
+<blockquote class="blockquote">
+<pre><code> Data (filepath:pathlib.Path, loaded_data:Any)</code></pre>
+</blockquote>
+<p><em>Helper class that provides a standard way to create an ABC using inheritance.</em></p>
+<hr>
+<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L40" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="recording" class="level3">
+<h3 class="anchored" data-anchor-id="recording">Recording</h3>
+<blockquote class="blockquote">
+<pre><code> Recording (filepath:pathlib.Path, loaded_data:Any)</code></pre>
+</blockquote>
+<p><em>Helper class that provides a standard way to create an ABC using inheritance.</em></p>
+<hr>
+<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L86" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="roi" class="level3">
+<h3 class="anchored" data-anchor-id="roi">ROI</h3>
+<blockquote class="blockquote">
+<pre><code> ROI (filepath:pathlib.Path, loaded_data:Any)</code></pre>
+</blockquote>
+<p><em>Helper class that provides a standard way to create an ABC using inheritance.</em></p>
+</section>
+</section>
+<section id="source-data-loader" class="level2">
+<h2 class="anchored" data-anchor-id="source-data-loader">Source Data Loader:</h2>
+<hr>
+<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L104" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="dataloader" class="level3">
+<h3 class="anchored" data-anchor-id="dataloader">DataLoader</h3>
+<blockquote class="blockquote">
+<pre><code> DataLoader (filepath:pathlib.Path)</code></pre>
+</blockquote>
+<p><em>Helper class that provides a standard way to create an ABC using inheritance.</em></p>
+<hr>
+<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L115" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="gridwrapperroiloader" class="level3">
+<h3 class="anchored" data-anchor-id="gridwrapperroiloader">GridWrapperROILoader</h3>
+<blockquote class="blockquote">
+<pre><code> GridWrapperROILoader (filepath:pathlib.Path)</code></pre>
+</blockquote>
+<p><em>Helper class that provides a standard way to create an ABC using inheritance.</em></p>
+<hr>
+<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L174" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="recordingloader" class="level3">
+<h3 class="anchored" data-anchor-id="recordingloader">RecordingLoader</h3>
+<blockquote class="blockquote">
+<pre><code> RecordingLoader (filepath:pathlib.Path)</code></pre>
+</blockquote>
+<p><em>Helper class that provides a standard way to create an ABC using inheritance.</em></p>
+<hr>
+<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L227" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="aviloader" class="level3">
+<h3 class="anchored" data-anchor-id="aviloader">AVILoader</h3>
+<blockquote class="blockquote">
+<pre><code> AVILoader (filepath:pathlib.Path)</code></pre>
+</blockquote>
+<p><em>Helper class that provides a standard way to create an ABC using inheritance.</em></p>
+<hr>
+<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L233" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="roiloader" class="level3">
+<h3 class="anchored" data-anchor-id="roiloader">ROILoader</h3>
+<blockquote class="blockquote">
+<pre><code> ROILoader (filepath:pathlib.Path)</code></pre>
+</blockquote>
+<p><em>Helper class that provides a standard way to create an ABC using inheritance.</em></p>
+<hr>
+<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L258" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="imagejroiloader" class="level3">
+<h3 class="anchored" data-anchor-id="imagejroiloader">ImageJROILoader</h3>
+<blockquote class="blockquote">
+<pre><code> ImageJROILoader (filepath:pathlib.Path)</code></pre>
+</blockquote>
+<p><em>Helper class that provides a standard way to create an ABC using inheritance.</em></p>
+</section>
+</section>
+<section id="loader-factories" class="level2">
+<h2 class="anchored" data-anchor-id="loader-factories">Loader Factories</h2>
+<hr>
+<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L285" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="dataloaderfactory" class="level3">
+<h3 class="anchored" data-anchor-id="dataloaderfactory">DataLoaderFactory</h3>
+<blockquote class="blockquote">
+<pre><code> DataLoaderFactory ()</code></pre>
+</blockquote>
+<p><em>Helper class that provides a standard way to create an ABC using inheritance.</em></p>
+<hr>
+<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L323" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="recordingloaderfactory" class="level3">
+<h3 class="anchored" data-anchor-id="recordingloaderfactory">RecordingLoaderFactory</h3>
+<blockquote class="blockquote">
+<pre><code> RecordingLoaderFactory ()</code></pre>
+</blockquote>
+<p><em>Helper class that provides a standard way to create an ABC using inheritance.</em></p>
+<hr>
+<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L331" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="roiloaderfactory" class="level3">
+<h3 class="anchored" data-anchor-id="roiloaderfactory">ROILoaderFactory</h3>
+<blockquote class="blockquote">
+<pre><code> ROILoaderFactory ()</code></pre>
+</blockquote>
+<p><em>Helper class that provides a standard way to create an ABC using inheritance.</em></p>
+<hr>
+<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L339" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_filepaths_with_supported_extension_in_dirpath" class="level3">
+<h3 class="anchored" data-anchor-id="get_filepaths_with_supported_extension_in_dirpath">get_filepaths_with_supported_extension_in_dirpath</h3>
+<blockquote class="blockquote">
+<pre><code> get_filepaths_with_supported_extension_in_dirpath (dirpath:pathlib.Path,
+                                                    all_supported_extensio
+                                                    ns:List[str], max_resu
+                                                    lts:Optional[int]=None
+                                                    )</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L355" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="recloaderroiloadercombinator" class="level3">
+<h3 class="anchored" data-anchor-id="recloaderroiloadercombinator">RecLoaderROILoaderCombinator</h3>
+<blockquote class="blockquote">
+<pre><code> RecLoaderROILoaderCombinator (dir_path:pathlib.Path)</code></pre>
+</blockquote>
+<p><em>Initialize self. See help(type(self)) for accurate signature.</em></p>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
-<script type="application/vnd.jupyter.widget-state+json">
-{"state":{},"version_major":2,"version_minor":0}
-</script>
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -670,4 +825,4 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><ul><li><a href="https://github.com/ddoll/NeuralActivityCubic/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/ddoll/NeuralActivityCubic/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
