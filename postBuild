@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -e
+
+# Register the base Python environment as a kernel
+source activate base
+python -m ipykernel install --user --name base --display-name "Python (base)"
+
+# Create a second Python environment for a separate kernel
+conda create -y -n envA python=3.9 ipykernel numpy pandas
+source activate envA
+python -m ipykernel install --user --name envA --display-name "Python (envA)"
+
+# Register the R kernel from the base environment
+source activate base
+R -e "IRkernel::installspec(name = 'ir', displayname = 'R (base)')"
