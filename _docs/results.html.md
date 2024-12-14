@@ -36,11 +36,66 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ### plot_activity_overview
 
 >  plot_activity_overview (analysis_rois_with_sufficient_activity:Union[List
->                              [neuralactivitycubic.analysis.AnalysisROI],List[N
->                              ever]], preview_image:numpy.ndarray,
+>                              [neuralactivitycubic.analysis.AnalysisROI],List],
+>                              preview_image:numpy.ndarray,
 >                              indicate_activity:bool=False, focus_area:Optional
 >                              [neuralactivitycubic.input.ROI]=None,
 >                              grid_configs:Optional[Dict[str,Any]]=None)
+
+<table>
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 25%" />
+<col style="width: 34%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr>
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>analysis_rois_with_sufficient_activity</td>
+<td>Union</td>
+<td></td>
+<td>With python 3.11 - change back to: List[Never]</td>
+</tr>
+<tr>
+<td>preview_image</td>
+<td>ndarray</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>indicate_activity</td>
+<td>bool</td>
+<td>False</td>
+<td></td>
+</tr>
+<tr>
+<td>focus_area</td>
+<td>Optional</td>
+<td>None</td>
+<td></td>
+</tr>
+<tr>
+<td>grid_configs</td>
+<td>Optional</td>
+<td>None</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Returns</strong></td>
+<td><strong>Tuple</strong></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
 
 ------------------------------------------------------------------------
 
@@ -52,11 +107,60 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 >  plot_rois_with_label_id_overview (analysis_rois_with_sufficient_activity:
 >                                        Union[List[neuralactivitycubic.analysis
->                                        .AnalysisROI],List[Never]],
+>                                        .AnalysisROI],List],
 >                                        preview_image:numpy.ndarray, focus_area
 >                                        :Optional[neuralactivitycubic.input.ROI
 >                                        ]=None, grid_configs:Optional[Dict[str,
 >                                        Any]]=None)
+
+<table>
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 25%" />
+<col style="width: 34%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr>
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>analysis_rois_with_sufficient_activity</td>
+<td>Union</td>
+<td></td>
+<td>With python 3.11 - change back to: List[Never]</td>
+</tr>
+<tr>
+<td>preview_image</td>
+<td>ndarray</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>focus_area</td>
+<td>Optional</td>
+<td>None</td>
+<td></td>
+</tr>
+<tr>
+<td>grid_configs</td>
+<td>Optional</td>
+<td>None</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Returns</strong></td>
+<td><strong>Tuple</strong></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
 
 ------------------------------------------------------------------------
 

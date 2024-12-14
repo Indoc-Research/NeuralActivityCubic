@@ -58,8 +58,6 @@ import neuralactivitycubic as na3
 na3.open_gui()
 ```
 
-    VBox(children=(HBox(children=(VBox(children=(HTML(value="<p style='font-size:16px; font-weight:bold; text-alig…
-
 Then, as a final step, execute the cell, for instance by clicking on the
 little play icon on top while the cell is selected and the GUI of NA³
 will open in the Notebook:

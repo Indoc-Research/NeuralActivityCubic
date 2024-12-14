@@ -38,11 +38,20 @@ title: results
 ### plot_activity_overview
 
 >      plot_activity_overview (analysis_rois_with_sufficient_activity:Union[List
->                              [neuralactivitycubic.analysis.AnalysisROI],List[N
->                              ever]], preview_image:numpy.ndarray,
+>                              [neuralactivitycubic.analysis.AnalysisROI],List],
+>                              preview_image:numpy.ndarray,
 >                              indicate_activity:bool=False, focus_area:Optional
 >                              [neuralactivitycubic.input.ROI]=None,
 >                              grid_configs:Optional[Dict[str,Any]]=None)
+
+|    | **Type** | **Default** | **Details** |
+| -- | -------- | ----------- | ----------- |
+| analysis_rois_with_sufficient_activity | Union |  | With python 3.11 - change back to: List[Never] |
+| preview_image | ndarray |  |  |
+| indicate_activity | bool | False |  |
+| focus_area | Optional | None |  |
+| grid_configs | Optional | None |  |
+| **Returns** | **Tuple** |  |  |
 
 
 ---
@@ -53,11 +62,19 @@ title: results
 
 >      plot_rois_with_label_id_overview (analysis_rois_with_sufficient_activity:
 >                                        Union[List[neuralactivitycubic.analysis
->                                        .AnalysisROI],List[Never]],
+>                                        .AnalysisROI],List],
 >                                        preview_image:numpy.ndarray, focus_area
 >                                        :Optional[neuralactivitycubic.input.ROI
 >                                        ]=None, grid_configs:Optional[Dict[str,
 >                                        Any]]=None)
+
+|    | **Type** | **Default** | **Details** |
+| -- | -------- | ----------- | ----------- |
+| analysis_rois_with_sufficient_activity | Union |  | With python 3.11 - change back to: List[Never] |
+| preview_image | ndarray |  |  |
+| focus_area | Optional | None |  |
+| grid_configs | Optional | None |  |
+| **Returns** | **Tuple** |  |  |
 
 
 ---
