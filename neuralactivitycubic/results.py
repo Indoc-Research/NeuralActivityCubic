@@ -13,7 +13,7 @@ from matplotlib.transforms import Bbox
 import numpy as np
 import pandas as pd
 from shapely import get_coordinates
-from typing import List, Tuple, Optional, Union, Any, Dict, Never
+from typing import List, Tuple, Optional, Union, Any, Dict #, Never
 from pathlib import Path
 from matplotlib.text import Text
 from matplotlib.figure import Figure
@@ -171,7 +171,7 @@ def _plot_peak_count_text_for_each_analysis_roi(analysis_rois: List[AnalysisROI]
         _plot_text_at_roi_centroid_coordinates(roi, roi.peaks_count, font_size, 'magenta', ax)
 
 # %% ../nbs/06_results.ipynb 18
-def plot_activity_overview(analysis_rois_with_sufficient_activity: Union[List[AnalysisROI], List[Never]],
+def plot_activity_overview(analysis_rois_with_sufficient_activity: Union[List[AnalysisROI], List], #With python 3.11 - change back to: List[Never]
                            preview_image: np.ndarray,
                            indicate_activity: bool=False,
                            focus_area: Optional[ROI]=None,
@@ -203,7 +203,7 @@ def _get_max_label_id_length(analysis_rois_with_sufficient_activity: List[Analys
     return max_label_id_length
 
 # %% ../nbs/06_results.ipynb 20
-def plot_rois_with_label_id_overview(analysis_rois_with_sufficient_activity: Union[List[AnalysisROI], List[Never]],
+def plot_rois_with_label_id_overview(analysis_rois_with_sufficient_activity: Union[List[AnalysisROI], List], #With python 3.11 - change back to: List[Never]
                                      preview_image: np.ndarray,
                                      focus_area: Optional[ROI]=None,
                                      grid_configs: Optional[Dict[str, Any]]=None
