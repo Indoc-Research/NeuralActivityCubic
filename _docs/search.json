@@ -1,14 +1,146 @@
 [
   {
-    "objectID": "view.html",
-    "href": "view.html",
-    "title": "view",
+    "objectID": "installation.html",
+    "href": "installation.html",
+    "title": "Installation",
     "section": "",
-    "text": "source\n\nchange_widget_state\n\n change_widget_state (widget:ipywidgets.widgets.widget.Widget,\n                      value:Optional[Any]=None,\n                      description:Optional[str]=None,\n                      disabled:Optional[bool]=None,\n                      visibility:Optional[str]=None,\n                      tooltip:Optional[str]=None,\n                      button_style:Optional[str]=None)\n\n\nsource\n\n\nUserInfoPanel\n\n UserInfoPanel ()\n\nInitialize self. See help(type(self)) for accurate signature.\n\nsource\n\n\nSourceDataPanel\n\n SourceDataPanel (user_info_panel:__main__.UserInfoPanel)\n\nInitialize self. See help(type(self)) for accurate signature.\n\nsource\n\n\nAnalysisSettingsPanel\n\n AnalysisSettingsPanel ()\n\nInitialize self. See help(type(self)) for accurate signature.\n\nsource\n\n\nMainScreen\n\n MainScreen ()\n\nInitialize self. See help(type(self)) for accurate signature.\n\nsource\n\n\nWidgetsInterface\n\n WidgetsInterface ()\n\nInitialize self. See help(type(self)) for accurate signature.",
+    "text": "This new version of NA³ is currently available via the Python Package Index or via GitHub. To be able to install and run NA³ on your system you currently need to run a few commands in the terminal, as the fully GUI-based installation will be available only soon. But don´t worry, we´ll take you through the process step by step!",
     "crumbs": [
-      "API",
-      "view"
+      "User Guides",
+      "Installation"
     ]
+  },
+  {
+    "objectID": "installation.html#install-anaconda",
+    "href": "installation.html#install-anaconda",
+    "title": "Installation",
+    "section": "1. Install Anaconda",
+    "text": "1. Install Anaconda\nThough not strictly required, we highly recommend installing NA³ in a virtual Python environment that you setup via Anaconda - especially for users with limited (or even no) programming expertise. Please download the corresponding distribution for your operating system here and follow the respective installation wizard to install Anaconda on your system.",
+    "crumbs": [
+      "User Guides",
+      "Installation"
+    ]
+  },
+  {
+    "objectID": "installation.html#create-and-activate-a-new-virtual-environment",
+    "href": "installation.html#create-and-activate-a-new-virtual-environment",
+    "title": "Installation",
+    "section": "2. Create and activate a new virtual environment",
+    "text": "2. Create and activate a new virtual environment\nNext, we´ll need a terminal to install NA³ with just a few commands. For this, we suggest using the tool Anaconda Prompt that came with the installation of Anaconda (but if you prefer to use a different terminal, please feel free to use it - the only requirement is that conda is accessible, which comes per default in Anaconda Prompt). In the terminal (e.g. in Anaconda Prompt), please type the following command and execute it by hitting the Return key on your keyboard. It will create a new virtual environment that we can use to install NA³, using conda:\n\nconda create --name na3 -y python=3.11\n\nOnce the setup of the environment has concluded, you should see a message like the following, informing you how to activate the environment:\n\nWe´ll do exactly as suggested to activate the newly created virtual environment to continue the installation of NA³. Thus, please run the following command in the Anaconda Prompt terminal:\n\nconda activate na3\n\nYou should now see that the input line in the Anaconda Prompt terminal starts with (na3) - indicating that you successfully switched to this virtual environment.",
+    "crumbs": [
+      "User Guides",
+      "Installation"
+    ]
+  },
+  {
+    "objectID": "installation.html#install-the-neuralactivitycubic-python-package",
+    "href": "installation.html#install-the-neuralactivitycubic-python-package",
+    "title": "Installation",
+    "section": "3. Install the neuralactivitycubic Python package:",
+    "text": "3. Install the neuralactivitycubic Python package:\nWith the activated na3 environment, please complete the installation of NA³ by running on final command in the Anaconda Prompt terminal:\n\npip install neuralactivitycubic\n\nUpon executing this command, you will see a lot of output and activity in the terminal while it downloads the source code of NA³ and it´s dependencies, and installs them all in the virtual environment on your system. You know that the installation has finished, when the input line starting with (na3) appears again. The final few messages that are shown in Anaconda Prompt will then likely look similar to this:\n\n\n\nOutput after successful installation of neuralactivitycubic.",
+    "crumbs": [
+      "User Guides",
+      "Installation"
+    ]
+  },
+  {
+    "objectID": "installation.html#done",
+    "href": "installation.html#done",
+    "title": "Installation",
+    "section": "4. Done!",
+    "text": "4. Done!\nCongratulations! That´s already everything you need to do to install NA³ on your system. You can now use NA³ to analyze your data and hopefully start a journey to the next scientific breakthrough!\nIf you´d like to get some more information on how to use NA³, please check out the following chapters in this documentation:\n\nUsing NA³ via the GUI\n[Using NA³ via the API]",
+    "crumbs": [
+      "User Guides",
+      "Installation"
+    ]
+  },
+  {
+    "objectID": "installation.html#wed-love-to-hear-your-feedback",
+    "href": "installation.html#wed-love-to-hear-your-feedback",
+    "title": "Installation",
+    "section": "We´d love to hear your Feedback:",
+    "text": "We´d love to hear your Feedback:\nYou are using NA³ for your research - or would like to do so, but there´s that one cool feature missing for you? That´s great! We´d love to hear your feedback, feature requests, or bug reports to keep improving NA³ - please use this form on GitHub to submit it, we appreciate it a lot!\nPlease feel free to also explore all other Research Software that our not-for-profit organization has developed, or learn more about us and what we do on our website. If you are interested to partner with us for a similar collaboration on your Research Software, or to develop it with or for you from scratch, don´t hesitate and drop us an email - we´re always looking for new opportunities to catalyze science be delivering cutting-edge technology tailored to the specific research challenges of our collaborators!\n\n\n\nIndoc Research Europe gGmbH",
+    "crumbs": [
+      "User Guides",
+      "Installation"
+    ]
+  },
+  {
+    "objectID": "docs_installation.html",
+    "href": "docs_installation.html",
+    "title": "Welcome!",
+    "section": "",
+    "text": "NeuralActivityCubic (NA³) is an open-source calcium image analysis tool published in 2018 by J. Prada and colleagues1, who describe it as following in the accompanying Author Summary:\nSince its publication in 20182, updates to several software packages on which the original implementation of NA3 depends have rendered this version of NA³ virtually un-installable and, thus, effectively inaccessible for its target user audience - the Neuroscientific Community. Given the continued interest in NA³, however, this was not acceptable. Thus, we formed a collaboration between the original developers of NA³ and research software engineering experts from the not-for-profit organization Indoc Research Europe to revamp NA³, with the goal of making it easily accessible to the Neuroscientific Community once again. While on it, we also enhanced NA³´s performance, it´s scope of features, and it´s maintainability to ensure NA³ remains accessible moving forward. Today, we´re happy to present to you this revamped version of NA³ - we hope you´ll like it!"
+  },
+  {
+    "objectID": "docs_installation.html#install-anaconda",
+    "href": "docs_installation.html#install-anaconda",
+    "title": "Welcome!",
+    "section": "1. Install Anaconda",
+    "text": "1. Install Anaconda\nThough not strictly required, we highly recommend installing NA³ in a virtual Python environment that you setup via Anaconda - especially for users with limited (or even no) programming expertise. Please download the corresponding distribution for your operating system here and follow the respective installation wizard to install Anaconda on your system."
+  },
+  {
+    "objectID": "docs_installation.html#create-and-activate-a-new-virtual-environment",
+    "href": "docs_installation.html#create-and-activate-a-new-virtual-environment",
+    "title": "Welcome!",
+    "section": "2. Create and activate a new virtual environment",
+    "text": "2. Create and activate a new virtual environment\nNext, we´ll need a terminal to install NA³ with just a few commands. For this, we suggest using the tool Anaconda Prompt that came with the installation of Anaconda (but if you prefer to use a different terminal, please feel free to use it - the only requirement is that conda is accessible, which comes per default in Anaconda Prompt). In the terminal (e.g. in Anaconda Prompt), please type the following command and execute it by hitting the Return key on your keyboard. It will create a new virtual environment that we can use to install NA³, using conda:\n\nconda create --name na3 -y python=3.11\n\nOnce the setup of the environment has concluded, you should see a message like the following, informing you how to activate the environment:\n\nWe´ll do exactly as suggested to activate the newly created virtual environment to continue the installation of NA³. Thus, please run the following command in the Anaconda Prompt terminal:\n\nconda activate na3\n\nYou should now see that the input line in the Anaconda Prompt terminal starts with (na3) - indicating that you successfully switched to this virtual environment."
+  },
+  {
+    "objectID": "docs_installation.html#install-the-neuralactivitycubic-python-package",
+    "href": "docs_installation.html#install-the-neuralactivitycubic-python-package",
+    "title": "Welcome!",
+    "section": "3. Install the neuralactivitycubic Python package:",
+    "text": "3. Install the neuralactivitycubic Python package:\nWith the activated na3 environment, please complete the installation of NA³ by running on final command in the Anaconda Prompt terminal:\n\npip install neuralactivitycubic\n\nUpon executing this command, you will see a lot of output and activity in the terminal while it downloads the source code of NA³ and it´s dependencies, and installs them all in the virtual environment on your system. You know that the installation has finished, when the input line starting with (na3) appears again. The final few messages that are shown in Anaconda Prompt will then likely look similar to this:\n\n\n\nOutput after successful installation of neuralactivitycubic.\n\n\nCongratulations! That´s already everything you need to do to install NA³ on your system. You can now use NA³ to analyze your data and hopefully start a journey to the next scientific breakthrough!\nIf you´d like to get some more information on how to use NA³, please check out the following chapters in this documentation:\n\nUsing NA³ via the GUI\n[Using NA³ via the API]"
+  },
+  {
+    "objectID": "docs_installation.html#wed-love-to-hear-your-feedback",
+    "href": "docs_installation.html#wed-love-to-hear-your-feedback",
+    "title": "Welcome!",
+    "section": "We´d love to hear your Feedback:",
+    "text": "We´d love to hear your Feedback:\nYou are using NA³ for your research - or would like to do so, but there´s that one cool feature missing for you? That´s great! We´d love to hear your feedback, feature requests, or bug reports to keep improving NA³ - please use this form on GitHub to submit it, we appreciate it a lot!\nPlease feel free to also explore all other Research Software that our not-for-profit organization has developed, or learn more about us and what we do on our website. If you are interested to partner with us for a similar collaboration on your Research Software, or to develop it with or for you from scratch, don´t hesitate and drop us an email - we´re always looking for new opportunities to catalyze science be delivering cutting-edge technology tailored to the specific research challenges of our collaborators!\n\n\n\nIndoc Research Europe gGmbH"
+  },
+  {
+    "objectID": "docs_installation.html#open-the-gui",
+    "href": "docs_installation.html#open-the-gui",
+    "title": "Welcome!",
+    "section": "Open the GUI:",
+    "text": "Open the GUI:"
+  },
+  {
+    "objectID": "docs_installation.html#end-to-end-walkthrough",
+    "href": "docs_installation.html#end-to-end-walkthrough",
+    "title": "Welcome!",
+    "section": "End-to-End Walkthrough",
+    "text": "End-to-End Walkthrough\nFollow"
+  },
+  {
+    "objectID": "docs_installation.html#general-settings",
+    "href": "docs_installation.html#general-settings",
+    "title": "Welcome!",
+    "section": "General Settings",
+    "text": "General Settings\nlorem ipsum lorem ipsum lorem ipsum\n\nROI modes:\nlorem ipsum lorem ipsum lorem ipsum\n\nGrid (congruent squares):\nlorem ipsum lorem ipsum lorem ipsum\n\n\nPredefined ROIs:\nlorem ipsum lorem ipsum lorem ipsum\n\n\n\nBatch mode:\nlorem ipsum lorem ipsum lorem ipsum\n\n\nFocus areas:\nlorem ipsum lorem ipsum lorem ipsum\n\n\nSource data:\nlorem ipsum lorem ipsum lorem ipsum"
+  },
+  {
+    "objectID": "docs_installation.html#analysis-settings",
+    "href": "docs_installation.html#analysis-settings",
+    "title": "Welcome!",
+    "section": "Analysis Settings:",
+    "text": "Analysis Settings:\nlorem ipsum lorem ipsum lorem ipsum\n\nOptional settings:\nlorem ipsum lorem ipsum lorem ipsum\n\n\nResult settings:\nlorem ipsum lorem ipsum lorem ipsum"
+  },
+  {
+    "objectID": "docs_installation.html#generated-results",
+    "href": "docs_installation.html#generated-results",
+    "title": "Welcome!",
+    "section": "Generated Results:",
+    "text": "Generated Results:\nlorem ipsum lorem ipsum lorem ipsum"
+  },
+  {
+    "objectID": "docs_installation.html#footnotes",
+    "href": "docs_installation.html#footnotes",
+    "title": "Welcome!",
+    "section": "Footnotes",
+    "text": "Footnotes\n\n\nPrada J, Sasi M, Martin C, Jablonka S, Dandekar T, Blum R (2018) An open source tool for automatic spatiotemporal assessment of calcium transients and local ‘signal-close-to-noise’ activity in calcium imaging data. PLoS computational biology 14(3): e1006054. https://doi.org/10.1371/journal.pcbi.1006054↩︎\nPrada J, Sasi M, Martin C, Jablonka S, Dandekar T, Blum R (2018) An open source tool for automatic spatiotemporal assessment of calcium transients and local ‘signal-close-to-noise’ activity in calcium imaging data. PLoS computational biology 14(3): e1006054. https://doi.org/10.1371/journal.pcbi.1006054↩︎"
   },
   {
     "objectID": "model.html",
@@ -24,57 +156,126 @@
   {
     "objectID": "tutorial.html",
     "href": "tutorial.html",
-    "title": "Getting started",
+    "title": "Welcome!",
     "section": "",
-    "text": "After you successfully completed the installation of neuralactivitycubic (NA³), open JupyterLab in your browser run the following commands in a Jupyter Notebook to open the graphical user interface (GUI) of NA³:\nimport neuralactivitycubic as na3\n\nna3.open_gui()",
-    "crumbs": [
-      "Tutorials",
-      "Getting started"
-    ]
+    "text": "NeuralActivityCubic (NA³) is an open-source calcium image analysis tool published in 2018 by J. Prada and colleagues1, who describe it as following in the accompanying Author Summary:\nSince its publication in 20182, updates to several software packages on which the original implementation of NA3 depends have rendered this version of NA³ virtually un-installable and, thus, effectively inaccessible for its target user audience - the Neuroscientific Community. Given the continued interest in NA³, however, this was not acceptable. Thus, we formed a collaboration between the original developers of NA³ and research software engineering experts from the not-for-profit organization Indoc Research Europe to revamp NA³, with the goal of making it easily accessible to the Neuroscientific Community once again. While on it, we also enhanced NA³´s performance, it´s scope of features, and it´s maintainability to ensure NA³ remains accessible moving forward. Today, we´re happy to present to you this revamped version of NA³ - we hope you´ll like it!"
+  },
+  {
+    "objectID": "tutorial.html#installation",
+    "href": "tutorial.html#installation",
+    "title": "Welcome!",
+    "section": "Installation",
+    "text": "Installation\nThis new version of NA³ is currently available via the Python Package Index or via GitHub. To be able to install and run NA³ on your system you currently need to run a few commands in the terminal, as the fully GUI-based installation will be available only soon. But don´t worry, we´ll take you through the process step by step!\n\n1. Install Anaconda\nThough not strictly required, we highly recommend installing NA³ in a virtual Python environment that you setup via Anaconda - especially for users with limited (or even no) programming expertise. Please download the corresponding distribution for your operating system here and follow the respective installation wizard to install Anaconda on your system.\n\n\n2. Create and activate a new virtual environment\nNext, we´ll need a terminal to install NA³ with just a few commands. For this, we suggest using the tool Anaconda Prompt that came with the installation of Anaconda (but if you prefer to use a different terminal, please feel free to use it - the only requirement is that conda is accessible, which comes per default in Anaconda Prompt). In the terminal (e.g. in Anaconda Prompt), please type the following command and execute it by hitting the Return key on your keyboard. It will create a new virtual environment that we can use to install NA³, using conda:\n\nconda create --name na3 -y python=3.11\n\nOnce the setup of the environment has concluded, you should see a message like the following, informing you how to activate the environment:\n\nWe´ll do exactly as suggested to activate the newly created virtual environment to continue the installation of NA³. Thus, please run the following command in the Anaconda Prompt terminal:\n\nconda activate na3\n\nYou should now see that the input line in the Anaconda Prompt terminal starts with (na3) - indicating that you successfully switched to this virtual environment. With the activated na3 environment, please complete the installation of NA³ by running on final command in the Anaconda Prompt terminal:\n\npip install neuralactivitycubic\n\nUpon executing this command, you will see a lot of output and activity in the terminal while it downloads the source code of NA³ and it´s dependencies, and installs them all in the virtual environment on your system. You know that the installation has finished, when the input line starting with (na3) appears again. The final few messages that are shown in Anaconda Prompt will then likely look similar to this:\n\n\nCongratulations! That´s already everything you need to do to install NA³ on your system. You can now use NA³ to analyze your data and hopefully start a journey to the next scientific breakthrough!\nIf you´d like to get some more information on how to use NA³ via it´s graphical user interface (GUI) or via it´s Python bindings, please check out the following sections:\n\nOpen the GUI\nAnalysis settings explained in detail\nAPI"
+  },
+  {
+    "objectID": "tutorial.html#open-the-gui",
+    "href": "tutorial.html#open-the-gui",
+    "title": "Welcome!",
+    "section": "Open the GUI:",
+    "text": "Open the GUI:\nAfter you successfully completed the installation of NA³ following the steps described above, please open a JupyterNotebook to launch the GUI of NA³.\nTo do this, open the Anaconda Prompt terminal (or the terminal of your choice) and make sure the virtual environment in which you installed NA³ is active. If you followed our installation guide above, you should see that the input line starts with (na3). If this is not the case, you can always activate it by running the following command:\n\nconda activate na3\n\nWith the virtual environment in which you installed NA³ activated, please execute the following command in the terminal:\n\njupyter-lab\n\nNext, open a new JupyterNotebook by clicking on the “Python 3 (ipykernel)” button in the Notebook section. In this JupyterNotebook, paste the following code in a cell:\n\nimport neuralactivitycubic as na3\n\nna3.open_gui()\n\n\n\n\nThen, as a final step, execute the cell, for instance by clicking on the little play icon on top while the cell is selected and the GUI of NA³ will open in the Notebook:\n\n\n\n\n\n\n\nTip\n\n\n\nIf you´re working on a smaller screen, e.g. if you´re using a notebook, you can use the keyboard shortcut Ctrl + b to collapse the file explorer panel of JupyterLab to the left of the JupyterNotebook to give you some extra horizontal space. You can always use the same keyboard shortcut again to bring it back again if needed."
+  },
+  {
+    "objectID": "tutorial.html#end-to-end-walkthrough-1",
+    "href": "tutorial.html#end-to-end-walkthrough-1",
+    "title": "Welcome!",
+    "section": "End-to-End Walkthrough",
+    "text": "End-to-End Walkthrough\nFollow"
   },
   {
     "objectID": "tutorial.html#general-settings",
     "href": "tutorial.html#general-settings",
-    "title": "Getting started",
+    "title": "Welcome!",
     "section": "General Settings",
-    "text": "General Settings\nlorem ipsum lorem ipsum lorem ipsum\n\nROI modes:\nlorem ipsum lorem ipsum lorem ipsum\n\nGrid (congruent squares):\nlorem ipsum lorem ipsum lorem ipsum\n\n\nPredefined ROIs:\nlorem ipsum lorem ipsum lorem ipsum\n\n\n\nBatch mode:\nlorem ipsum lorem ipsum lorem ipsum\n\n\nFocus areas:\nlorem ipsum lorem ipsum lorem ipsum\n\n\nSource data:\nlorem ipsum lorem ipsum lorem ipsum",
-    "crumbs": [
-      "Tutorials",
-      "Getting started"
-    ]
+    "text": "General Settings\nlorem ipsum lorem ipsum lorem ipsum\n\nROI modes:\nlorem ipsum lorem ipsum lorem ipsum\n\nGrid (congruent squares):\nlorem ipsum lorem ipsum lorem ipsum\n\n\nPredefined ROIs:\nlorem ipsum lorem ipsum lorem ipsum\n\n\n\nBatch mode:\nlorem ipsum lorem ipsum lorem ipsum\n\n\nFocus areas:\nlorem ipsum lorem ipsum lorem ipsum\n\n\nSource data:\nlorem ipsum lorem ipsum lorem ipsum"
   },
   {
     "objectID": "tutorial.html#analysis-settings",
     "href": "tutorial.html#analysis-settings",
-    "title": "Getting started",
+    "title": "Welcome!",
     "section": "Analysis Settings:",
-    "text": "Analysis Settings:\nlorem ipsum lorem ipsum lorem ipsum\n\nOptional settings:\nlorem ipsum lorem ipsum lorem ipsum\n\n\nResult settings:\nlorem ipsum lorem ipsum lorem ipsum",
-    "crumbs": [
-      "Tutorials",
-      "Getting started"
-    ]
+    "text": "Analysis Settings:\nlorem ipsum lorem ipsum lorem ipsum\n\nOptional settings:\nlorem ipsum lorem ipsum lorem ipsum\n\n\nResult settings:\nlorem ipsum lorem ipsum lorem ipsum"
   },
   {
     "objectID": "tutorial.html#generated-results",
     "href": "tutorial.html#generated-results",
-    "title": "Getting started",
+    "title": "Welcome!",
     "section": "Generated Results:",
-    "text": "Generated Results:\nlorem ipsum lorem ipsum lorem ipsum",
+    "text": "Generated Results:\nlorem ipsum lorem ipsum lorem ipsum"
+  },
+  {
+    "objectID": "tutorial.html#footnotes",
+    "href": "tutorial.html#footnotes",
+    "title": "Welcome!",
+    "section": "Footnotes",
+    "text": "Footnotes\n\n\nPrada J, Sasi M, Martin C, Jablonka S, Dandekar T, Blum R (2018) An open source tool for automatic spatiotemporal assessment of calcium transients and local ‘signal-close-to-noise’ activity in calcium imaging data. PLoS computational biology 14(3): e1006054. https://doi.org/10.1371/journal.pcbi.1006054↩︎\nPrada J, Sasi M, Martin C, Jablonka S, Dandekar T, Blum R (2018) An open source tool for automatic spatiotemporal assessment of calcium transients and local ‘signal-close-to-noise’ activity in calcium imaging data. PLoS computational biology 14(3): e1006054. https://doi.org/10.1371/journal.pcbi.1006054↩︎"
+  },
+  {
+    "objectID": "results.html",
+    "href": "results.html",
+    "title": "results",
+    "section": "",
+    "text": "source\n\nplot_roi_boundaries\n\n plot_roi_boundaries (roi:Union[neuralactivitycubic.input.ROI,neuralactivi\n                      tycubic.analysis.AnalysisROI], line_color:str,\n                      line_style:str, line_width:Union[int,float])\n\n\nsource\n\n\nplot_window_size_preview\n\n plot_window_size_preview (preview_image:numpy.ndarray,\n                           grid_configs:Dict[str,Any], focus_area_roi:Opti\n                           onal[neuralactivitycubic.input.ROI]=None)\n\n\nsource\n\n\nplot_activity_overview\n\n plot_activity_overview (analysis_rois_with_sufficient_activity:Union[List\n                         [neuralactivitycubic.analysis.AnalysisROI],List[N\n                         ever]], preview_image:numpy.ndarray,\n                         indicate_activity:bool=False, focus_area:Optional\n                         [neuralactivitycubic.input.ROI]=None,\n                         grid_configs:Optional[Dict[str,Any]]=None)\n\n\nsource\n\n\nplot_rois_with_label_id_overview\n\n plot_rois_with_label_id_overview (analysis_rois_with_sufficient_activity:\n                                   Union[List[neuralactivitycubic.analysis\n                                   .AnalysisROI],List[Never]],\n                                   preview_image:numpy.ndarray, focus_area\n                                   :Optional[neuralactivitycubic.input.ROI\n                                   ]=None, grid_configs:Optional[Dict[str,\n                                   Any]]=None)\n\n\nsource\n\n\nplot_intensity_trace_with_identified_peaks_for_individual_roi\n\n plot_intensity_trace_with_identified_peaks_for_individual_roi\n                                                                (analysis_\n                                                                roi:neural\n                                                                activitycu\n                                                                bic.analys\n                                                                is.Analysi\n                                                                sROI)\n\n\nsource\n\n\nexport_peak_results_df_from_analysis_roi\n\n export_peak_results_df_from_analysis_roi\n                                           (analysis_roi:neuralactivitycub\n                                           ic.analysis.AnalysisROI)\n\n\nsource\n\n\ncreate_single_roi_amplitude_and_delta_f_over_f_results\n\n create_single_roi_amplitude_and_delta_f_over_f_results\n                                                         (df_all_results_s\n                                                         ingle_roi:pandas.\n                                                         core.frame.DataFr\n                                                         ame,\n                                                         zfill_factor:int)\n\n\nsource\n\n\ncreate_single_roi_auc_results\n\n create_single_roi_auc_results\n                                (df_all_results_single_roi:pandas.core.fra\n                                me.DataFrame, zfill_factor:int)",
     "crumbs": [
-      "Tutorials",
-      "Getting started"
+      "API",
+      "results"
     ]
   },
   {
-    "objectID": "controller.html",
-    "href": "controller.html",
-    "title": "controller",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Welcome to NeuralActivityCubic",
     "section": "",
-    "text": "source\n\nApp\n\n App ()\n\nInitialize self. See help(type(self)) for accurate signature.\n\nsource\n\n\nopen_gui\n\n open_gui ()\n\nStart the interactive widgets interface for NeuralActivityCubic",
+    "text": "NeuralActivityCubic (NA³) is an open-source calcium image analysis tool published in 2018 by J. Prada and colleagues1, who describe it as following in their Author Summary:\nSince its publication in 2018, updates to several software packages on which the original implementation of NA3 depends have rendered this version of NA³ virtually un-installable and, thus, effectively inaccessible for its target user audience - the Neuroscientific Community. Given the continued interest in NA³, however, this was not acceptable. Thus, we formed a collaboration between the original developers of NA³ and research software engineering experts from the not-for-profit organization Indoc Research Europe to revamp NA³, with the goal of making it easily accessible to the Neuroscientific Community once again. While on it, we also enhanced NA³´s performance, it´s scope of features, and it´s maintainability to ensure NA³ remains accessible moving forward. Today, we´re happy to present to you this revamped version of NA³ - we hope you´ll like it!\nNote: We´re still putting a few finishing touches on this new implementation of NA³, so please be aware that this version remains under active development and should not yet be considered as a stable release. We´re currently also working on a paper describing our work in more details, so make sure you stay tuned and regularly check these docs for updates!",
     "crumbs": [
-      "API",
-      "controller"
+      "Welcome to NeuralActivityCubic"
     ]
+  },
+  {
+    "objectID": "index.html#usage",
+    "href": "index.html#usage",
+    "title": "Welcome to NeuralActivityCubic",
+    "section": "Usage",
+    "text": "Usage\n\nInstallation\nIf you´re comfortable working with virtual Python environments and installing packages via command line interfaces, please follow one of the subsequent options to install NA³. If you´d prefer a full step-by-step guide instead, we also got you covered: please find our detailed installation guide here.\nInstall latest from GitHub:\n$ pip install git+https://github.com/Indoc-Research/neuralactivitycubic.git\nor from pypi\n$ pip install neuralactivitycubic\n\n\nDocumentation\nDocumentation for NA³ can be found here.",
+    "crumbs": [
+      "Welcome to NeuralActivityCubic"
+    ]
+  },
+  {
+    "objectID": "index.html#how-to-use---quick-start",
+    "href": "index.html#how-to-use---quick-start",
+    "title": "Welcome to NeuralActivityCubic",
+    "section": "How to use - quick start:",
+    "text": "How to use - quick start:\nAfter installing neuralactivitycubic, open a Jupyter Notebook and execute the following code to launch the GUI of NA³:\n\nimport neuralactivitycubic as na3\n\nna3.open_gui()\n\n\n\n\nGUI of NA³.",
+    "crumbs": [
+      "Welcome to NeuralActivityCubic"
+    ]
+  },
+  {
+    "objectID": "index.html#developer-guide",
+    "href": "index.html#developer-guide",
+    "title": "Welcome to NeuralActivityCubic",
+    "section": "Developer Guide",
+    "text": "Developer Guide\nIf you are new to using nbdev here are some useful pointers to get you started.\n\nInstall NeuralActivityCubic in Development mode\n# make sure NeuralActivityCubic package is installed in development mode\n$ pip install -e .\n\n# make changes under nbs/ directory\n# ...\n\n# compile to have changes apply to NeuralActivityCubic\n$ nbdev_prepare",
+    "crumbs": [
+      "Welcome to NeuralActivityCubic"
+    ]
+  },
+  {
+    "objectID": "index.html#footnotes",
+    "href": "index.html#footnotes",
+    "title": "Welcome to NeuralActivityCubic",
+    "section": "Footnotes",
+    "text": "Footnotes\n\n\nPrada J, Sasi M, Martin C, Jablonka S, Dandekar T, Blum R (2018) An open source tool for automatic spatiotemporal assessment of calcium transients and local ‘signal-close-to-noise’ activity in calcium imaging data. PLoS computational biology 14(3): e1006054. https://doi.org/10.1371/journal.pcbi.1006054↩︎",
+    "crumbs": [
+      "Welcome to NeuralActivityCubic"
+    ]
+  },
+  {
+    "objectID": "docs_working_with_the_gui.html",
+    "href": "docs_working_with_the_gui.html",
+    "title": "Using NA³ via the GUI:",
+    "section": "",
+    "text": "After you successfully completed the installation of NA³ (e.g. by following our Installation Guide), please open a JupyterNotebook to launch the GUI of NA³.\nTo do this, open the Anaconda Prompt terminal (or the terminal of your choice) and make sure the virtual environment in which you installed NA³ is active. If you followed our installation guide, you should see that the input line starts with (na3). If this is not the case, you can always activate it by running the following command:\n\nconda activate na3\n\nWith the virtual environment in which you installed NA³ activated, please execute the following command in the terminal:\n\njupyter-lab\n\nNext, open a new JupyterNotebook by clicking on the “Python 3 (ipykernel)” button in the Notebook section. In this JupyterNotebook, paste the following code in a cell:\n\nimport neuralactivitycubic as na3\n\nna3.open_gui()\n\n\n\n\nThen, as a final step, execute the cell, for instance by clicking on the little play icon on top while the cell is selected and the GUI of NA³ will open in the Notebook:\n\n\n\n\n\n\n\nTip\n\n\n\nIf you´re working on a smaller screen, e.g. if you´re using a notebook, you can use the keyboard shortcut Ctrl + b to collapse the file explorer panel of JupyterLab to the left of the JupyterNotebook to give you some extra horizontal space. You can always use the same keyboard shortcut again to bring it back again if needed."
   },
   {
     "objectID": "input.html",
@@ -121,54 +322,80 @@
     ]
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "NeuralActivityCubic",
+    "objectID": "controller.html",
+    "href": "controller.html",
+    "title": "controller",
     "section": "",
-    "text": "This file will become your README and also the index of your documentation.",
-    "crumbs": [
-      "NeuralActivityCubic"
-    ]
-  },
-  {
-    "objectID": "index.html#developer-guide",
-    "href": "index.html#developer-guide",
-    "title": "NeuralActivityCubic",
-    "section": "Developer Guide",
-    "text": "Developer Guide\nIf you are new to using nbdev here are some useful pointers to get you started.\n\nInstall NeuralActivityCubic in Development mode\n# make sure NeuralActivityCubic package is installed in development mode\n$ pip install -e .\n\n# make changes under nbs/ directory\n# ...\n\n# compile to have changes apply to NeuralActivityCubic\n$ nbdev_prepare",
-    "crumbs": [
-      "NeuralActivityCubic"
-    ]
-  },
-  {
-    "objectID": "index.html#usage",
-    "href": "index.html#usage",
-    "title": "NeuralActivityCubic",
-    "section": "Usage",
-    "text": "Usage\n\nInstallation\nInstall latest from the GitHub repository:\n$ pip install git+https://github.com/Indoc-Research/neuralactivitycubic.git\nor from conda\n$ conda install -c Indoc-Research NeuralActivityCubic\nor from pypi\n$ pip install NeuralActivityCubic\n\n\nDocumentation\nDocumentation can be found hosted on this GitHub repository’s pages. Additionally you can find package manager specific guidelines on conda and pypi respectively.",
-    "crumbs": [
-      "NeuralActivityCubic"
-    ]
-  },
-  {
-    "objectID": "index.html#how-to-use",
-    "href": "index.html#how-to-use",
-    "title": "NeuralActivityCubic",
-    "section": "How to use",
-    "text": "How to use\nFill me in please! Don’t forget code examples:\n\n1+1\n\n2",
-    "crumbs": [
-      "NeuralActivityCubic"
-    ]
-  },
-  {
-    "objectID": "results.html",
-    "href": "results.html",
-    "title": "results",
-    "section": "",
-    "text": "source\n\nplot_roi_boundaries\n\n plot_roi_boundaries (roi:Union[neuralactivitycubic.input.ROI,neuralactivi\n                      tycubic.analysis.AnalysisROI], line_color:str,\n                      line_style:str, line_width:Union[int,float])\n\n\nsource\n\n\nplot_window_size_preview\n\n plot_window_size_preview (preview_image:numpy.ndarray,\n                           grid_configs:Dict[str,Any], focus_area_roi:Opti\n                           onal[neuralactivitycubic.input.ROI]=None)\n\n\nsource\n\n\nplot_activity_overview\n\n plot_activity_overview (analysis_rois_with_sufficient_activity:Union[List\n                         [neuralactivitycubic.analysis.AnalysisROI],List[N\n                         ever]], preview_image:numpy.ndarray,\n                         indicate_activity:bool=False, focus_area:Optional\n                         [neuralactivitycubic.input.ROI]=None,\n                         grid_configs:Optional[Dict[str,Any]]=None)\n\n\nsource\n\n\nplot_rois_with_label_id_overview\n\n plot_rois_with_label_id_overview (analysis_rois_with_sufficient_activity:\n                                   Union[List[neuralactivitycubic.analysis\n                                   .AnalysisROI],List[Never]],\n                                   preview_image:numpy.ndarray, focus_area\n                                   :Optional[neuralactivitycubic.input.ROI\n                                   ]=None, grid_configs:Optional[Dict[str,\n                                   Any]]=None)\n\n\nsource\n\n\nplot_intensity_trace_with_identified_peaks_for_individual_roi\n\n plot_intensity_trace_with_identified_peaks_for_individual_roi\n                                                                (analysis_\n                                                                roi:neural\n                                                                activitycu\n                                                                bic.analys\n                                                                is.Analysi\n                                                                sROI)\n\n\nsource\n\n\nexport_peak_results_df_from_analysis_roi\n\n export_peak_results_df_from_analysis_roi\n                                           (analysis_roi:neuralactivitycub\n                                           ic.analysis.AnalysisROI)\n\n\nsource\n\n\ncreate_single_roi_amplitude_and_delta_f_over_f_results\n\n create_single_roi_amplitude_and_delta_f_over_f_results\n                                                         (df_all_results_s\n                                                         ingle_roi:pandas.\n                                                         core.frame.DataFr\n                                                         ame,\n                                                         zfill_factor:int)\n\n\nsource\n\n\ncreate_single_roi_auc_results\n\n create_single_roi_auc_results\n                                (df_all_results_single_roi:pandas.core.fra\n                                me.DataFrame, zfill_factor:int)",
+    "text": "source\n\nApp\n\n App ()\n\nInitialize self. See help(type(self)) for accurate signature.\n\nsource\n\n\nopen_gui\n\n open_gui ()\n\nStart the interactive widgets interface for NeuralActivityCubic",
     "crumbs": [
       "API",
-      "results"
+      "controller"
+    ]
+  },
+  {
+    "objectID": "using_the_gui.html",
+    "href": "using_the_gui.html",
+    "title": "Using NA³ via the GUI",
+    "section": "",
+    "text": "Note\n\n\n\nWe´re still putting a few finishing touches onto the new implementation of NA³, so please be aware that this version remains under active development and should not yet be considered as a stable release.",
+    "crumbs": [
+      "User Guides",
+      "Using NA³ via the GUI"
+    ]
+  },
+  {
+    "objectID": "using_the_gui.html#launching-the-gui",
+    "href": "using_the_gui.html#launching-the-gui",
+    "title": "Using NA³ via the GUI",
+    "section": "Launching the GUI",
+    "text": "Launching the GUI\nAfter you successfully completed the installation of NA³ (e.g. by following our Installation Guide), please open a JupyterNotebook to launch the GUI of NA³.\nTo do this, open the Anaconda Prompt terminal (or the terminal of your choice) and make sure the virtual environment in which you installed NA³ is active. If you followed our installation guide, you should see that the input line starts with (na3). If this is not the case, you can always activate it by running the following command:\n\nconda activate na3\n\nWith the virtual environment in which you installed NA³ activated, please execute the following command in the terminal:\n\njupyter-lab\n\nNext, open a new JupyterNotebook by clicking on the “Python 3 (ipykernel)” button in the Notebook section. In this JupyterNotebook, paste the following code in a cell:\n\nimport neuralactivitycubic as na3\n\nna3.open_gui()\n\n\n\n\nThen, as a final step, execute the cell, for instance by clicking on the little play icon on top while the cell is selected and the GUI of NA³ will open in the Notebook:\n\n\n\n\n\n\n\nTip\n\n\n\nIf you´re working on a smaller screen, e.g. if you´re using a notebook, you can use the keyboard shortcut Ctrl + b to collapse the file explorer panel of JupyterLab to the left of the JupyterNotebook to give you some extra horizontal space. You can always use the same keyboard shortcut again to bring it back again if needed.",
+    "crumbs": [
+      "User Guides",
+      "Using NA³ via the GUI"
+    ]
+  },
+  {
+    "objectID": "using_the_gui.html#quick-walkthrough",
+    "href": "using_the_gui.html#quick-walkthrough",
+    "title": "Using NA³ via the GUI",
+    "section": "Quick Walkthrough",
+    "text": "Quick Walkthrough\nWe´re all busy people and documentation can be quite exhaustive to read. Thus, here´s a quick walkthrough of NA³´s core functionalities that should allow you to get going with your own first tests:\n\nFor more detailed descriptions of the individual features and settings, please see the sections below.",
+    "crumbs": [
+      "User Guides",
+      "Using NA³ via the GUI"
+    ]
+  },
+  {
+    "objectID": "using_the_gui.html#general-settings",
+    "href": "using_the_gui.html#general-settings",
+    "title": "Using NA³ via the GUI",
+    "section": "General Settings",
+    "text": "General Settings\nThe first section of NA³’s GUI prompts you to specify the general settings of your analysis before being able to continue. Most importantly, the selections will have an impact on the structure and organization of your source data that NA³ expects. Thus, please make sure you consult the Source Data Structure section below to check what structure is requested for your specific combination of settings.\n\nROI modes:\nNA³´s core functionality is to compute the signal intensity over time for defined regions of interest (ROIs) within the whole image. You either have the chance to provide source data that defines these ROIs (“Predefined ROIs”), or you can use NA³´s “Grid” mode to automatically create congruent square ROIs over your recording with adjustable sizes (Grid size - see Analysis Settings) that will be analyzed.\n\nGrid (congruent squares):\nThe main advantage of NA³´s Grid mode is that it does not require any additional input other than your recording file to start the analysis with NA³. This can be especially useful in high-throughput settings, as it eliminates additional (potentially manual) preprocessing steps to generate ROIs.\n\n\nPredefined ROIs:\nSometimes you want to investigate specific features instead of the whole field of view, though. For this, NA³ provides the option for you to provide predefined ROIs along with your source data. Currently, only ROIs created with the ImageJ tools are supported.\n\n\n\n\n\n\nTip\n\n\n\nThe predefined ROI filetype that your are using is currently not supported? That needs to be changed! Please drop us your feature request via GitHub and we´ll implement it for you asap.\n\n\n\n\n\nBatch mode:\nThe period of trouble shooting and of adjusting individual experimental parameters is finally over and you are ready to process all your data at once? That´s awesome, congrats! As an additional reward, NA³ offers you a batch mode feature: You select your entire dataset as source data and then only have to specify the settings once, hit “Run Analysis” and then leave for a well deserved end-of-day, while NA³ and your computer do the heavy lifting for you and process your entire dataset, recording after recording. Batch mode is compatible with all ROI-modes (Grid & predefined ROIs), and can even be combined with Focus Areas.\n\n\nFocus areas:\nThis feature is for those of you who want - or may need - to squeeze out every single percent of processing speed. It allows you to provide another ROI (or even set of ROIs), to which NA³ will restrict it´s analysis, while ignoring any ROIs that reside outside of these Focus Areas. Since processing of each ROI takes ~ the same amount of time (it can be considered a linear operation), not processing 50 % of the ROIs will cut your processing time almost in half! We tried to illustrate this with the following example, in which we used NA³´s Grid mode with the Focus Area being disabled or enabled, saving ~2/3´s of processing time:\n\n\n\nFocus Area mode to max out performance.\n\n\n\n\nSource data structure\nlorem ipsum lorem ipsum lorem ipsum",
+    "crumbs": [
+      "User Guides",
+      "Using NA³ via the GUI"
+    ]
+  },
+  {
+    "objectID": "using_the_gui.html#analysis-settings",
+    "href": "using_the_gui.html#analysis-settings",
+    "title": "Using NA³ via the GUI",
+    "section": "Analysis Settings:",
+    "text": "Analysis Settings:\nlorem ipsum lorem ipsum lorem ipsum\n\nOptional settings:\nlorem ipsum lorem ipsum lorem ipsum\n\n\nResult settings:\nlorem ipsum lorem ipsum lorem ipsum",
+    "crumbs": [
+      "User Guides",
+      "Using NA³ via the GUI"
+    ]
+  },
+  {
+    "objectID": "using_the_gui.html#generated-results",
+    "href": "using_the_gui.html#generated-results",
+    "title": "Using NA³ via the GUI",
+    "section": "Generated Results:",
+    "text": "Generated Results:\nlorem ipsum lorem ipsum lorem ipsum",
+    "crumbs": [
+      "User Guides",
+      "Using NA³ via the GUI"
     ]
   },
   {
@@ -191,6 +418,17 @@
     "crumbs": [
       "API",
       "processing"
+    ]
+  },
+  {
+    "objectID": "view.html",
+    "href": "view.html",
+    "title": "view",
+    "section": "",
+    "text": "source\n\nchange_widget_state\n\n change_widget_state (widget:ipywidgets.widgets.widget.Widget,\n                      value:Optional[Any]=None,\n                      description:Optional[str]=None,\n                      disabled:Optional[bool]=None,\n                      visibility:Optional[str]=None,\n                      tooltip:Optional[str]=None,\n                      button_style:Optional[str]=None)\n\n\nsource\n\n\nUserInfoPanel\n\n UserInfoPanel ()\n\nInitialize self. See help(type(self)) for accurate signature.\n\nsource\n\n\nSourceDataPanel\n\n SourceDataPanel (user_info_panel:__main__.UserInfoPanel)\n\nInitialize self. See help(type(self)) for accurate signature.\n\nsource\n\n\nAnalysisSettingsPanel\n\n AnalysisSettingsPanel ()\n\nInitialize self. See help(type(self)) for accurate signature.\n\nsource\n\n\nMainScreen\n\n MainScreen ()\n\nInitialize self. See help(type(self)) for accurate signature.\n\nsource\n\n\nWidgetsInterface\n\n WidgetsInterface ()\n\nInitialize self. See help(type(self)) for accurate signature.",
+    "crumbs": [
+      "API",
+      "view"
     ]
   }
 ]
