@@ -2,46 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://ddoll.github.io/NeuralActivityCubic/installation.html</loc>
-    <lastmod>2024-12-17T14:57:12.374Z</lastmod>
+    <lastmod>2024-12-17T16:06:22.313Z</lastmod>
   </url>
   <url>
     <loc>https://ddoll.github.io/NeuralActivityCubic/processing.html</loc>
-    <lastmod>2024-12-17T12:05:23.159Z</lastmod>
-  </url>
-  <url>
-    <loc>https://ddoll.github.io/NeuralActivityCubic/Untitled.html</loc>
-    <lastmod>2024-12-17T12:05:23.179Z</lastmod>
-  </url>
-  <url>
-    <loc>https://ddoll.github.io/NeuralActivityCubic/using_the_gui.html</loc>
-    <lastmod>2024-12-17T14:57:12.364Z</lastmod>
-  </url>
-  <url>
-    <loc>https://ddoll.github.io/NeuralActivityCubic/controller.html</loc>
-    <lastmod>2024-12-14T01:00:44.642Z</lastmod>
-  </url>
-  <url>
-    <loc>https://ddoll.github.io/NeuralActivityCubic/input.html</loc>
-    <lastmod>2024-12-14T01:00:44.682Z</lastmod>
-  </url>
-  <url>
-    <loc>https://ddoll.github.io/NeuralActivityCubic/index.html</loc>
-    <lastmod>2024-12-17T14:57:12.364Z</lastmod>
-  </url>
-  <url>
-    <loc>https://ddoll.github.io/NeuralActivityCubic/results.html</loc>
-    <lastmod>2024-12-14T01:00:44.722Z</lastmod>
+    <lastmod>2024-12-17T16:06:22.283Z</lastmod>
   </url>
   <url>
     <loc>https://ddoll.github.io/NeuralActivityCubic/analysis.html</loc>
-    <lastmod>2024-12-17T12:05:23.129Z</lastmod>
+    <lastmod>2024-12-17T16:06:22.283Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ddoll.github.io/NeuralActivityCubic/results.html</loc>
+    <lastmod>2024-12-17T16:06:22.223Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ddoll.github.io/NeuralActivityCubic/index.html</loc>
+    <lastmod>2024-12-17T16:06:22.233Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ddoll.github.io/NeuralActivityCubic/input.html</loc>
+    <lastmod>2024-12-17T16:06:22.133Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ddoll.github.io/NeuralActivityCubic/controller.html</loc>
+    <lastmod>2024-12-17T16:06:22.213Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ddoll.github.io/NeuralActivityCubic/using_the_gui.html</loc>
+    <lastmod>2024-12-17T16:06:22.203Z</lastmod>
   </url>
   <url>
     <loc>https://ddoll.github.io/NeuralActivityCubic/model.html</loc>
-    <lastmod>2024-12-14T01:00:44.632Z</lastmod>
+    <lastmod>2024-12-17T16:06:22.373Z</lastmod>
   </url>
   <url>
     <loc>https://ddoll.github.io/NeuralActivityCubic/view.html</loc>
-    <lastmod>2024-12-17T12:05:23.259Z</lastmod>
+    <lastmod>2024-12-17T16:06:22.313Z</lastmod>
   </url>
 </urlset>
