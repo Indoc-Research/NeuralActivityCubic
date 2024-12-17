@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "neuralactivitycubic"
+  site-url: "https://ddoll.github.io/NeuralActivityCubic"
+  description: "Computation of local and signal-close-to-noise calcium activity"
+  repo-branch: main
+  repo-url: "https://github.com/ddoll/NeuralActivityCubic"

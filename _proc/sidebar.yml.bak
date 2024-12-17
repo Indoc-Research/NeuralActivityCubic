@@ -1,0 +1,17 @@
+website:
+  sidebar:
+    contents:
+      - index.ipynb
+      - section: User Guides
+        contents:
+          - installation.ipynb
+          - using_the_gui.ipynb
+      - section: API
+        contents:
+          - 00_controller.ipynb
+          - 01_view.ipynb
+          - 02_model.ipynb
+          - 03_input.ipynb
+          - 04_processing.ipynb
+          - 05_analysis.ipynb
+          - 06_results.ipynb

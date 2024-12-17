@@ -1,1 +1,3 @@
-from .controller import open_gui
+__version__ = "0.0.3"
+
+from neuralactivitycubic.controller import open_gui
