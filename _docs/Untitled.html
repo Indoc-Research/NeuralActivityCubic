@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Installation – neuralactivitycubic</title>
+<title>untitled – neuralactivitycubic</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -57,7 +57,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/quarto-nav/headroom.min.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -73,8 +73,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-cee5a6e0a1092ddbcbc2ace3d9ac7e54.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
-<script src="site_libs/quarto-contrib/videojs/video.min.js"></script>
-<link href="site_libs/quarto-contrib/videojs/video-js.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -102,17 +100,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script src="https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js" crossorigin="anonymous"></script>
 
 
 <link rel="stylesheet" href="styles.css">
-<meta property="og:title" content="Installation – neuralactivitycubic">
-<meta property="og:description" content="Computation of local and signal-close-to-noise calcium activity">
-<meta property="og:image" content="https://ddoll.github.io/NeuralActivityCubic/data:image/png;base64,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">
+<meta property="og:title" content="neuralactivitycubic">
 <meta property="og:site_name" content="neuralactivitycubic">
-<meta name="twitter:title" content="Installation – neuralactivitycubic">
-<meta name="twitter:description" content="Computation of local and signal-close-to-noise calcium activity">
-<meta name="twitter:image" content="https://ddoll.github.io/NeuralActivityCubic/data:image/png;base64,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">
-<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="neuralactivitycubic">
+<meta name="twitter:card" content="summary">
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
@@ -136,7 +134,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./installation.html">User Guides</a></li><li class="breadcrumb-item"><a href="./installation.html">Installation</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -165,7 +163,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./installation.html" class="sidebar-item-text sidebar-link active">
+  <a href="./installation.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Installation</span></a>
   </div>
 </li>
@@ -236,124 +234,33 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#install-anaconda" id="toc-install-anaconda" class="nav-link active" data-scroll-target="#install-anaconda">1. Install Anaconda</a></li>
-  <li><a href="#create-and-activate-a-new-virtual-environment" id="toc-create-and-activate-a-new-virtual-environment" class="nav-link" data-scroll-target="#create-and-activate-a-new-virtual-environment">2. Create and activate a new virtual environment</a></li>
-  <li><a href="#install-the-neuralactivitycubic-python-package" id="toc-install-the-neuralactivitycubic-python-package" class="nav-link" data-scroll-target="#install-the-neuralactivitycubic-python-package">3. Install the <code>neuralactivitycubic</code> Python package:</a></li>
-  <li><a href="#done" id="toc-done" class="nav-link" data-scroll-target="#done">4. Done!</a></li>
-  <li><a href="#wed-love-to-hear-your-feedback" id="toc-wed-love-to-hear-your-feedback" class="nav-link" data-scroll-target="#wed-love-to-hear-your-feedback">We´d love to hear your Feedback:</a></li>
-  </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/ddoll/NeuralActivityCubic/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="installation.html.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
-    </div>
+        
+    <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="Untitled.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./installation.html">User Guides</a></li><li class="breadcrumb-item"><a href="./installation.html">Installation</a></li></ol></nav>
-<div class="quarto-title">
-<h1 class="title">Installation</h1>
+
+
+
+<div id="26dde4da-3961-4853-99a3-d80384481280" class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> neuralactivitycubic <span class="im">as</span> na3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-
-
-
-<div class="quarto-title-meta">
-
-    
-  
-    
-  </div>
-  
-
-
-</header>
-
-
 <!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
-<p>This new version of NA³ is currently available via the <a href="https://pypi.org/project/neuralactivitycubic/">Python Package Index</a> or via <a href="https://github.com/Indoc-Research/NeuralActivityCubic">GitHub</a>. To be able to install and run NA³ on your system you currently need to run a few commands in the terminal, as the fully GUI-based installation will be available only soon. But don´t worry, we´ll take you through the process step by step!</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
+<div id="9c27c8a3-a106-437b-a067-339fed33f4ae" class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>na3.open_gui()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"fbd1555420844970bc2135088c3f2129","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
 </div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>We´re still putting a few finishing touches onto the new implementation of NA³, so please be aware that this version remains under active development and should not yet be considered as a stable release.</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Tip
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>We´re currently working on a paper describing our work in more details - make sure you stay tuned and regularly check these docs for updates!</p>
-</div>
-</div>
-<section id="install-anaconda" class="level2">
-<h2 class="anchored" data-anchor-id="install-anaconda">1. Install Anaconda</h2>
-<p>Though not strictly required, we highly recommend installing NA³ in a virtual Python environment that you setup via Anaconda - especially for users with limited (or even no) programming expertise. Please download the corresponding distribution for your operating system <a href="https://www.anaconda.com/download">here</a> and follow the respective installation wizard to install Anaconda on your system.</p>
-</section>
-<section id="create-and-activate-a-new-virtual-environment" class="level2">
-<h2 class="anchored" data-anchor-id="create-and-activate-a-new-virtual-environment">2. Create and activate a new virtual environment</h2>
-<p>Next, we´ll need a terminal to install NA³ with just a few commands. For this, we suggest using the tool Anaconda Prompt that came with the installation of Anaconda (but if you prefer to use a different terminal, please feel free to use it - the only requirement is that <code>conda</code> is accessible, which comes per default in Anaconda Prompt). In the terminal (e.g.&nbsp;in Anaconda Prompt), please type the following command and execute it by hitting the Return key on your keyboard. It will create a new virtual environment that we can use to install NA³, using <code>conda</code>:</p>
-<div id="b0ab1677-46a1-429c-b1b1-0fec80eaaac1" class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>conda create <span class="op">--</span>name na3 <span class="op">-</span>y python<span class="op">=</span><span class="fl">3.11</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Once the setup of the environment has concluded, you should see a message like the following, informing you how to activate the environment:</p>
-<div class="quarto-video"><video id="video_shortcode_videojs_video1" class="video-js vjs-default-skin vjs-fluid" controls="" preload="auto" data-setup="{}" title=""><source src="./media/create_conda_env.mp4"></video></div>
-<p>We´ll do exactly as suggested to activate the newly created virtual environment to continue the installation of NA³. Thus, please run the following command in the Anaconda Prompt terminal:</p>
-<div id="e7dc6e32-b32a-45e1-8772-0fa997424022" class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>conda activate na3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>You should now see that the input line in the Anaconda Prompt terminal starts with <code>(na3)</code> - indicating that you successfully switched to this virtual environment.</p>
-</section>
-<section id="install-the-neuralactivitycubic-python-package" class="level2">
-<h2 class="anchored" data-anchor-id="install-the-neuralactivitycubic-python-package">3. Install the <code>neuralactivitycubic</code> Python package:</h2>
-<p>With the activated na3 environment, please complete the installation of NA³ by running on final command in the Anaconda Prompt terminal:</p>
-<div id="4175b204-330c-4923-87fe-3071379d1ce8" class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pip install neuralactivitycubic</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Upon executing this command, you will see a lot of output and activity in the terminal while it downloads the source code of NA³ and it´s dependencies, and installs them all in the virtual environment on your system. You know that the installation has finished, when the input line starting with <code>(na3)</code> appears again. The final few messages that are shown in Anaconda Prompt will then likely look similar to this:</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="./media/successfully_installed_na3.png" class="img-fluid figure-img"></p>
-<figcaption>Output after successful installation of neuralactivitycubic.</figcaption>
-</figure>
-</div>
-</section>
-<section id="done" class="level2">
-<h2 class="anchored" data-anchor-id="done">4. Done!</h2>
-<p>Congratulations! That´s already everything you need to do to install NA³ on your system. You can now use NA³ to analyze your data and hopefully start a journey to the next scientific breakthrough!</p>
-<p>If you´d like to get some more information on how to use NA³, please check out the following chapters in this documentation:</p>
-<ul>
-<li><a href="https://indoc-research.github.io/NeuralActivityCubic/using_the_gui.html">Using NA³ via the GUI</a></li>
-<li><a href="https://indoc-research.github.io/NeuralActivityCubic/controller.html">Using NA³ via the API</a></li>
-</ul>
-</section>
-<section id="wed-love-to-hear-your-feedback" class="level2">
-<h2 class="anchored" data-anchor-id="wed-love-to-hear-your-feedback">We´d love to hear your Feedback:</h2>
-<p>You are using NA³ for your research - or would like to do so, but there´s that one cool feature missing for you? That´s great! We´d love to hear your feedback, feature requests, or bug reports to keep improving NA³ - please use <a href="https://github.com/Indoc-Research/NeuralActivityCubic/issues/new">this form on GitHub</a> to submit it, we appreciate it a lot!</p>
-<p>Please feel free to also explore all other <a href="https://github.com/Indoc-Research/">Research Software</a> that our not-for-profit organization has developed, or learn more about us and what we do on our <a href="https://www.indocresearch.eu/">website</a>. If you are interested to partner with us for a similar collaboration on your Research Software, or to develop it with or for you from scratch, don´t hesitate and drop us an <a href="mailto:ddoll@indocresearch.org">email</a> - we´re always looking for new opportunities to catalyze science be delivering cutting-edge technology tailored to the specific research challenges of our collaborators!</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="data:image/png;base64,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" class="img-fluid figure-img"></p>
-<figcaption>Indoc Research Europe gGmbH</figcaption>
-</figure>
 </div>
 
 
-</section>
 
 </main> <!-- /main -->
+<script type="application/vnd.jupyter.widget-state+json">
+{"state":{},"version_major":2,"version_minor":0}
+</script>
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -772,9 +679,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/ddoll/NeuralActivityCubic/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer><script>videojs(video_shortcode_videojs_video1);</script>
 
 
 
 
-</body></html>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><ul><li><a href="https://github.com/ddoll/NeuralActivityCubic/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

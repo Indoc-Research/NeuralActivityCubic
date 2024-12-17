@@ -6,7 +6,7 @@
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L19"
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L20"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### change_widget_state
@@ -22,7 +22,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L42"
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L43"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### UserInfoPanel
@@ -34,7 +34,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L97"
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L98"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### SourceDataPanel
@@ -46,7 +46,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L204"
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L205"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### AnalysisSettingsPanel
@@ -58,7 +58,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L360"
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L361"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### MainScreen
@@ -70,11 +70,23 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L395"
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L396"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### WidgetsInterface
 
 >  WidgetsInterface ()
+
+*Initialize self. See help(type(self)) for accurate signature.*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L465"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### SourceDataStructureWidget
+
+>  SourceDataStructureWidget ()
 
 *Initialize self. See help(type(self)) for accurate signature.*

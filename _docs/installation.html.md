@@ -108,7 +108,8 @@ check out the following chapters in this documentation:
 
 - [Using NA³ via the
   GUI](https://indoc-research.github.io/NeuralActivityCubic/using_the_gui.html)
-- \[Using NA³ via the API\]
+- [Using NA³ via the
+  API](https://indoc-research.github.io/NeuralActivityCubic/controller.html)
 
 ## We´d love to hear your Feedback:
 

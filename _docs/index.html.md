@@ -71,7 +71,7 @@ $ pip install neuralactivitycubic
 ### Documentation
 
 Documentation for NA³ can be found
-[here](https://Indoc-Research.github.io/neuralactivitycubic/).
+[here](https://indoc-research.github.io/NeuralActivityCubic/).
 
 ## How to use - quick start:
 
