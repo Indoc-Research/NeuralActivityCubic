@@ -1,0 +1,67 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: neuralactivitycubic
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Dennis
+    family-names: Doll
+    email: ddoll@indocresearch.org
+    affiliation: 'Indoc Research Europe gGmbH, Mainz, Germany'
+    orcid: 'https://orcid.org/0000-0002-3806-9324'
+  - given-names: Matvey
+    family-names: Loshakov
+    affiliation: 'Indoc Research Europe gGmbH, Mainz, Germany'
+    orcid: 'https://orcid.org/0009-0009-7571-073X'
+  - given-names: Niels
+    family-names: Köhler
+    affiliation: >-
+      University Hospital Würzburg, Department of Neurology,
+      Würzburg, Germany
+  - given-names: Antonio
+    family-names: Cascais
+    affiliation: 'Indoc Research Europe gGmbH, Mainz, Germany'
+    orcid: 'https://orcid.org/0009-0005-3491-1894'
+  - given-names: Juan
+    family-names: Prada
+    affiliation: >-
+      University of Würzburg, Department of Bioinformatics,
+      Würzburg, Germany 
+  - given-names: Thomas
+    family-names: Dandekar
+    affiliation: >-
+      University of Würzburg, Department of Bioinformatics,
+      Würzburg, Germany 
+  - given-names: Stephane
+    family-names: Pollentier
+    affiliation: 'Indoc Research Europe gGmbH, Mainz, Germany'
+    orcid: 'https://orcid.org/0000-0002-0800-8918'
+  - given-names: Robert
+    family-names: Blum
+    affiliation: >-
+      University Hospital Würzburg, Department of Neurology,
+      Würzburg, Germany
+    orcid: 'https://orcid.org/0000-0002-5270-3854'
+repository-code: 'https://github.com/Indoc-Research/NeuralActivityCubic'
+url: 'https://indoc-research.github.io/NeuralActivityCubic/'
+abstract: >-
+  Detection, quantification, and localization of calcium
+  signals, even under challenging signal-to-noise
+  conditions and in high-throughput settings.
+keywords:
+  - calcium imaging
+  - calcium signal processing
+  - neuroscience
+  - neuronal activity
+  - biomedical image analysis
+  - research software
+  - open-source software
+  - open science
+license: AGPL-3.0
+commit: 6076b93cbcc59eb10427290effaf92c81818526e
+version: 0.1.0
+date-released: '2024-12-17'
