@@ -19,11 +19,3 @@ title: model
 *Initialize self.  See help(type(self)) for accurate signature.*
 
 
-::: {#cell-3 .cell}
-``` {.python .cell-code}
-assert isinstance(test_create_analysis(), AnalysisJob)
-assert test_run_analysis() is None
-```
-:::
-
-

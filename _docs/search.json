@@ -54,7 +54,7 @@
     "href": "model.html",
     "title": "model",
     "section": "",
-    "text": "source\n\nModel\n\n Model ()\n\nInitialize self. See help(type(self)) for accurate signature.\n\nassert isinstance(test_create_analysis(), AnalysisJob)\nassert test_run_analysis() is None",
+    "text": "source\n\nModel\n\n Model ()\n\nInitialize self. See help(type(self)) for accurate signature.",
     "crumbs": [
       "API",
       "model"

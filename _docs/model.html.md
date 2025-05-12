@@ -14,8 +14,3 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 >  Model ()
 
 *Initialize self. See help(type(self)) for accurate signature.*
-
-``` python
-assert isinstance(test_create_analysis(), AnalysisJob)
-assert test_run_analysis() is None
-```
