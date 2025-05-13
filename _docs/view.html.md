@@ -90,24 +90,3 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 >  SourceDataStructureWidget ()
 
 *Initialize self. See help(type(self)) for accurate signature.*
-
-``` python
-assert WidgetsInterface().export_user_settings() == {'window_size': 10,
- 'signal_to_noise_ratio': 3.0,
- 'noise_window_size': 200,
- 'signal_average_threshold': 10.0,
- 'minimum_activity_counts': 2,
- 'baseline_estimation_method': 'asls',
- 'include_variance': False,
- 'variance': 15,
- 'limit_analysis_to_frame_interval': False,
- 'start_frame_idx': 0,
- 'end_frame_idx': 500,
- 'configure_octaves': False,
- 'octaves_ridge_needs_to_spann': 1.0,
- 'save_overview_png': True,
- 'save_detailed_results': True,
- 'batch_mode': False,
- 'focus_area_enabled': False,
- 'roi_mode': 'grid'}
-```
