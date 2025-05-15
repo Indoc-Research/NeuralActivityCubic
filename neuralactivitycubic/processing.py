@@ -17,7 +17,7 @@ from datetime import datetime
 from shapely import get_coordinates
 
 # %% ../nbs/04_processing.ipynb 4
-from typing import Optional, Tuple, Dict, List, Any, Union
+from typing import Tuple, Dict, List, Any, Union
 
 # %% ../nbs/04_processing.ipynb 5
 from .input import DataLoader, RecordingLoader, Recording, ROILoader, ROI, GridWrapperROILoader

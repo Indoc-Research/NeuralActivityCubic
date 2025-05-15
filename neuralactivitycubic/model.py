@@ -11,9 +11,7 @@ import json
 from datetime import datetime, timezone
 import ipywidgets as w
 import matplotlib.pyplot as plt
-import inspect
 import multiprocessing
-from dataclasses import dataclass
 
 # %% ../nbs/02_model.ipynb 4
 from typing import Tuple, Dict, Callable, Optional, Any, List, Union
@@ -83,11 +81,8 @@ class Model:
 
     def create_analysis_jobs(self, configs: Dict[str, Any]) -> None:
         self._ensure_data_from_previous_jobs_was_removed()
-        # validated_configs = self._get_configs_required_for_specific_function(configs, self._assertion_for_create_analysis_jobs)
         analysis_job_config = AnalysisJobConfig.validate(configs)
         self.add_info_to_logs('Basic configurations for data import validated. Starting creation of analysis job(s)...', True)
-        # but why split config in the line below?
-        # data_source_path, roi_mode, focus_area_enabled = validated_configs['data_source_path'], validated_configs['roi_mode'], validated_configs['focus_area_enabled']
         if analysis_job_config['batch_mode'] == True:
             all_subdir_paths_with_rec_file = self._get_all_subdir_paths_with_rec_file(analysis_job_config['data_source_path'])
             all_subdir_paths_with_rec_file.sort()
@@ -218,15 +213,6 @@ class Model:
         return AnalysisJob(self.num_processes, data_loaders)
 
     def run_analysis(self, configs: Dict[str, Any]) -> None:
-        # code below is functioning properly, but do we really need it?
-        # we should not validate the function input at runtime, it should be trusted to be correct
-
-        # sample_job_to_validate_configs = self.analysis_job_queue[0]
-        # validated_configs_for_analysis = self._get_configs_required_for_specific_function(configs, sample_job_to_validate_configs.run_analysis)
-        # validated_configs_for_result_creation = self._get_configs_required_for_specific_function(configs, sample_job_to_validate_configs.create_results)
-
-        # if there is a real need to validate complex data structure, we should use dataclasses
-
         analysis_config = AnalysisConfig.validate(configs)
         results_config = ResultsConfig.validate(configs)
         self.add_info_to_logs('Configurations for Analysis Settings and Result Creation validated successfully.', True)
