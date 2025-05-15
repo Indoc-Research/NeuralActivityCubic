@@ -84,7 +84,6 @@ class AnalysisROI:
         n_padded_frames = int(np.median(widths)) + 1
         signal_padded_with_reflection = np.pad(self.mean_intensity_over_time, n_padded_frames, 'reflect')
         frame_idxs_of_peaks_in_padded_signal = signal.find_peaks_cwt(vector = signal_padded_with_reflection, 
-                                                         wavelet = signal.ricker, 
                                                          widths = widths, 
                                                          min_length = min_length,
                                                          max_distances = widths / 4, # default
