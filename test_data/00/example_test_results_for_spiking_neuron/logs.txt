@@ -1,0 +1,33 @@
+16-05-25 12:53:50.479632 (UTC): Basic configurations for data import validated. Starting creation of analysis job(s)...
+16-05-25 12:53:50.479652 (UTC): Starting with Job creation(s) for ../test_data/00/spiking_neuron.avi ...
+16-05-25 12:53:50.479688 (UTC): Found recording file of supported type at: ../test_data/00/spiking_neuron.avi.
+16-05-25 12:53:50.479714 (UTC): Successfully created a single job for ../test_data/00/spiking_neuron.avi at queue position: #1.
+16-05-25 12:53:50.479718 (UTC): Finished Job creation(s) for ../test_data/00/spiking_neuron.avi!
+16-05-25 12:53:50.479720 (UTC): All job creation(s) completed.
+16-05-25 12:53:50.479768 (UTC): Configurations for Analysis Settings and Result Creation validated successfully.
+16-05-25 12:53:50.479771 (UTC): Analysis Settings are:
+16-05-25 12:53:50.479779 (UTC): window_size: 10
+16-05-25 12:53:50.479783 (UTC): signal_to_noise_ratio: 3.0
+16-05-25 12:53:50.479785 (UTC): noise_window_size: 200
+16-05-25 12:53:50.479787 (UTC): signal_average_threshold: 10.0
+16-05-25 12:53:50.479790 (UTC): minimum_activity_counts: 2
+16-05-25 12:53:50.479792 (UTC): baseline_estimation_method: asls
+16-05-25 12:53:50.479794 (UTC): include_variance: False
+16-05-25 12:53:50.479798 (UTC): variance: 15
+16-05-25 12:53:50.479800 (UTC): limit_analysis_to_frame_interval: False
+16-05-25 12:53:50.479803 (UTC): start_frame_idx: 0
+16-05-25 12:53:50.479805 (UTC): end_frame_idx: 500
+16-05-25 12:53:50.479807 (UTC): configure_octaves: False
+16-05-25 12:53:50.479809 (UTC): octaves_ridge_needs_to_spann: 1.0
+16-05-25 12:53:50.479811 (UTC): save_overview_png: True
+16-05-25 12:53:50.479813 (UTC): save_detailed_results: True
+16-05-25 12:53:50.479815 (UTC): batch_mode: False
+16-05-25 12:53:50.479817 (UTC): focus_area_enabled: False
+16-05-25 12:53:50.479819 (UTC): roi_mode: grid
+16-05-25 12:53:50.479822 (UTC): data_source_path: ../test_data/00/spiking_neuron.avi
+16-05-25 12:53:50.479825 (UTC): Starting analysis...
+16-05-25 12:53:50.479828 (UTC): Starting to process analysis job with index #0.
+16-05-25 12:53:51.209690 (UTC): Analysis successfully completed. Continue with creation of results.. 
+16-05-25 12:53:53.603759 (UTC): Results successfully created at: ../test_data/00/2025_05_16_14-53-50_results_for_spiking_neuron
+16-05-25 12:53:53.604014 (UTC): Successfully finished processing of analysis job with index #0. 1 of 1 total job(s) completed.
+16-05-25 12:53:53.604110 (UTC): Updating all log files to contain all logs as final step. All valid logs files will end with this message.
