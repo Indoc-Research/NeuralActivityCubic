@@ -9,6 +9,7 @@ __all__ = ['process_analysis_rois', 'AnalysisJob']
 import multiprocessing
 import numpy as np
 import pandas as pd
+from pathlib import Path
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
@@ -155,13 +156,13 @@ class AnalysisJob:
     def create_results(self, 
                        save_overview_png: bool,
                        save_detailed_results: bool,
+                       save_single_trace_results: bool,
                        minimum_activity_counts: int, 
                        signal_average_threshold: float, 
                        signal_to_noise_ratio: float
                       ) -> None:
         self._ensure_results_dir_exists()
         activity_filtered_analysis_rois = [roi for roi in self.all_analysis_rois if roi.peaks_count >= minimum_activity_counts]
-        
         self.activity_overview_plot = results.plot_activity_overview(analysis_rois_with_sufficient_activity = activity_filtered_analysis_rois,
                                                                      preview_image = self.recording.preview,
                                                                      indicate_activity = True,
@@ -178,9 +179,11 @@ class AnalysisJob:
         if save_detailed_results == True:
             self._create_and_save_csv_result_files(activity_filtered_analysis_rois)
             self._create_and_save_individual_traces_pdf_result_file(activity_filtered_analysis_rois)
+        if save_single_trace_results == True:
+            self._create_and_save_single_trace_results_as_csv(activity_filtered_analysis_rois)
 
 
-    def _ensure_results_dir_exists(self) -> None:
+    def _ensure_results_dir_exists(self, subdir_name_to_check: str | None = None) -> None:
         if hasattr(self, 'results_dir_path') == False:
             prefix_with_datetime = self.analysis_start_datetime.strftime('%Y_%m_%d_%H-%M-%S_results_for')
             recording_filename_without_extension = self.recording.filepath.name.replace(self.recording.filepath.suffix, '')
@@ -190,7 +193,11 @@ class AnalysisJob:
             else:
                 results_dir_name = f'{prefix_with_datetime}_{recording_filename_without_extension}'
             self.results_dir_path = self.parent_dir_path.joinpath(results_dir_name)
-            self.results_dir_path.mkdir()       
+            self.results_dir_path.mkdir()
+        if type(subdir_name_to_check) == str:
+            subdir_path = self.results_dir_path.joinpath(subdir_name_to_check)
+            if subdir_path.is_dir() == False:
+                subdir_path.mkdir()
 
 
     def _create_variance_area_dataframe(self, filtered_rois: List[AnalysisROI]) -> pd.DataFrame:
@@ -239,3 +246,51 @@ class AnalysisJob:
                     fig = results.plot_intensity_trace_with_identified_peaks_for_individual_roi(roi)
                     pdf.savefig(fig)
                     plt.close()
+
+
+    def _create_and_save_single_trace_results_as_csv(self, filtered_rois: List[AnalysisROI]) -> None:
+        self._ensure_results_dir_exists(subdir_name_to_check='single_traces')
+        single_trace_subdir_path = self.results_dir_path.joinpath('single_traces')
+        for analysis_roi in filtered_rois:
+            df_single_trace = self._initialize_single_trace_df(analysis_roi)
+            for peak_idx in df_single_trace[df_single_trace['is_peak'] == True].index:
+                peak = analysis_roi.peaks[peak_idx]
+                df_single_trace.at[peak_idx, 'peak_type'] = peak.peak_type
+                df_single_trace.at[peak_idx, 'amplitude'] = peak.amplitude
+                df_single_trace.at[peak_idx, 'delta_f_over_f'] = peak.delta_f_over_f
+                df_single_trace.at[peak_idx, 'has_baseline_intersections'] = peak.has_neighboring_intersections
+                if peak.has_neighboring_intersections == True:
+                    df_single_trace.at[peak_idx, 'pre_peak_intersection_idx'] = peak.frame_idxs_of_neighboring_intersections[0]
+                    df_single_trace.at[peak_idx, 'post_peak_intersection_idx'] = peak.frame_idxs_of_neighboring_intersections[1]
+                    df_single_trace.at[peak_idx, 'area_under_curve'] = peak.area_under_curve
+            self._save_single_trace_df(df_single_trace, analysis_roi, single_trace_subdir_path)
+            
+
+    def _initialize_single_trace_df(self, analysis_roi: AnalysisROI) -> pd.DataFrame:
+        is_peak_mask = np.zeros(analysis_roi.mean_intensity_over_time.shape[0], dtype=bool)
+        is_peak_mask[analysis_roi.frame_idxs_of_peaks] = True
+        data = {'intensity': analysis_roi.mean_intensity_over_time,
+                'estimated_baseline': analysis_roi.baseline,
+                'is_peak': is_peak_mask}
+        df = pd.DataFrame(data = data)
+        df.index.name = 'frame_idx'
+        new_columns = ['peak_type', 
+                       'amplitude', 
+                       'delta_f_over_f', 
+                       'has_baseline_intersections', 
+                       'pre_peak_intersection_idx', 
+                       'post_peak_intersection_idx', 
+                       'area_under_curve']
+        df[new_columns] = np.nan
+        df = df.astype({'peak_type': 'object',
+                        'has_baseline_intersections': 'object'})
+        return df
+
+
+    def _save_single_trace_df(self, 
+                              df_single_trace: pd.DataFrame, 
+                              analysis_roi: AnalysisROI,
+                              single_trace_subdir_path: Path) -> None:
+        filepath_friendly_roi_label_id = analysis_roi.label_id.replace('/', '-')
+        filepath = single_trace_subdir_path.joinpath(f'data_of_ROI_{filepath_friendly_roi_label_id}.csv')
+        df_single_trace.to_csv(filepath)

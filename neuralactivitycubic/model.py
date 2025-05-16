@@ -287,5 +287,6 @@ def test_correct_model_behavior():
     config = WidgetsInterface().export_user_settings()
     recording_filepath = Path('../test_data/00/spiking_neuron.avi')
     config['data_source_path'] = recording_filepath
+    config['save_single_trace_results'] = True
     model.create_analysis_jobs(config)
     model.run_analysis(config)

@@ -67,6 +67,7 @@ class AnalysisConfig(BaseDataClass):
 class ResultsConfig(BaseDataClass):
     save_overview_png: bool
     save_detailed_results: bool
+    save_single_trace_results: bool
     minimum_activity_counts: int
     signal_average_threshold: float
     signal_to_noise_ratio: float
@@ -94,10 +95,11 @@ class Peak(BaseDataClass):
 from .view import WidgetsInterface
 
 correct_general_config = WidgetsInterface().export_user_settings()
+correct_general_config['save_single_trace_results'] = True  # needs to be added here until implemented in GUI
 
 recording_filepath = Path('../test_data/00/spiking_neuron.avi')
 correct_analysis_job_config = {
-    'roi_mode': 'yes',
+    'roi_mode': 'grid',
     'batch_mode': True,
     'focus_area_enabled': True,
     'data_source_path': recording_filepath,
