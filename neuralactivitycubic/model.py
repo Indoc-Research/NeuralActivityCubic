@@ -284,6 +284,7 @@ class Model:
 # %% ../nbs/02_model.ipynb 8
 import filecmp
 from os import listdir
+from os.path import isfile
 from shutil import rmtree
 import pandas as pd
 from pandas.testing import assert_frame_equal
