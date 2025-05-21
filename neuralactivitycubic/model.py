@@ -104,21 +104,6 @@ class Model:
             self.callback_view_update_infos(message, progress_in_percent)
 
 
-    def create_analysis_jobs(self, configs: Dict[str, Any]) -> None:
-        self._ensure_data_from_previous_jobs_was_removed()
-        analysis_job_config = AnalysisJobConfig.validate(configs)
-        self.add_info_to_logs('Basic configurations for data import validated. Starting creation of analysis job(s)...', True)
-        if analysis_job_config['batch_mode'] == True:
-            all_subdir_paths_with_rec_file = self._get_all_subdir_paths_with_rec_file(analysis_job_config['data_source_path'])
-            all_subdir_paths_with_rec_file.sort()
-            for idx, subdir_path in enumerate(all_subdir_paths_with_rec_file):
-                self._create_analysis_jobs_for_single_rec(subdir_path, analysis_job_config['roi_mode'], analysis_job_config['focus_area_enabled'])
-        else:
-
-            self._create_analysis_jobs_for_single_rec(analysis_job_config['data_source_path'], analysis_job_config['roi_mode'], analysis_job_config['focus_area_enabled'])
-        self.add_info_to_logs('All job creation(s) completed.', True, 100.0)
-
-
     def _ensure_data_from_previous_jobs_was_removed(self) -> None:
         # if we are deleting all data anyway, why bother checking?
         if len(self.analysis_job_queue) > 0:
@@ -234,6 +219,7 @@ class Model:
             data_loaders['focus_area'] = focus_area_loader
         return AnalysisJob(self.num_processes, data_loaders)
 
+
     def _display_configs(self, configs: Dict[str, Any]) -> None:
         self.add_info_to_logs('Configurations for Analysis Settings and Result Creation validated successfully.', True)
         self.add_info_to_logs(f'Analysis Settings are:')
@@ -241,6 +227,40 @@ class Model:
             if isinstance(value, Path):
                 value = value.as_posix()
             self.add_info_to_logs(f'{key}: {str(value)}')
+
+    def _save_user_settings_as_json(self, configs: Dict[str, Any], analysis_job: AnalysisJob) -> None:
+        filepath = analysis_job.results_dir_path.joinpath('user_settings.json')
+        configs['recording_filepath'] = analysis_job.recording.filepath
+        if analysis_job.focus_area_enabled == True:
+            configs['focus_area_filepath'] = analysis_job.focus_area.filepath
+        else:
+            configs['focus_area_filepath'] = None
+        if analysis_job.rois_source == 'file':
+            for idx, roi in enumerate(analysis_job.all_rois):
+                configs[f'filepath_analyzed_roi_#{idx + 1}'] = roi.filepath.as_posix()
+        configs_preformatted_for_json = {}
+        for key, value in configs.items():
+            if isinstance(value, Path):
+                configs_preformatted_for_json[key] = value.as_posix()
+            else:
+                configs_preformatted_for_json[key] = value
+        with open(filepath, 'w+') as user_settings_json:
+            json.dump(configs_preformatted_for_json, user_settings_json)
+
+
+    def create_analysis_jobs(self, configs: Dict[str, Any]) -> None:
+        self._ensure_data_from_previous_jobs_was_removed()
+        analysis_job_config = AnalysisJobConfig.validate(configs)
+        self.add_info_to_logs('Basic configurations for data import validated. Starting creation of analysis job(s)...', True)
+        if analysis_job_config['batch_mode'] == True:
+            all_subdir_paths_with_rec_file = self._get_all_subdir_paths_with_rec_file(analysis_job_config['data_source_path'])
+            all_subdir_paths_with_rec_file.sort()
+            for idx, subdir_path in enumerate(all_subdir_paths_with_rec_file):
+                self._create_analysis_jobs_for_single_rec(subdir_path, analysis_job_config['roi_mode'], analysis_job_config['focus_area_enabled'])
+        else:
+
+            self._create_analysis_jobs_for_single_rec(analysis_job_config['data_source_path'], analysis_job_config['roi_mode'], analysis_job_config['focus_area_enabled'])
+        self.add_info_to_logs('All job creation(s) completed.', True, 100.0)
 
     def run_analysis(self, configs: Dict[str, Any]) -> None:
         analysis_config = AnalysisConfig.validate(configs)
@@ -265,26 +285,6 @@ class Model:
         self.add_info_to_logs('Updating all log files to contain all logs as final step. All valid logs files will end with this message.')
         for job_idx, analysis_job in enumerate(self.analysis_job_queue):
             self.logs.save_current_logs(analysis_job.results_dir_path)
-
-
-    def _save_user_settings_as_json(self, configs: Dict[str, Any], analysis_job: AnalysisJob) -> None:
-        filepath = analysis_job.results_dir_path.joinpath('user_settings.json')
-        configs['recording_filepath'] = analysis_job.recording.filepath
-        if analysis_job.focus_area_enabled == True:
-            configs['focus_area_filepath'] = analysis_job.focus_area.filepath
-        else:
-            configs['focus_area_filepath'] = None
-        if analysis_job.rois_source == 'file':
-            for idx, roi in enumerate(analysis_job.all_rois):
-                configs[f'filepath_analyzed_roi_#{idx + 1}'] = roi.filepath.as_posix()
-        configs_preformatted_for_json = {}
-        for key, value in configs.items():
-            if isinstance(value, Path):
-                configs_preformatted_for_json[key] = value.as_posix()
-            else:
-                configs_preformatted_for_json[key] = value
-        with open(filepath, 'w+') as user_settings_json: 
-            json.dump(configs_preformatted_for_json, user_settings_json)
 
 
     # def preview_window_size(self, configs: Dict[str, Any]) -> Tuple[Figure, Axes]:
