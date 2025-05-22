@@ -28,7 +28,8 @@ from .input import RecordingLoaderFactory, ROILoaderFactory, RecordingLoader, RO
 
 # %% ../nbs/02_model.ipynb 6
 class Logger:
-    logs = []
+    def __init__(self):
+        self.logs = []
 
     def add_new_log(self, message: str) -> None:
         time_prefix_in_utc = datetime.now(timezone.utc).strftime('%d-%m-%y %H:%M:%S.%f')
