@@ -3,26 +3,27 @@
 # %% auto 0
 __all__ = ['correct_general_config', 'recording_filepath', 'correct_analysis_job_config', 'correct_peak_config',
            'minimal_peak_config', 'incomplete_analysis_config', 'wrong_analysis_config', 'incomplete_results_config',
-           'wrong_results_config', 'incomplete_peak_config', 'wrong_peak_config', 'BaseDataClass', 'AnalysisConfig',
-           'ResultsConfig', 'AnalysisJobConfig', 'Peak', 'test_correct_analysis_config',
+           'wrong_results_config', 'incomplete_peak_config', 'wrong_peak_config', 'BaseDataClass', 'Config',
+           'AnalysisConfig', 'ResultsConfig', 'AnalysisJobConfig', 'Peak', 'test_correct_analysis_config',
            'test_correct_analysis_job_config', 'test_correct_results_config', 'test_correct_peak_config',
            'test_minimal_peak_config', 'test_incomplete_analysis_config', 'test_wrong_analysis_config',
            'test_incomplete_results_config', 'test_wrong_results_config', 'test_incomplete_peak_config',
            'test_wrong_peak_config']
 
 # %% ../nbs/07_datamodels.ipynb 2
+from typing import Any
 from dataclasses import dataclass, asdict, fields
 from pathlib import Path
 from fastcore.test import test_fail
 
 @dataclass
 class BaseDataClass:
-    def to_dict(self):
+    def to_dict(self) -> dict[str, Any]:
         """Returning contents of the dataclass as a dictionary."""
         return asdict(self)
 
     @classmethod
-    def from_dict(cls, **params):
+    def from_dict(cls, **params) -> "BaseDataClass":
         """Creating dataclass from dictionary with data validation."""
         # getting all class fields
         all_fields = {field.name: field.type for field in fields(cls)}
@@ -43,11 +44,35 @@ class BaseDataClass:
         return cls(**cleaned_params)
 
     @classmethod
-    def validate(cls, params):
+    def validate(cls, params) -> dict[str, Any]:
         instance = cls.from_dict(**params)
         return instance.to_dict()
 
-
+@dataclass
+class Config(BaseDataClass):
+    window_size: int = 10
+    signal_to_noise_ratio: float = 3.0
+    noise_window_size: int = 200
+    signal_average_threshold: float = 10.0
+    minimum_activity_counts: int = 2
+    baseline_estimation_method: str = 'asls'
+    include_variance: bool = False
+    variance: int = 15
+    limit_analysis_to_frame_interval: bool = False
+    start_frame_idx: int = 0
+    end_frame_idx: int = 500
+    configure_octaves: bool = False
+    octaves_ridge_needs_to_spann: float = 1.0
+    save_overview_png: bool = True
+    save_detailed_results: bool = True
+    batch_mode: bool = False
+    focus_area_enabled: bool = False
+    roi_mode: str = 'grid'
+    save_single_trace_results: bool = False
+    data_source_path: Path = None
+    recording_filepath: Path = None
+    focus_area_filepath: Path = None
+    filepath_analyzed_rois: list[str] = None
 
 @dataclass
 class AnalysisConfig(BaseDataClass):
@@ -92,10 +117,9 @@ class Peak(BaseDataClass):
     peak_type: str | None = None
 
 # %% ../nbs/07_datamodels.ipynb 3
-from .view import WidgetsInterface
+# from neuralactivitycubic.view import WidgetsInterface
 
-correct_general_config = WidgetsInterface().export_user_settings()
-correct_general_config['save_single_trace_results'] = True  # needs to be added here until implemented in GUI
+correct_general_config = Config().to_dict()  # needs to be added here until implemented in GUI
 
 recording_filepath = Path('../test_data/00/spiking_neuron.avi')
 correct_analysis_job_config = {
@@ -169,3 +193,21 @@ wrong_peak_config['frame_idx'] = False
 
 def test_wrong_peak_config():
     return Peak.from_dict(**wrong_peak_config)
+
+# Add a check to ensure Config contains all required fields for other dataclasses
+def _check_config_fields():
+    config_fields = set(Config.__dataclass_fields__.keys())
+    required = {
+        'AnalysisConfig': set(AnalysisConfig.__dataclass_fields__.keys()),
+        'ResultsConfig': set(ResultsConfig.__dataclass_fields__.keys()),
+        'AnalysisJobConfig': set(AnalysisJobConfig.__dataclass_fields__.keys()),
+        # Peak is not a config, so skip
+    }
+    for name, fields_set in required.items():
+        missing = fields_set - config_fields
+        if missing:
+            print(f"Config is missing fields required by {name}: {missing}")
+        else:
+            print(f"Config contains all fields required by {name}.")
+
+_check_config_fields()

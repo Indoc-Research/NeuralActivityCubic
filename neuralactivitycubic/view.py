@@ -17,6 +17,9 @@ from typing import Dict, Optional, Any
 from pathlib import Path
 
 # %% ../nbs/01_view.ipynb 4
+from .datamodels import Config
+
+# %% ../nbs/01_view.ipynb 5
 def change_widget_state(widget: w.Widget,
                         value: Optional[Any]=None,
                         description: Optional[str]=None,
@@ -39,7 +42,7 @@ def change_widget_state(widget: w.Widget,
         widget.button_style = button_style
     return widget
 
-# %% ../nbs/01_view.ipynb 5
+# %% ../nbs/01_view.ipynb 6
 class UserInfoPanel:
 
     def __init__(self) -> None:
@@ -94,7 +97,7 @@ class UserInfoPanel:
             self.progress_bar.bar_style = ''
         self.progress_bar.value = progress_in_percent
 
-# %% ../nbs/01_view.ipynb 6
+# %% ../nbs/01_view.ipynb 7
 class SourceDataPanel:
     
     def __init__(self, user_info_panel: UserInfoPanel) -> None:
@@ -201,7 +204,7 @@ class SourceDataPanel:
             else:
                 self.load_source_data_button = change_widget_state(self.load_source_data_button, disabled = True, tooltip = 'Please select which source data to load!')
 
-# %% ../nbs/01_view.ipynb 7
+# %% ../nbs/01_view.ipynb 8
 class AnalysisSettingsPanel:
 
     def __init__(self) -> None:
@@ -357,7 +360,7 @@ class AnalysisSettingsPanel:
             else:
                 self.user_settings_octaves_ridge_needs_to_spann.layout.visibility = 'hidden'
 
-# %% ../nbs/01_view.ipynb 8
+# %% ../nbs/01_view.ipynb 9
 class MainScreen:
 
     def __init__(self) -> None:
@@ -392,7 +395,7 @@ class MainScreen:
         self.widget.children = self.output_screen.children
         self.current_screen = 'output'
 
-# %% ../nbs/01_view.ipynb 9
+# %% ../nbs/01_view.ipynb 10
 class WidgetsInterface:
 
     def __init__(self) -> None:
@@ -439,7 +442,7 @@ class WidgetsInterface:
         self.analysis_settings_panel.user_settings_frame_interval_to_analyze.value = (1, total_frames + 1)
 
 
-    def export_user_settings(self) -> Dict[str, Any]:
+    def export_user_settings(self) -> Config:
         user_settings = {}
         for panel_name_with_user_settings in ['analysis_settings_panel', 'source_data_panel']:
             panel = getattr(self, panel_name_with_user_settings)
@@ -449,19 +452,20 @@ class WidgetsInterface:
                     user_settings['end_frame_idx'] = attribute_value.value[1]
                 elif attribute_name.startswith('user_settings_'):
                     value_set_by_user = attribute_value.value
-                    if value_set_by_user != None:
+                    if value_set_by_user is not None:
                         parameter_name = attribute_name.replace('user_settings_', '')
                         if 'path' in parameter_name:
                             value_set_by_user = Path(value_set_by_user)
-                        user_settings[parameter_name] = value_set_by_user               
-        return user_settings
+                        user_settings[parameter_name] = value_set_by_user
+        config = Config.from_dict(**user_settings)
+        return config
 
 
     def enable_analysis(self, enable: bool=True) -> None:
         roi_mode = self.source_data_panel.user_settings_roi_mode.value
         self.analysis_settings_panel.enable_analysis_settings(enable, roi_mode)     
 
-# %% ../nbs/01_view.ipynb 10
+# %% ../nbs/01_view.ipynb 11
 class SourceDataStructureWidget:
     
     def __init__(self) -> None:
