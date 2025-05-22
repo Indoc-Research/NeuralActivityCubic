@@ -287,12 +287,12 @@ class Model:
             self.logs.save_current_logs(analysis_job.results_dir_path)
 
 
-    # def preview_window_size(self, configs: Dict[str, Any]) -> Tuple[Figure, Axes]:
-    #     job_for_preview = self.analysis_job_queue[0]
-    #     # this is cool, but since we need only 'window_size' for the preview, we can skip the validation
-    #     validated_configs_for_preview = self._get_configs_required_for_specific_function(configs, job_for_preview.preview_window_size)
-    #     preview_fig, preview_ax = job_for_preview.preview_window_size(**validated_configs_for_preview)
-    #     return preview_fig, preview_ax
+    def preview_window_size(self, configs: Dict[str, Any]) -> Tuple[Figure, Axes]:
+        job_for_preview = self.analysis_job_queue[0]
+        # this is cool, but since we need only 'window_size' for the preview, we can skip the validation
+        # validated_configs_for_preview = self._get_configs_required_for_specific_function(configs, job_for_preview.preview_window_size)
+        preview_fig, preview_ax = job_for_preview.preview_window_size(configs['window_size'])
+        return preview_fig, preview_ax
 
 # %% ../nbs/02_model.ipynb 9
 from shutil import rmtree
