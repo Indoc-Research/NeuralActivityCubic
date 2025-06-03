@@ -6,17 +6,11 @@
 __all__ = ['App', 'open_gui']
 
 # %% ../nbs/00_controller.ipynb 3
-from PIL import Image
 import matplotlib.pyplot as plt
-from pathlib import Path
-import numpy as np
 from IPython.display import display
-
-from typing import Any, Callable, Dict
 
 # %% ../nbs/00_controller.ipynb 4
 from .model import Model
-from .datamodels import AnalysisConfig, AnalysisJobConfig
 from .view import WidgetsInterface
 from . import results
 
@@ -48,12 +42,12 @@ class App:
 
     def _load_data_button_clicked(self, change) -> None:
         user_settings = self.view.export_user_settings()
-        self.model.create_analysis_jobs(AnalysisJobConfig.validate(user_settings.to_dict()))
+        self.model.create_analysis_jobs(user_settings)
         if len(self.model.analysis_job_queue) < 1:
             self.model.add_info_to_logs('Failed to create any analysis job(s). Please inspect logs for more details!', True)
             self.view.user_info_panel.progress_bar.bar_style = 'danger'
         else:
-            self._display_preview_of_representative_job(window_size = user_settings.window_size)
+            self._display_preview_of_representative_job(window_size = user_settings.grid_size)
             self.model.add_info_to_logs(f'Data import completed! {len(self.model.analysis_job_queue)} job(s) in queue.', True, 100.0)
             self.view.enable_analysis()
 
@@ -78,7 +72,7 @@ class App:
     def _run_button_clicked(self, change) -> None:
         self.view.enable_analysis(False)
         user_settings = self.view.export_user_settings()
-        self.model.run_analysis(AnalysisConfig.validate(user_settings.to_dict()))
+        self.model.run_analysis(user_settings)
         self.model.add_info_to_logs(f'Processing of all jobs completed! Feel free to load more data & continue analyzing!', True, 100.0)
         self.view.enable_analysis(True)
 
@@ -87,7 +81,7 @@ class App:
         self.view.main_screen.show_output_screen()
         with self.view.main_screen.output:
             user_settings = self.view.export_user_settings()
-            preview_fig, preview_ax = self.model.preview_window_size(user_settings.window_size)
+            preview_fig, preview_ax = self.model.preview_window_size(user_settings.grid_size)
             preview_fig.set_figheight(400 * self.pixel_conversion)
             preview_fig.tight_layout()
             plt.show(preview_fig)
