@@ -188,7 +188,7 @@ class AnalysisJob:
             prefix_with_datetime = self.analysis_start_datetime.strftime('%Y_%m_%d_%H-%M-%S_results_for')
             recording_filename_without_extension = self.recording.filepath.name.replace(self.recording.filepath.suffix, '')
             if self.focus_area_enabled == True:
-                focus_area_filename_without_extension = self.focus_area.filepath.name.replace(self.focus_area.filepath.suffix, '')
+                focus_area_filename_without_extension = self.focus_area.test_filepath.name.replace(self.focus_area.test_filepath.suffix, '')
                 results_dir_name = f'{prefix_with_datetime}_{recording_filename_without_extension}_with_{focus_area_filename_without_extension}'                
             else:
                 results_dir_name = f'{prefix_with_datetime}_{recording_filename_without_extension}'
