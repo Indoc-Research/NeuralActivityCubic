@@ -253,7 +253,7 @@ class NWBRecordingLoader(RecordingLoader):
             nwbfile = io.read()
             if 'OnePhotonSeries' in nwbfile.acquisition.keys():
                 all_frames = nwbfile.acquisition['OnePhotonSeries'].data[:]
-            elif 'TwoPhotonSeries' in nwb_file.acquisition.keys():
+            elif 'TwoPhotonSeries' in nwbfile.acquisition.keys():
                 all_frames = nwbfile.acquisition['TwoPhotonSeries'].data[:]
             else:
                 raise ValueError('The NWB file you try to load does not have a recording stored as "OnePhotonSeries" or "TwoPhotonSeries" under Acquisition.')
