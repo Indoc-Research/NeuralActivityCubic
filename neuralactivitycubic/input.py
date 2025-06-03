@@ -4,8 +4,10 @@
 
 # %% auto 0
 __all__ = ['FocusAreaPathRestrictions', 'Data', 'Recording', 'ROI', 'DataLoader', 'GridWrapperROILoader', 'RecordingLoader',
-           'AVILoader', 'ROILoader', 'ImageJROILoader', 'DataLoaderFactory', 'RecordingLoaderFactory',
-           'ROILoaderFactory', 'get_filepaths_with_supported_extension_in_dirpath', 'RecLoaderROILoaderCombinator']
+           'AVILoader', 'NWBRecordingLoader', 'ROILoader', 'ImageJROILoader', 'NWBROILoader', 'DataLoaderFactory',
+           'RecordingLoaderFactory', 'ROILoaderFactory', 'get_filepaths_with_supported_extension_in_dirpath',
+           'RecLoaderROILoaderCombinator', 'test_unsupported_file_extension', 'test_successful_recording_loading',
+           'test_successful_roi_loading']
 
 # %% ../nbs/03_input.ipynb 3
 import imageio.v3 as iio
@@ -13,6 +15,10 @@ from pathlib import Path
 import numpy as np
 from shapely import Polygon
 import roifile
+from skimage.draw import polygon
+from skimage.measure import find_contours
+from pynwb import NWBHDF5IO
+
 from abc import ABC, abstractmethod
 from typing import List, Dict, Tuple, Union, Optional, Any
 
@@ -99,6 +105,13 @@ class ROI(Data):
     def add_label_id(self, label_id: str) -> None:
         assert type(label_id) == str, f'"label_id" must be a string. However, you passed {label_id} which is of type {type(label_id)}.'
         setattr(self, 'label_id', label_id)
+
+
+    def create_nwb_compliant_pixel_mask(self):
+        boundary_coords_with_subpixel_precision = np.asarray(self.boundary_row_col_coords)
+        row_idxs, col_idxs = polygon(boundary_coords_with_subpixel_precision[:, 0], boundary_coords_with_subpixel_precision[:, 1])
+        weights = np.ones(row_idxs.shape[0], dtype='int64')
+        self.pixel_mask = np.stack((row_idxs, col_idxs, weights), axis = 1)
 
 # %% ../nbs/03_input.ipynb 10
 class DataLoader(ABC):
@@ -230,6 +243,22 @@ class AVILoader(RecordingLoader):
         return iio.imread(self.filepath)
 
 # %% ../nbs/03_input.ipynb 14
+class NWBRecordingLoader(RecordingLoader):
+
+    def _get_all_frames(self) -> np.ndarray:
+        with NWBHDF5IO(self.filepath, "r") as io:
+            nwbfile = io.read()
+            if 'OnePhotonSeries' in nwbfile.acquisition.keys():
+                all_frames = nwbfile.acquisition['OnePhotonSeries'].data[:]
+            elif 'TwoPhotonSeries' in nwbfile.acquisition.keys():
+                all_frames = nwbfile.acquisition['TwoPhotonSeries'].data[:]
+            else:
+                raise ValueError('The NWB file you try to load does not have a recording stored as "OnePhotonSeries" or "TwoPhotonSeries" under Acquisition.')
+        if len(all_frames.shape) < 4:
+            all_frames = all_frames[..., np.newaxis]        
+        return all_frames
+
+# %% ../nbs/03_input.ipynb 15
 class ROILoader(DataLoader):
 
     @abstractmethod
@@ -254,7 +283,7 @@ class ROILoader(DataLoader):
         boundary_row_col_coords.append(first_boundary_point_coords)
         return boundary_row_col_coords
 
-# %% ../nbs/03_input.ipynb 15
+# %% ../nbs/03_input.ipynb 16
 class ImageJROILoader(ROILoader):
 
     
@@ -282,6 +311,27 @@ class ImageJROILoader(ROILoader):
         return boundary_row_col_coords
 
 # %% ../nbs/03_input.ipynb 17
+class NWBROILoader(ROILoader):
+
+    def _get_boundary_row_col_coords_for_all_rois_in_source_data(self) -> List[List[Tuple[int, int]]]:
+        with NWBHDF5IO(self.filepath, "r") as io:
+            nwbfile = io.read()
+            recording_frame_shape = nwbfile.processing['ophys']['ImageSegmentation']['PlaneSegmentation'].reference_images[0].data.shape[1:3]
+            rois_df = nwbfile.processing['ophys']['ImageSegmentation']['PlaneSegmentation'].to_dataframe()
+        all_rois = []
+        for roi_id in rois_df.index.values:
+            pixel_mask = rois_df.at[roi_id, 'pixel_mask']
+            binary_mask = np.zeros(recording_frame_shape, dtype='uint8')
+            for x, y, _ in pixel_mask:
+                binary_mask[int(x), int(y)] = 1
+            contour_results = find_contours(binary_mask)
+            if len(contour_results) != 1:
+                raise ValueError(f'Expected to find exactly one contour, but found {len(contour_results)} for ROI ID')
+            boundary_row_col_coords = [(float(row), float(col)) for row, col in contour_results[0]]
+            all_rois.append(boundary_row_col_coords)
+        return all_rois
+
+# %% ../nbs/03_input.ipynb 19
 class DataLoaderFactory(ABC):
 
     @property
@@ -319,23 +369,29 @@ class DataLoaderFactory(ABC):
             raise NotImplementedError('It seems like there is no DataLoader implemented for the specific filetype you´re trying to load - sorry!')
         return matching_loader
 
-# %% ../nbs/03_input.ipynb 18
+# %% ../nbs/03_input.ipynb 20
 class RecordingLoaderFactory(DataLoaderFactory):
 
     @property
     def supported_extensions_per_data_loader(self) -> Dict[RecordingLoader, List[str]]:
-        supported_extensions_per_data_loader = {AVILoader: ['.avi']}
+        supported_extensions_per_data_loader = {
+            AVILoader: ['.avi'],
+            NWBRecordingLoader: ['.nwb']
+        }
         return supported_extensions_per_data_loader
 
-# %% ../nbs/03_input.ipynb 19
+# %% ../nbs/03_input.ipynb 21
 class ROILoaderFactory(DataLoaderFactory):
 
     @property
     def supported_extensions_per_data_loader(self) -> Dict[ROILoader, List[str]]:
-        supported_extensions_per_data_loader = {ImageJROILoader: ['.roi', '.zip']}
+        supported_extensions_per_data_loader = {
+            ImageJROILoader: ['.roi', '.zip'],
+            NWBROILoader: ['.nwb']
+        }
         return supported_extensions_per_data_loader
 
-# %% ../nbs/03_input.ipynb 20
+# %% ../nbs/03_input.ipynb 22
 def get_filepaths_with_supported_extension_in_dirpath(dirpath: Path, all_supported_extensions: List[str], max_results: Optional[int]=None) -> List[Path]:
     all_filepaths_with_supported_extension = []
     for elem in dirpath.iterdir():
@@ -351,7 +407,7 @@ def get_filepaths_with_supported_extension_in_dirpath(dirpath: Path, all_support
         )
     return all_filepaths_with_supported_extension
 
-# %% ../nbs/03_input.ipynb 21
+# %% ../nbs/03_input.ipynb 23
 class RecLoaderROILoaderCombinator:
 
         
@@ -381,3 +437,32 @@ class RecLoaderROILoaderCombinator:
         all_roi_filepaths = get_filepaths_with_supported_extension_in_dirpath(self.dir_path, roi_loader_factory.all_supported_extensions)
         all_roi_loaders = [roi_loader_factory.get_loader(filepath) for filepath in all_roi_filepaths]
         return all_roi_loaders
+
+# %% ../nbs/03_input.ipynb 25
+def test_unsupported_file_extension(loader_factory: DataLoaderFactory, filepath: Path) -> bool:
+    try:
+        loader_factory.get_loader(filepath)
+    except NotImplementedError:
+        return True
+    else:
+        return False
+
+# %% ../nbs/03_input.ipynb 26
+def test_successful_recording_loading(filepath: Path) -> bool:
+    recording_loader_factory = RecordingLoaderFactory()
+    recording_loader = recording_loader_factory.get_loader(filepath)
+    return isinstance(recording_loader.load_and_parse_file_content(), Recording)
+
+# %% ../nbs/03_input.ipynb 27
+def test_successful_roi_loading(filepath: Path) -> bool:
+    roi_loader_factory = ROILoaderFactory()
+    roi_loader = roi_loader_factory.get_loader(filepath)
+    parsed_rois = roi_loader.load_and_parse_file_content()
+    if type(parsed_rois) == list:
+        are_rois = [isinstance(roi, ROI) for roi in parsed_rois]
+        if all(are_rois):
+            return True
+        else:
+            return False
+    else:
+        return False
