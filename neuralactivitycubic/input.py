@@ -15,8 +15,6 @@ from pathlib import Path
 import numpy as np
 from shapely import Polygon
 import roifile
-
-import numpy as np
 from skimage.draw import polygon
 from skimage.measure import find_contours
 from pynwb import NWBHDF5IO
@@ -113,8 +111,7 @@ class ROI(Data):
         boundary_coords_with_subpixel_precision = np.asarray(self.boundary_row_col_coords)
         row_idxs, col_idxs = polygon(boundary_coords_with_subpixel_precision[:, 0], boundary_coords_with_subpixel_precision[:, 1])
         weights = np.ones(row_idxs.shape[0], dtype='int64')
-        pixel_mask = np.stack((row_idxs, col_idxs, weights), axis = 1)
-        setattr(self, 'pixel_mask', pixel_mask)
+        self.pixel_mask = np.stack((row_idxs, col_idxs, weights), axis = 1)
 
 # %% ../nbs/03_input.ipynb 10
 class DataLoader(ABC):
