@@ -6,13 +6,8 @@
 __all__ = ['App', 'open_gui']
 
 # %% ../nbs/00_controller.ipynb 3
-from PIL import Image
 import matplotlib.pyplot as plt
-from pathlib import Path
-import numpy as np
 from IPython.display import display
-
-from typing import Any, Callable, Dict
 
 # %% ../nbs/00_controller.ipynb 4
 from .model import Model
@@ -52,7 +47,7 @@ class App:
             self.model.add_info_to_logs('Failed to create any analysis job(s). Please inspect logs for more details!', True)
             self.view.user_info_panel.progress_bar.bar_style = 'danger'
         else:
-            self._display_preview_of_representative_job(window_size = user_settings['window_size'])
+            self._display_preview_of_representative_job(window_size = user_settings.grid_size)
             self.model.add_info_to_logs(f'Data import completed! {len(self.model.analysis_job_queue)} job(s) in queue.', True, 100.0)
             self.view.enable_analysis()
 

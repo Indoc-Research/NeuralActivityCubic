@@ -9,14 +9,15 @@ __all__ = ['change_widget_state', 'UserInfoPanel', 'SourceDataPanel', 'AnalysisS
 # %% ../nbs/01_view.ipynb 3
 import ipywidgets as w
 from ipyfilechooser import FileChooser
-from IPython.display import Image
-import numpy as np
 from datetime import datetime
 
-from typing import Dict, Optional, Any
+from typing import Optional, Any
 from pathlib import Path
 
 # %% ../nbs/01_view.ipynb 4
+from .datamodels import Config
+
+# %% ../nbs/01_view.ipynb 5
 def change_widget_state(widget: w.Widget,
                         value: Optional[Any]=None,
                         description: Optional[str]=None,
@@ -39,7 +40,7 @@ def change_widget_state(widget: w.Widget,
         widget.button_style = button_style
     return widget
 
-# %% ../nbs/01_view.ipynb 5
+# %% ../nbs/01_view.ipynb 6
 class UserInfoPanel:
 
     def __init__(self) -> None:
@@ -94,7 +95,7 @@ class UserInfoPanel:
             self.progress_bar.bar_style = ''
         self.progress_bar.value = progress_in_percent
 
-# %% ../nbs/01_view.ipynb 6
+# %% ../nbs/01_view.ipynb 7
 class SourceDataPanel:
     
     def __init__(self, user_info_panel: UserInfoPanel) -> None:
@@ -201,7 +202,7 @@ class SourceDataPanel:
             else:
                 self.load_source_data_button = change_widget_state(self.load_source_data_button, disabled = True, tooltip = 'Please select which source data to load!')
 
-# %% ../nbs/01_view.ipynb 7
+# %% ../nbs/01_view.ipynb 8
 class AnalysisSettingsPanel:
 
     def __init__(self) -> None:
@@ -214,17 +215,17 @@ class AnalysisSettingsPanel:
         # Create and configure all elements:
         analysis_settings_info = w.HTML(value="<p style='font-size:16px; font-weight:bold; text-align:center;'>Analysis Settings</p>", layout = w.Layout(width = '99%'))
 
-        self.user_settings_window_size = w.IntSlider(description = 'Grid size:', value = 10, min = 1, max = 128, step = 1, disabled = True, 
+        self.user_settings_grid_size = w.IntSlider(description = 'Grid size:', value = 10, min = 1, max = 128, step = 1, disabled = True,
                                                           layout = w.Layout(width = '80%'), style = {'description_width': 'initial'})
         self.preview_window_size_button = w.Button(description = 'Preview', disabled = True, tooltip = 'Preview grid size. Does not start analysis', layout = w.Layout(width = '20%'))
         self.user_settings_signal_to_noise_ratio = w.BoundedFloatText(description = 'SNR: ', tooltip = 'Signal to noise ratio', value = 3.0, min = 0.1, max = 100.0, step = 0.05, disabled = True, 
                                                                       layout = w.Layout(width = width_percentage_core_widgets), style = {'description_width': description_width})
         self.user_settings_noise_window_size = w.BoundedIntText(description = 'NWS: ', tooltip = 'Noise window size', value = 200, min = 10, max = 1000, step = 1, disabled = True,
                                                                 layout = w.Layout(width = width_percentage_core_widgets), style = {'description_width': description_width})
-        self.user_settings_signal_average_threshold = w.BoundedFloatText(description = 'SAT: ', tooltip = 'Signal average threshold', value = 10.0, min = 0.0, max = 255.0, step = 0.5, 
+        self.user_settings_mean_signal_threshold = w.BoundedFloatText(description = 'SAT: ', tooltip = 'Signal average threshold', value = 10.0, min = 0.0, max = 255.0, step = 0.5,
                                                                          disabled = True, layout = w.Layout(width = width_percentage_core_widgets), 
                                                                          style = {'description_width': description_width})
-        self.user_settings_minimum_activity_counts = w.BoundedIntText(description = 'MAC: ', tooltip = 'Minimum activity counts', value = 2, min = 0, max = 100, step = 1, disabled = True, 
+        self.user_settings_min_peak_count = w.BoundedIntText(description = 'MAC: ', tooltip = 'Minimum activity counts', value = 2, min = 0, max = 100, step = 1, disabled = True,
                                                                       layout = w.Layout(width = width_percentage_core_widgets), style = {'description_width': description_width})
         self.user_settings_baseline_estimation_method = w.Dropdown(description = 'Baseline estimation method: ',
                                                                    value = 'asls', 
@@ -237,11 +238,11 @@ class AnalysisSettingsPanel:
                                                                    layout = w.Layout(width = '99%'), style = {'description_width': 'initial'})
         vertical_spacer = w.HTML(value = '', layout = w.Layout(height = '4px'))
         horizontal_spacer = w.HTML(value = '', layout = w.Layout(width = '5%'))
-        vbox_core_settings_left = w.VBox([self.user_settings_signal_to_noise_ratio, vertical_spacer, self.user_settings_signal_average_threshold], 
+        vbox_core_settings_left = w.VBox([self.user_settings_signal_to_noise_ratio, vertical_spacer, self.user_settings_mean_signal_threshold],
                                          layout = w.Layout(width = '50%', align_items = 'flex-start'))
-        vbox_core_settings_right = w.VBox([self.user_settings_noise_window_size, vertical_spacer, self.user_settings_minimum_activity_counts], 
+        vbox_core_settings_right = w.VBox([self.user_settings_noise_window_size, vertical_spacer, self.user_settings_min_peak_count],
                                            layout = w.Layout(width = '50%', align_items = 'flex-end'))      
-        hbox_grid_window_size_settings = w.HBox([self.user_settings_window_size, self.preview_window_size_button], layout = w.Layout(width = '100%', justify_content = 'flex-start'))
+        hbox_grid_window_size_settings = w.HBox([self.user_settings_grid_size, self.preview_window_size_button], layout = w.Layout(width = '100%', justify_content = 'flex-start'))
         hbox_core_setting_vboxes = w.HBox([vbox_core_settings_left, vbox_core_settings_right], layout = w.Layout(width = '100%'))
         vbox_all_core_settings = w.VBox([hbox_grid_window_size_settings, 
                                          vertical_spacer,
@@ -255,26 +256,26 @@ class AnalysisSettingsPanel:
         optional_info = w.Label(value = 'Optional Settings:', style = {'text_align': 'left', 'font_weight': 'bold'}, layout = w.Layout(width = '90%'))
         self.user_settings_include_variance = w.Checkbox(description = 'include variance', value = False, indent = False, disabled = True, 
                                                          layout = w.Layout(width = '35%'), style = {'description_width': 'initial'})
-        self.user_settings_variance = w.BoundedIntText(description = 'Variance:', disabled = True,
+        self.user_settings_variance_window_size = w.BoundedIntText(description = 'Variance:', disabled = True,
                                                          value = 15, min = 5, max = 200, step = 5,
                                                          style = {'description_width': 'initial'},
                                                          layout = w.Layout(width = '65%', visibility = 'hidden'))
-        self.user_settings_limit_analysis_to_frame_interval = w.Checkbox(description = 'analyze interval', indent = False, 
+        self.user_settings_use_frame_range = w.Checkbox(description = 'analyze interval', indent = False,
                                                                          value = False, disabled = True, layout = w.Layout(width = '35%'), 
                                                                          style = {'description_width': 'initial'})
         self.user_settings_frame_interval_to_analyze = w.IntRangeSlider(description = 'Frames:', disabled = True, 
                                                                         value = (0, 500), min = 0, max = 500, step = 1, 
                                                                         style = {'description_width': 'initial'}, layout = w.Layout(width = '65%', visibility = 'hidden'))
-        self.user_settings_configure_octaves = w.Checkbox(description = 'configure octaves', value = False, disabled = True, indent = False, 
+        self.user_settings_customize_octave_filtering = w.Checkbox(description = 'configure octaves', value = False, disabled = True, indent = False,
                                                           layout = w.Layout(width = '35%'), style = {'description_width': 'initial'})
-        self.user_settings_octaves_ridge_needs_to_spann = w.BoundedFloatText(description = 'Min. octaves:', tooltip = 'Minimum octaves a ridge needs to span', disabled = True,
+        self.user_settings_min_octave_span = w.BoundedFloatText(description = 'Min. octaves:', tooltip = 'Minimum octaves a ridge needs to span', disabled = True,
                                                                              value = 1.0, min = 0.1, max = 30.0, step = 0.05,
                                                                              style = {'description_width': 'initial'},
                                                                              layout = w.Layout(width = '65%', visibility = 'hidden'))
-        optional_variance_widgets = w.HBox([self.user_settings_include_variance, self.user_settings_variance], layout = w.Layout(width = '100%', align_items = 'flex-start'))
-        optional_interval_widgets = w.HBox([self.user_settings_limit_analysis_to_frame_interval, self.user_settings_frame_interval_to_analyze], 
+        optional_variance_widgets = w.HBox([self.user_settings_include_variance, self.user_settings_variance_window_size], layout = w.Layout(width = '100%', align_items = 'flex-start'))
+        optional_interval_widgets = w.HBox([self.user_settings_use_frame_range, self.user_settings_frame_interval_to_analyze],
                                            layout = w.Layout(width = '100%', align_items = 'flex-start'))
-        optional_octave_widgets = w.HBox([self.user_settings_configure_octaves, self.user_settings_octaves_ridge_needs_to_spann], 
+        optional_octave_widgets = w.HBox([self.user_settings_customize_octave_filtering, self.user_settings_min_octave_span],
                                          layout = w.Layout(width = '100%', align_items = 'flex-start'))
         
         optional_settings = w.VBox([optional_variance_widgets, vertical_spacer, optional_interval_widgets, vertical_spacer, optional_octave_widgets],
@@ -282,20 +283,20 @@ class AnalysisSettingsPanel:
 
         results_info = w.Label(value = 'Results Settings:', style = {'text_align': 'left', 'font_weight': 'bold'}, layout = w.Layout(width = '90%'))
         self.user_settings_save_overview_png = w.Checkbox(description = 'Save overview plot', value = True, disabled = True, style = {'description_width': 'initial'})
-        self.user_settings_save_detailed_results = w.Checkbox(description = 'Save detailed results', value = True, disabled = True, style = {'description_width': 'initial'})
+        self.user_settings_save_summary_results = w.Checkbox(description = 'Save detailed results', value = True, disabled = True, style = {'description_width': 'initial'})
         self.run_analysis_button = w.Button(description = 'Run Analysis',
                                             disabled = True,
                                             tooltip = 'You have to load some data first, before you can run the analysis!',
                                             button_style = '',
                                             icon = 'rocket',
                                             layout = w.Layout(width = '90%'))
-        results_settings = w.VBox([w.HBox([self.user_settings_save_overview_png, self.user_settings_save_detailed_results],
+        results_settings = w.VBox([w.HBox([self.user_settings_save_overview_png, self.user_settings_save_summary_results],
                                           layout = w.Layout(width = '100%', align_items = 'flex-start'))],
                                    layout = w.Layout(width = '90%', align_items = 'flex-start', align_content = 'flex-start', justify_content = 'flex-start'))
         # Enable event handling:
         self.user_settings_include_variance.observe(self._include_variance_config_changed)
-        self.user_settings_limit_analysis_to_frame_interval.observe(self._limit_analysis_to_interval_changed)
-        self.user_settings_configure_octaves.observe(self._configure_octaves_changed)
+        self.user_settings_use_frame_range.observe(self._limit_analysis_to_interval_changed)
+        self.user_settings_customize_octave_filtering.observe(self._configure_octaves_changed)
         # Arrange elements:
         analysis_settings_box = w.VBox([analysis_settings_info,
                                         vbox_all_core_settings,
@@ -331,15 +332,15 @@ class AnalysisSettingsPanel:
                 attribute_obj.disabled = not enable_all_widgets
         if roi_mode == 'file':
             self.preview_window_size_button.disabled = True
-            self.user_settings_window_size.disabled = True
+            self.user_settings_grid_size.disabled = True
     
 
     def _include_variance_config_changed(self, change) -> None:
         if change['name'] == 'value':
             if change['new'] == True:
-                self.user_settings_variance.layout.visibility = 'visible'
+                self.user_settings_variance_window_size.layout.visibility = 'visible'
             else:
-                self.user_settings_variance.layout.visibility = 'hidden'
+                self.user_settings_variance_window_size.layout.visibility = 'hidden'
 
 
     def _limit_analysis_to_interval_changed(self, change) -> None:
@@ -353,11 +354,11 @@ class AnalysisSettingsPanel:
     def _configure_octaves_changed(self, change) -> None:
         if change['name'] == 'value':
             if change['new'] == True:
-                self.user_settings_octaves_ridge_needs_to_spann.layout.visibility = 'visible'
+                self.user_settings_min_octave_span.layout.visibility = 'visible'
             else:
-                self.user_settings_octaves_ridge_needs_to_spann.layout.visibility = 'hidden'
+                self.user_settings_min_octave_span.layout.visibility = 'hidden'
 
-# %% ../nbs/01_view.ipynb 8
+# %% ../nbs/01_view.ipynb 9
 class MainScreen:
 
     def __init__(self) -> None:
@@ -392,7 +393,7 @@ class MainScreen:
         self.widget.children = self.output_screen.children
         self.current_screen = 'output'
 
-# %% ../nbs/01_view.ipynb 9
+# %% ../nbs/01_view.ipynb 10
 class WidgetsInterface:
 
     def __init__(self) -> None:
@@ -413,7 +414,7 @@ class WidgetsInterface:
     def _enable_window_size_widgets(self, change) -> None:
         if change['name'] == 'value':
             if change['new'] == 'file':
-                change_widget_state(self.analysis_settings_panel.user_settings_window_size, disabled = True)
+                change_widget_state(self.analysis_settings_panel.user_settings_grid_size, disabled = True)
                 change_widget_state(self.analysis_settings_panel.preview_window_size_button, disabled = True)
             else:
                 if self.analysis_settings_panel.user_settings_signal_to_noise_ratio.disabled == True:
@@ -439,7 +440,7 @@ class WidgetsInterface:
         self.analysis_settings_panel.user_settings_frame_interval_to_analyze.value = (1, total_frames + 1)
 
 
-    def export_user_settings(self) -> Dict[str, Any]:
+    def export_user_settings(self) -> Config:
         user_settings = {}
         for panel_name_with_user_settings in ['analysis_settings_panel', 'source_data_panel']:
             panel = getattr(self, panel_name_with_user_settings)
@@ -449,19 +450,20 @@ class WidgetsInterface:
                     user_settings['end_frame_idx'] = attribute_value.value[1]
                 elif attribute_name.startswith('user_settings_'):
                     value_set_by_user = attribute_value.value
-                    if value_set_by_user != None:
+                    if value_set_by_user is not None:
                         parameter_name = attribute_name.replace('user_settings_', '')
                         if 'path' in parameter_name:
                             value_set_by_user = Path(value_set_by_user)
-                        user_settings[parameter_name] = value_set_by_user               
-        return user_settings
+                        user_settings[parameter_name] = value_set_by_user
+        config = Config.from_dict(**user_settings)
+        return config
 
 
     def enable_analysis(self, enable: bool=True) -> None:
         roi_mode = self.source_data_panel.user_settings_roi_mode.value
         self.analysis_settings_panel.enable_analysis_settings(enable, roi_mode)     
 
-# %% ../nbs/01_view.ipynb 10
+# %% ../nbs/01_view.ipynb 11
 class SourceDataStructureWidget:
     
     def __init__(self) -> None:
