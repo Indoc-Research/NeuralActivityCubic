@@ -81,7 +81,7 @@ class App:
         self.view.main_screen.show_output_screen()
         with self.view.main_screen.output:
             user_settings = self.view.export_user_settings()
-            preview_fig, preview_ax = self.model.preview_window_size(user_settings.grid_size)
+            preview_fig, preview_ax = self.model.preview_window_size(user_settings)
             preview_fig.set_figheight(400 * self.pixel_conversion)
             preview_fig.tight_layout()
             plt.show(preview_fig)
