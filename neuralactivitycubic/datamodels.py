@@ -167,30 +167,29 @@ class Config(BaseDataClass):
         save_single_trace_results (bool, default=False):
             Whether to save individual trace results for each ROI separately.
     """
-    grid_size: int = 10
-    signal_to_noise_ratio: float = 3.0
-    noise_window_size: int = 200
-    mean_signal_threshold: float = 10.0
-    min_peak_count: int = 2
-    baseline_estimation_method: str = 'asls'
-    include_variance: bool = False
-    variance_window_size: int = 15
-    use_frame_range: bool = False
-    start_frame_idx: int = 0
-    end_frame_idx: int = 500
-    customize_octave_filtering: bool = False
-    min_octave_span: float = 1.0
-    save_overview_png: bool = True
-    save_summary_results: bool = True
     batch_mode: bool = False
-    focus_area_enabled: bool = False
-    roi_mode: str = 'grid'
-    save_single_trace_results: bool = False
+    baseline_estimation_method: str = 'asls'
+    customize_octave_filtering: bool = False
     data_source_path: Path = None
+    end_frame_idx: int = 500
+    focus_area_enabled: bool = False
     focus_area_filepath: Path = None
-    filepath_analyzed_rois: list[str] = None
+    grid_size: int = 10
+    include_variance: bool = False
+    mean_signal_threshold: float = 10.0
+    min_octave_span: float = 1.0
+    min_peak_count: int = 2
+    noise_window_size: int = 200
     recording_filepath: Path = None
     roi_filepath: Path | list[Path] = None
+    roi_mode: str = 'grid'
+    save_overview_png: bool = True
+    save_single_trace_results: bool = False
+    save_summary_results: bool = True
+    signal_to_noise_ratio: float = 3.0
+    start_frame_idx: int = 0
+    use_frame_range: bool = False
+    variance_window_size: int = 15
 
 
 @dataclass
