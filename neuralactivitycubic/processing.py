@@ -21,19 +21,19 @@ from shapely import get_coordinates
 from typing import Tuple, Dict, List, Any, Union
 
 # %% ../nbs/04_processing.ipynb 5
-from .input import DataLoader, RecordingLoader, Recording, ROILoader, ROI, GridWrapperROILoader
+from .input import DataLoader, ROI, GridWrapperROILoader
 from . import results
 from .analysis import AnalysisROI
 
 # %% ../nbs/04_processing.ipynb 6
 def process_analysis_rois(analysis_roi: AnalysisROI, configs: Dict[str, Any]) -> AnalysisROI:
-    analysis_roi.compute_mean_intensity_timeseries(configs['limit_analysis_to_frame_interval'], configs['start_frame_idx'], configs['end_frame_idx'])
-    if np.mean(analysis_roi.mean_intensity_over_time) >= configs['signal_average_threshold']:
-        analysis_roi.detect_peaks(configs['signal_to_noise_ratio'], configs['octaves_ridge_needs_to_spann'], configs['noise_window_size'])
+    analysis_roi.compute_mean_intensity_timeseries(configs['use_frame_range'], configs['start_frame_idx'], configs['end_frame_idx'])
+    if np.mean(analysis_roi.mean_intensity_over_time) >= configs['mean_signal_threshold']:
+        analysis_roi.detect_peaks(configs['signal_to_noise_ratio'], configs['min_octave_span'], configs['noise_window_size'])
         analysis_roi.estimate_baseline(configs['baseline_estimation_method'])
         analysis_roi.compute_area_under_curve()
         analysis_roi.compute_amplitude_and_delta_f_over_f()
-        analysis_roi.compute_variance_area(configs['variance'])
+        analysis_roi.compute_variance_area(configs['variance_window_size'])
     return analysis_roi
 
 # %% ../nbs/04_processing.ipynb 7
@@ -126,20 +126,20 @@ class AnalysisJob:
 
     
     def run_analysis(self,
-                     window_size: int,
-                     limit_analysis_to_frame_interval: bool,
+                     grid_size: int,
+                     use_frame_range: bool,
                      start_frame_idx: int,
                      end_frame_idx: int,
-                     signal_average_threshold: float,
+                     mean_signal_threshold: float,
                      signal_to_noise_ratio: float,
-                     octaves_ridge_needs_to_spann: float,
+                     min_octave_span: float,
                      noise_window_size: int,
                      baseline_estimation_method: str,                     
                      include_variance: bool,
-                     variance: int
+                     variance_window_size: int
                     ) -> None:
         self._set_analysis_start_datetime()
-        self.load_data_into_memory(window_size)
+        self.load_data_into_memory(grid_size)
         configs = locals()
         configs.pop('self')
         copy_of_all_analysis_rois = self.all_analysis_rois.copy()
@@ -155,14 +155,14 @@ class AnalysisJob:
 
     def create_results(self, 
                        save_overview_png: bool,
-                       save_detailed_results: bool,
+                       save_summary_results: bool,
                        save_single_trace_results: bool,
-                       minimum_activity_counts: int, 
-                       signal_average_threshold: float, 
+                       min_peak_count: int,
+                       mean_signal_threshold: float,
                        signal_to_noise_ratio: float
                       ) -> None:
         self._ensure_results_dir_exists()
-        activity_filtered_analysis_rois = [roi for roi in self.all_analysis_rois if roi.peaks_count >= minimum_activity_counts]
+        activity_filtered_analysis_rois = [roi for roi in self.all_analysis_rois if roi.peaks_count >= min_peak_count]
         self.activity_overview_plot = results.plot_activity_overview(analysis_rois_with_sufficient_activity = activity_filtered_analysis_rois,
                                                                      preview_image = self.recording.preview,
                                                                      indicate_activity = True,
@@ -176,7 +176,7 @@ class AnalysisJob:
                                                                                                    grid_configs = self.grid_configs)
             label_id_overview_fig.savefig(self.results_dir_path.joinpath('ROI_label_IDs_overview.png'), dpi = 300)
             plt.close()
-        if save_detailed_results == True:
+        if save_summary_results == True:
             self._create_and_save_csv_result_files(activity_filtered_analysis_rois)
             self._create_and_save_individual_traces_pdf_result_file(activity_filtered_analysis_rois)
         if save_single_trace_results == True:
@@ -188,7 +188,7 @@ class AnalysisJob:
             prefix_with_datetime = self.analysis_start_datetime.strftime('%Y_%m_%d_%H-%M-%S_results_for')
             recording_filename_without_extension = self.recording.filepath.name.replace(self.recording.filepath.suffix, '')
             if self.focus_area_enabled == True:
-                focus_area_filename_without_extension = self.focus_area.filepath.name.replace(self.focus_area.filepath.suffix, '')
+                focus_area_filename_without_extension = self.focus_area.test_filepath.name.replace(self.focus_area.test_filepath.suffix, '')
                 results_dir_name = f'{prefix_with_datetime}_{recording_filename_without_extension}_with_{focus_area_filename_without_extension}'                
             else:
                 results_dir_name = f'{prefix_with_datetime}_{recording_filename_without_extension}'

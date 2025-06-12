@@ -3,26 +3,27 @@
 # %% auto 0
 __all__ = ['correct_general_config', 'recording_filepath', 'correct_analysis_job_config', 'correct_peak_config',
            'minimal_peak_config', 'incomplete_analysis_config', 'wrong_analysis_config', 'incomplete_results_config',
-           'wrong_results_config', 'incomplete_peak_config', 'wrong_peak_config', 'BaseDataClass', 'AnalysisConfig',
-           'ResultsConfig', 'AnalysisJobConfig', 'Peak', 'test_correct_analysis_config',
+           'wrong_results_config', 'incomplete_peak_config', 'wrong_peak_config', 'BaseDataClass', 'Config',
+           'AnalysisConfig', 'ResultsConfig', 'AnalysisJobConfig', 'Peak', 'test_correct_analysis_config',
            'test_correct_analysis_job_config', 'test_correct_results_config', 'test_correct_peak_config',
            'test_minimal_peak_config', 'test_incomplete_analysis_config', 'test_wrong_analysis_config',
            'test_incomplete_results_config', 'test_wrong_results_config', 'test_incomplete_peak_config',
            'test_wrong_peak_config']
 
 # %% ../nbs/07_datamodels.ipynb 2
+from typing import Any
 from dataclasses import dataclass, asdict, fields
 from pathlib import Path
 from fastcore.test import test_fail
 
 @dataclass
 class BaseDataClass:
-    def to_dict(self):
+    def to_dict(self) -> dict[str, Any]:
         """Returning contents of the dataclass as a dictionary."""
         return asdict(self)
 
     @classmethod
-    def from_dict(cls, **params):
+    def from_dict(cls, **params) -> "BaseDataClass":
         """Creating dataclass from dictionary with data validation."""
         # getting all class fields
         all_fields = {field.name: field.type for field in fields(cls)}
@@ -43,34 +44,178 @@ class BaseDataClass:
         return cls(**cleaned_params)
 
     @classmethod
-    def validate(cls, params):
+    def validate(cls, params) -> dict[str, Any]:
         instance = cls.from_dict(**params)
         return instance.to_dict()
 
+@dataclass
+class Config(BaseDataClass):
+    """
+    Configuration for analysis.
+
+    Attributes:
+        ### General Settings ###
+
+        data_source_path (Path, default=None):
+            Path to the source data file or directory to be analyzed. Must comply with the source data structure
+            that is defined for the corresponding usage modes (see here:
+            https://indoc-research.github.io/NeuralActivityCubic/using_the_gui.html#source-data-structure).
+            Alternatively, source data locations can be defined using `recording_filepath`, `roi_filepath`,
+            and `focus_area_filepath`.
+
+        recording_filepath (Path, default=None):
+            Path to the recording file to be analyzed. Can be used instead of `data_source_path` to
+            define the source data location.
+
+        roi_filepath (Path | list[Path], default=None):
+            Path or list of Paths to files that define the ROIs that are to be analyzed when `roi_mode = file`.
+            Can be used instead of `data_source_path` to define source data locations.
+
+        focus_area_filepath (Path | list[Path], default=None):
+            Path or list of Paths to files that define the focus areas to which analysis shall be restricted
+            when `focus_area_enabled = True`. Can be used instead of `data_source_path` to define source data
+            locations.
+
+        roi_mode (str, default='grid'):
+            Mode for defining regions of interest (ROIs) that are analyzed for activity. Options are `grid` for
+            automatic grid-based ROIs creation and `file` to load predefined ROIs from supplied files.
+
+        batch_mode (bool, default=False):
+            Whether to enable batch mode for processing multiple recordings sequentially. Requires
+            `data_source_path` to be used and is not compatible with definition of individual source data
+            locations.
+
+        focus_area_enabled (bool, default=False):
+            Whether to restrict analysis only to ROIs within specific focus area(s).
+
+
+        ### Analysis Settings ###
+
+        grid_size (int, default=10):
+            Size (in pixels) of the individual squares forming the ROI grid when `roi_mode = grid`. For example,
+            a value of 10 generates a grid composed of 10 × 10 pixel ROIs.
+
+        signal_to_noise_ratio (float, default=3.0):
+            Minimum signal-to-noise ratio (SNR) used by SciPy's `find_peaks_cwt` function (see here:
+            https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.find_peaks_cwt.html) as `min_snr`
+            for identifying peaks in the ROI signal intensity traces.
+
+        noise_window_size (int, default=200):
+            Window size (in frames) used by SciPy's `find_peaks_cwt` function (see here:
+            https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.find_peaks_cwt.html) as `window_size`
+            for estimating the local noise level when identifying signal peaks.
+
+        mean_signal_threshold (float, default=10.0): # previously: signal_average_threshold
+            Minimum average intensity across the entire analysis interval required for a ROI to be considered for
+            peak detection. Helps exclude regions with low baseline signal by filtering out background noise before
+            analysis.
+
+        min_peak_count (int, default=2):
+            Minimum number of detected peaks required in a ROI for it to be included in the final analysis results.
+            ROIs with fewer peaks than this threshold are excluded. Set to `0` if all ROIs shall be included.
+
+        baseline_estimation_method (str, default='asls'):
+            Method used to estimate the signal baseline, required for calculating area-under-curve (AUC) of detected
+            peaks. Options are based on the pybaselines library (see here:
+            https://pybaselines.readthedocs.io/en/latest/) and are:
+                - `asls`: Asymmetric Least Squares.
+                - `fabc`: Fully Automatic Baseline Correction.
+                - `pasls`: Peaked Signal's Asymmetric Least Squares.
+                - `sdd`: Standard Deviation Distribution.
+            Each method is applied with its default parameters as defined in pybaselines.
+
+        include_variance (bool, default=False):
+            Whether to compute signal variance as a proxy for neuronal excitability. Enables sliding window
+            variance analysis for each ROI.
+
+        variance_window_size (int, default=15):
+            Size of the sliding window (in frames) used to compute signal variance for each ROI when
+            `include_variance = True`.
+
+        use_frame_range (bool, default=False):
+            Whether to analyze only a specific frame interval from the recording. When enabled, analysis is limited
+            to frames between `frame_start` and `frame_end`, inclusive.
+
+        start_frame_idx (int, default=0):
+            Index of the first frame to include in the analysis interval (inclusive) if `use_frame_range = True`.
+
+        end_frame_idx (int, default=500):
+            Index of the last frame to include in the analysis interval (inclusive) if `use_frame_range = True`.
+
+        customize_octave_filtering (bool, default=False):
+            Enables manual configuration of octave-based peak filtering via `min_octave_span`. This option should
+            only be used by advanced users familiar with na3`s internal logic.
+
+        min_octave_span  (float, default=1.0):
+            Minimum number of octaves a peak ridge must span to be considered if `customize_octave_filtering = True`.
+            Used to compute `min_length` for SciPy´s `find_peaks_cwt` function, based on the number of frames.
+
+
+        ### Results Settings ###
+
+        save_overview_png (bool, default=True):
+            Whether to save an overview PNG image summarizing the analysis results.
+
+        save_summary_results (bool, default=True):
+            Whether to save detailed results, including the following files, depending on your analysis settings:
+                - Individual_traces_with_identified_events.pdf
+                - all_peak_results.csv
+                - Amplitude_and_dF_over_F_results.csv
+                - AUC_results.csv
+                - Variance_area_results.csv
+
+        save_single_trace_results (bool, default=False):
+            Whether to save individual trace results for each ROI separately.
+    """
+    batch_mode: bool = False
+    baseline_estimation_method: str = 'asls'
+    customize_octave_filtering: bool = False
+    data_source_path: Path = None
+    end_frame_idx: int = 500
+    focus_area_enabled: bool = False
+    focus_area_filepath: Path = None
+    grid_size: int = 10
+    include_variance: bool = False
+    mean_signal_threshold: float = 10.0
+    min_octave_span: float = 1.0
+    min_peak_count: int = 2
+    noise_window_size: int = 200
+    recording_filepath: Path = None
+    roi_filepath: Path | list[Path] = None
+    roi_mode: str = 'grid'
+    save_overview_png: bool = True
+    save_single_trace_results: bool = False
+    save_summary_results: bool = True
+    signal_to_noise_ratio: float = 3.0
+    start_frame_idx: int = 0
+    use_frame_range: bool = False
+    variance_window_size: int = 15
 
 
 @dataclass
 class AnalysisConfig(BaseDataClass):
-    window_size: int
-    limit_analysis_to_frame_interval: bool
+    grid_size: int
+    use_frame_range: bool
     start_frame_idx: int
     end_frame_idx: int
-    signal_average_threshold: float
+    mean_signal_threshold: float
     signal_to_noise_ratio: float
-    octaves_ridge_needs_to_spann: float
+    min_octave_span: float
     noise_window_size: int
     baseline_estimation_method: str
     include_variance: bool
-    variance: int
+    variance_window_size: int
+
 
 @dataclass
 class ResultsConfig(BaseDataClass):
     save_overview_png: bool
-    save_detailed_results: bool
+    save_summary_results: bool
     save_single_trace_results: bool
-    minimum_activity_counts: int
-    signal_average_threshold: float
+    min_peak_count: int
+    mean_signal_threshold: float
     signal_to_noise_ratio: float
+
 
 @dataclass
 class AnalysisJobConfig(BaseDataClass):
@@ -92,10 +237,9 @@ class Peak(BaseDataClass):
     peak_type: str | None = None
 
 # %% ../nbs/07_datamodels.ipynb 3
-from .view import WidgetsInterface
+# from neuralactivitycubic.view import WidgetsInterface
 
-correct_general_config = WidgetsInterface().export_user_settings()
-correct_general_config['save_single_trace_results'] = True  # needs to be added here until implemented in GUI
+correct_general_config = Config().to_dict()  # needs to be added here until implemented in GUI
 
 recording_filepath = Path('../test_data/00/spiking_neuron.avi')
 correct_analysis_job_config = {
@@ -135,13 +279,13 @@ def test_minimal_peak_config():
     return Peak.from_dict(**minimal_peak_config)
 
 incomplete_analysis_config = correct_general_config.copy()
-incomplete_analysis_config.pop('window_size')
+incomplete_analysis_config.pop('grid_size')
 
 def test_incomplete_analysis_config():
     return AnalysisConfig.from_dict(**incomplete_analysis_config)
 
 wrong_analysis_config = correct_general_config.copy()
-wrong_analysis_config['window_size'] = 'haha'
+wrong_analysis_config['grid_size'] = 'haha'
 
 def test_wrong_analysis_config():
     return AnalysisConfig.from_dict(**wrong_analysis_config)

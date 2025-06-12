@@ -17,12 +17,12 @@ import matplotlib.pyplot as plt
 import multiprocessing
 
 # %% ../nbs/02_model.ipynb 4
-from typing import Tuple, Dict, Callable, Optional, Any, List, Union
+from typing import Callable
 from matplotlib.figure import Figure
 from matplotlib.axes._axes import Axes 
 
 # %% ../nbs/02_model.ipynb 5
-from .datamodels import AnalysisConfig, ResultsConfig, AnalysisJobConfig
+from .datamodels import AnalysisConfig, ResultsConfig, AnalysisJobConfig, Config
 from .processing import AnalysisJob
 from .input import RecordingLoaderFactory, ROILoaderFactory, RecordingLoader, ROILoader, get_filepaths_with_supported_extension_in_dirpath, FocusAreaPathRestrictions
 
@@ -36,7 +36,7 @@ class Logger:
         self.logs.append(f'{time_prefix_in_utc} (UTC): {message}')
         print(f'{time_prefix_in_utc} (UTC): {message}')
 
-    def get_logs(self) -> List[str]:
+    def get_logs(self) -> list[str]:
         return self.logs
 
     def clear_logs(self) -> None:
@@ -99,7 +99,7 @@ class Model:
                 self.add_info_to_logs(f'Setup of {attribute_name} missing before GUI connection can be enabled.')
 
 
-    def add_info_to_logs(self, message: str, display_in_gui: bool=False, progress_in_percent: Optional[float]=None) -> None:
+    def add_info_to_logs(self, message: str, display_in_gui: bool = False, progress_in_percent: float | None = None) -> None:
         self.logs.add_new_log(message)
         if (display_in_gui == True) and (self.gui_enabled == True): 
             self.callback_view_update_infos(message, progress_in_percent)
@@ -114,7 +114,7 @@ class Model:
             self._check_if_gui_setup_is_completed()
 
 
-    def _get_all_subdir_paths_with_rec_file(self, top_level_dir_path: Path) -> List[Path]:
+    def _get_all_subdir_paths_with_rec_file(self, top_level_dir_path: Path) -> list[Path]:
         rec_loader_factory = RecordingLoaderFactory()
         supported_extensions_for_recordings = rec_loader_factory.all_supported_extensions
         all_subdir_paths_that_contain_a_supported_recording_file = []
@@ -127,58 +127,73 @@ class Model:
         return all_subdir_paths_that_contain_a_supported_recording_file
 
 
-    def _create_analysis_jobs_for_single_rec(self, data_source_path: Path, roi_mode: str, focus_area_enabled: bool) -> None:
-        self.add_info_to_logs(f'Starting with Job creation(s) for {data_source_path} ...', True)
-        recording_loader = self._get_recording_loader(data_source_path)
-        if roi_mode == 'file':
-            roi_loaders = self._get_all_roi_loaders(data_source_path)
+    def _create_analysis_jobs_for_single_rec(self, config: Config) -> None:
+        if config.recording_filepath:
+            recording_filepath = config.recording_filepath
+        else:
+            recording_filepath = config.data_source_path
+        self.add_info_to_logs(f'Starting with Job creation(s) for {recording_filepath}', True)
+        recording_loader = self._get_recording_loader(recording_filepath)
+
+
+        if config.roi_filepath:
+            roi_filepath = config.roi_filepath
+        else:
+            roi_filepath = config.data_source_path
+        if config.roi_mode == 'file':
+            roi_loaders = self._get_all_roi_loaders(roi_filepath)
         else:
             roi_loaders = None
-        if focus_area_enabled == True:
-            focus_area_dir_path = self._get_focus_area_dir_path(data_source_path)
-            if focus_area_dir_path == None:
+
+        if config.focus_area_filepath:
+            focus_area_filepath = config.focus_area_filepath
+        else:
+            focus_area_filepath = config.data_source_path
+        if config.focus_area_enabled:
+            focus_area_dir_path = self._get_focus_area_dir_path(focus_area_filepath)
+            if focus_area_dir_path is None:
                 analysis_job = self._create_single_analysis_job(recording_loader, roi_loaders)
                 self.analysis_job_queue.append(analysis_job)
-                self.add_info_to_logs(f'Successfully created a single job for {data_source_path} at queue position: #{len(self.analysis_job_queue)}.', True)
+                self.add_info_to_logs(f'Successfully created a single job for {focus_area_filepath} at queue position: #{len(self.analysis_job_queue)}.', True)
             else:
                 all_focus_area_loaders = self._get_all_roi_loaders(focus_area_dir_path)
                 assert len(all_focus_area_loaders) > 0, f'Focus Area analysis enabled, but no focus area ROIs could be found. Please revisit your source data and retry!'
                 for idx, focus_area_loader in enumerate(all_focus_area_loaders):
                     analysis_job_with_focus_area = self._create_single_analysis_job(recording_loader, roi_loaders, focus_area_loader)
                     self.analysis_job_queue.append(analysis_job_with_focus_area)
-                    job_creation_message = (f'Successfully created {idx + 1} out of {len(all_focus_area_loaders)} job(s) for {data_source_path} '
+                    job_creation_message = (f'Successfully created {idx + 1} out of {len(all_focus_area_loaders)} job(s) for {recording_filepath} '
                                             f'at queue position: #{len(self.analysis_job_queue)}.')
                     self.add_info_to_logs(job_creation_message, True)
         else:
             analysis_job = self._create_single_analysis_job(recording_loader, roi_loaders)
             self.analysis_job_queue.append(analysis_job)
-            self.add_info_to_logs(f'Successfully created a single job for {data_source_path} at queue position: #{len(self.analysis_job_queue)}.', True)
-        self.add_info_to_logs(f'Finished Job creation(s) for {data_source_path}!', True)
+            self.add_info_to_logs(f'Successfully created a single job for {recording_filepath} at queue position: #{len(self.analysis_job_queue)}.', True)
+        self.add_info_to_logs(f'Finished Job creation(s) for {recording_filepath}!', True)
 
 
-    def _get_recording_loader(self, data_source_path) -> RecordingLoader:
+    def _get_recording_loader(self, source_path: Path) -> RecordingLoader:
         rec_loader_factory = RecordingLoaderFactory()
-        if data_source_path.is_dir() == True:
-            self.add_info_to_logs(f'Looking for a valid recording file in {data_source_path}...', True)
-            valid_filepaths = get_filepaths_with_supported_extension_in_dirpath(data_source_path, rec_loader_factory.all_supported_extensions, 1)
+        if source_path.is_dir() == True:
+            self.add_info_to_logs(f'Looking for a valid recording file in {source_path}...', True)
+            valid_filepaths = get_filepaths_with_supported_extension_in_dirpath(source_path, rec_loader_factory.all_supported_extensions, 1)
             if len(valid_filepaths) == 0:
-                self.add_info_to_logs(f'Could not find any recording files of supported type at {data_source_path}!', True)
+                self.add_info_to_logs(f'Could not find any recording files of supported type at {source_path}!', True)
             elif len(valid_filepaths) >  1:
-                recording_filepath = valid_filepaths[0]
-                too_many_files_message = (f'Found more than a single recording file of supported type at {data_source_path}, i.e.: {valid_filepaths}. '
-                                          f'However, only a single file was expected. NA3 continues with {recording_filepath} and will ignore the other files.')
+                filepath = valid_filepaths[0]
+                too_many_files_message = (f'Found more than a single recording file of supported type at {source_path}, i.e.: {valid_filepaths}. '
+                                          f'However, only a single file was expected. NA3 continues with {filepath} and will ignore the other files.')
                 self.add_info_to_logs(too_many_files_message, True)
             else:
-                recording_filepath = valid_filepaths[0]
-                self.add_info_to_logs(f'Found recording file of supported type at: {recording_filepath}.', True)
+                filepath = valid_filepaths[0]
+                self.add_info_to_logs(f'Found recording file of supported type at: {filepath}.', True)
         else:
-            recording_filepath = data_source_path
-            self.add_info_to_logs(f'Found recording file of supported type at: {recording_filepath}.', True)
-        recording_loader = rec_loader_factory.get_loader(recording_filepath)
+            filepath = source_path
+            self.add_info_to_logs(f'Found recording file of supported type at: {filepath}.', True)
+        recording_loader = rec_loader_factory.get_loader(filepath)
         return recording_loader
 
 
-    def _get_all_roi_loaders(self, data_source_path: Path) -> List[ROILoader]:
+    def _get_all_roi_loaders(self, data_source_path: Path) -> list[ROILoader]:
         assert data_source_path.is_dir(), f'You must provide a directory as source data when using ROI mode or enabling Focus Areas. Please revisit your input data and retry.'
         roi_loader_factory = ROILoaderFactory()
         all_filepaths_with_supported_filetype_extensions = get_filepaths_with_supported_extension_in_dirpath(data_source_path, roi_loader_factory.all_supported_extensions)
@@ -186,13 +201,13 @@ class Model:
         return all_roi_loaders
 
 
-    def _get_focus_area_dir_path(self, data_source_path: Path) -> Path:
+    def _get_focus_area_dir_path(self, source_path: Path) -> Path:
         focus_area_path_restrictions = FocusAreaPathRestrictions()
         supported_dir_names = focus_area_path_restrictions.supported_dir_names
-        if data_source_path.is_dir():
-            source_dir_path = data_source_path
+        if source_path.is_dir():
+            source_dir_path = source_path
         else:
-            source_dir_path = data_source_path.parent
+            source_dir_path = source_path.parent
         dirs_with_valid_name = [elem for elem in source_dir_path.iterdir() if (elem.name in supported_dir_names) & (elem.is_dir() == True)]
         if len(dirs_with_valid_name) == 0:
             no_dir_found_message = (f'You enabled Focus Area but a correspondingly named directory could not be found in {source_dir_path}. '
@@ -212,7 +227,7 @@ class Model:
         return focus_area_dir_path
 
 
-    def _create_single_analysis_job(self, recording_loader: RecordingLoader, roi_loaders: Union[List[ROILoader], None], focus_area_loader: Optional[ROILoader]=None) -> AnalysisJob:
+    def _create_single_analysis_job(self, recording_loader: RecordingLoader, roi_loaders: list[ROILoader] | None, focus_area_loader: ROILoader | None = None) -> AnalysisJob:
         data_loaders = {'recording': recording_loader}
         if roi_loaders != None:
             data_loaders['rois'] = roi_loaders
@@ -221,26 +236,26 @@ class Model:
         return AnalysisJob(self.num_processes, data_loaders)
 
 
-    def _display_configs(self, configs: Dict[str, Any]) -> None:
+    def _display_configs(self, config: Config) -> None:
         self.add_info_to_logs('Configurations for Analysis Settings and Result Creation validated successfully.', True)
         self.add_info_to_logs(f'Analysis Settings are:')
-        for key, value in configs.items():
+        for key, value in config.to_dict().items():
             if isinstance(value, Path):
                 value = value.as_posix()
             self.add_info_to_logs(f'{key}: {str(value)}')
 
-    def _save_user_settings_as_json(self, configs: Dict[str, Any], analysis_job: AnalysisJob) -> None:
+    def _save_user_settings_as_json(self, config: Config, analysis_job: AnalysisJob) -> None:
         filepath = analysis_job.results_dir_path.joinpath('user_settings.json')
-        configs['recording_filepath'] = analysis_job.recording.filepath
+        config.recording_filepath = analysis_job.recording.filepath
         if analysis_job.focus_area_enabled == True:
-            configs['focus_area_filepath'] = analysis_job.focus_area.filepath
+            config.focus_area_filepath = analysis_job.focus_area.filepath
         else:
-            configs['focus_area_filepath'] = None
+            config.focus_area_filepath = None
         if analysis_job.rois_source == 'file':
             for idx, roi in enumerate(analysis_job.all_rois):
-                configs[f'filepath_analyzed_roi_#{idx + 1}'] = roi.filepath.as_posix()
+                config.roi_filepath = roi.filepath.as_posix()
         configs_preformatted_for_json = {}
-        for key, value in configs.items():
+        for key, value in config.to_dict().items():
             if isinstance(value, Path):
                 configs_preformatted_for_json[key] = value.as_posix()
             else:
@@ -249,24 +264,23 @@ class Model:
             json.dump(configs_preformatted_for_json, user_settings_json)
 
 
-    def create_analysis_jobs(self, configs: Dict[str, Any]) -> None:
+    def create_analysis_jobs(self, config: Config) -> None:
         self._ensure_data_from_previous_jobs_was_removed()
-        analysis_job_config = AnalysisJobConfig.validate(configs)
+        analysis_job_config = AnalysisJobConfig.validate(config.to_dict())
         self.add_info_to_logs('Basic configurations for data import validated. Starting creation of analysis job(s)...', True)
         if analysis_job_config['batch_mode'] == True:
             all_subdir_paths_with_rec_file = self._get_all_subdir_paths_with_rec_file(analysis_job_config['data_source_path'])
             all_subdir_paths_with_rec_file.sort()
             for idx, subdir_path in enumerate(all_subdir_paths_with_rec_file):
-                self._create_analysis_jobs_for_single_rec(subdir_path, analysis_job_config['roi_mode'], analysis_job_config['focus_area_enabled'])
+                self._create_analysis_jobs_for_single_rec(config)
         else:
-
-            self._create_analysis_jobs_for_single_rec(analysis_job_config['data_source_path'], analysis_job_config['roi_mode'], analysis_job_config['focus_area_enabled'])
+            self._create_analysis_jobs_for_single_rec(config)
         self.add_info_to_logs('All job creation(s) completed.', True, 100.0)
 
-    def run_analysis(self, configs: Dict[str, Any]) -> None:
-        analysis_config = AnalysisConfig.validate(configs)
-        results_config = ResultsConfig.validate(configs)
-        self._display_configs(configs)
+    def run_analysis(self, config: Config) -> None:
+        analysis_config = AnalysisConfig.validate(config.to_dict())
+        results_config = ResultsConfig.validate(config.to_dict())
+        self._display_configs(config)
         self.add_info_to_logs('Starting analysis...', True)
         for job_idx, analysis_job in enumerate(self.analysis_job_queue):
             self.add_info_to_logs(f'Starting to process analysis job with index #{job_idx}.')
@@ -281,18 +295,16 @@ class Model:
                     activity_overview_fig.set_figheight(400 * self.pixel_conversion)
                     activity_overview_fig.tight_layout()
                     plt.show(activity_overview_fig)
-            self._save_user_settings_as_json(configs, analysis_job)
+            self._save_user_settings_as_json(config, analysis_job)
             self.logs.save_current_logs(analysis_job.results_dir_path)
         self.add_info_to_logs('Updating all log files to contain all logs as final step. All valid logs files will end with this message.')
         for job_idx, analysis_job in enumerate(self.analysis_job_queue):
             self.logs.save_current_logs(analysis_job.results_dir_path)
 
 
-    def preview_window_size(self, configs: Dict[str, Any]) -> Tuple[Figure, Axes]:
+    def preview_window_size(self, config: Config) -> tuple[Figure, Axes]:
         job_for_preview = self.analysis_job_queue[0]
-        # this is cool, but since we need only 'window_size' for the preview, we can skip the validation
-        # validated_configs_for_preview = self._get_configs_required_for_specific_function(configs, job_for_preview.preview_window_size)
-        preview_fig, preview_ax = job_for_preview.preview_window_size(configs['window_size'])
+        preview_fig, preview_ax = job_for_preview.preview_window_size(config.grid_size)
         return preview_fig, preview_ax
 
 # %% ../nbs/02_model.ipynb 9
@@ -305,19 +317,19 @@ from .processing import AnalysisJob
 
 def test_correct_model_run():
     config = WidgetsInterface().export_user_settings()
-    config['data_source_path'] = recording_filepath / 'spiking_neuron.avi'
-    config['save_single_trace_results'] = True
+    config.data_source_path = test_filepath / 'spiking_neuron.avi'
+    config.save_single_trace_results = True
     model.create_analysis_jobs(config)
     model.run_analysis(config)
 
 # %% ../nbs/02_model.ipynb 10
 def _test_csv_files(relative_filepath_to_csv: str) -> bool:
-    test_filepath = results_dir / relative_filepath_to_csv
+    filepath = results_dir / relative_filepath_to_csv
     # confirm results have been created:
-    if not test_filepath.is_file():
+    if not filepath.is_file():
         return False
     # confirm computational consistency of results, while allowing minor numerical tolerance
-    df_test = pd.read_csv(test_filepath)
+    df_test = pd.read_csv(filepath)
     df_validation = pd.read_csv(example_results_dir / relative_filepath_to_csv)
     if assert_frame_equal(df_test, df_validation) is not None:
         return False

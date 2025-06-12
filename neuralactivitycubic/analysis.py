@@ -58,16 +58,16 @@ class AnalysisROI:
         return dimension_adjusted_mask
 
     
-    def compute_mean_intensity_timeseries(self, limit_analysis_to_frame_interval: bool, start_frame_idx: int, end_frame_idx: int) -> None:
-        if limit_analysis_to_frame_interval == True:
+    def compute_mean_intensity_timeseries(self, use_frame_range: bool, start_frame_idx: int, end_frame_idx: int) -> None:
+        if use_frame_range == True:
             self.mean_intensity_over_time = np.mean(self.zstack[start_frame_idx:end_frame_idx], axis = (1,2,3), where = self.as_mask)
         else:
             self.mean_intensity_over_time = np.mean(self.zstack, axis = (1,2,3), where = self.as_mask)
 
 
-    def detect_peaks(self, signal_to_noise_ratio: float, octaves_ridge_needs_to_spann: float, noise_window_size: int) -> None:
+    def detect_peaks(self, signal_to_noise_ratio: float, min_octave_span: float, noise_window_size: int) -> None:
         widths = np.logspace(np.log10(1), np.log10(self.mean_intensity_over_time.shape[0]), 100)
-        min_length = octaves_ridge_needs_to_spann / np.log2(widths[1] / widths[0])
+        min_length = min_octave_span / np.log2(widths[1] / widths[0])
         n_padded_frames = int(np.median(widths)) + 1
         signal_padded_with_reflection = np.pad(self.mean_intensity_over_time, n_padded_frames, 'reflect')
         frame_idxs_of_peaks_in_padded_signal = signal.find_peaks_cwt(vector = signal_padded_with_reflection, 
