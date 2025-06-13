@@ -246,7 +246,7 @@ class AVILoader(RecordingLoader):
 class NWBRecordingLoader(RecordingLoader):
 
     def _get_all_frames(self) -> np.ndarray:
-        with NWBHDF5IO(self.filepath, "r") as io:
+        with NWBHDF5IO(self.filepath, "r+") as io:
             nwbfile = io.read()
             if 'OnePhotonSeries' in nwbfile.acquisition.keys():
                 all_frames = nwbfile.acquisition['OnePhotonSeries'].data[:]
