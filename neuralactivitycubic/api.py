@@ -7,13 +7,13 @@ __all__ = ['run_analysis']
 from .datamodels import Config
 from .model import Model
 
-def run_analysis(config: Config):
+def run_analysis(config: Config | str) -> None:
     """
     Run analysis.
 
     Args:
-        config (Config): Configuration for analysis.
+        config (Config | str): Configuration for analysis or data source path to run analysis with default settings.
     """
-    model = Model()
-    model.create_analysis_jobs(config)
-    model.run_analysis(config)
+    model = Model(config)
+    model.create_analysis_jobs()
+    model.run_analysis()

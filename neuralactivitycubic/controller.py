@@ -18,10 +18,8 @@ from . import results
 class App:
 
     def __init__(self):
-        self.model = Model()
         self.view = WidgetsInterface()
         self.pixel_conversion = 1/plt.rcParams['figure.dpi']
-        self._setup_interaction_between_model_and_view()
 
 
     def _setup_interaction_between_model_and_view(self) -> None:
@@ -42,7 +40,9 @@ class App:
 
     def _load_data_button_clicked(self, change) -> None:
         user_settings = self.view.export_user_settings()
-        self.model.create_analysis_jobs(user_settings)
+        self.model = Model(user_settings)
+        self._setup_interaction_between_model_and_view()
+        self.model.create_analysis_jobs()
         if len(self.model.analysis_job_queue) < 1:
             self.model.add_info_to_logs('Failed to create any analysis job(s). Please inspect logs for more details!', True)
             self.view.user_info_panel.progress_bar.bar_style = 'danger'
@@ -88,6 +88,6 @@ class App:
 
 # %% ../nbs/00_controller.ipynb 6
 def open_gui():
-    "Start the interactive widgets interface for NeuralActivityCubic"
+    """Start the interactive widgets interface for NeuralActivityCubic"""
     na3 = App()
     return na3.launch()
