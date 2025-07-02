@@ -73,12 +73,10 @@ class BaseDataClass:
 
         # getting all class fields
         all_fields = {field.name: field.type for field in fields(cls)}
-        for param in params.items():
-            key, value = param
+        for key, value in params.items():
             # checking if input param is in fields
             if key in all_fields:
-                # print(value, type(value), all_fields[key], type(all_fields[key]))
-                if value:
+                if value is not None:
                     if type(all_fields[key]) is UnionType:
                         # if field is UnionType, check if value is in any of the types
                         if not any(isinstance(value, _unpack_parameterized_generic(t)) for t in _unpack_unions(all_fields[key])):

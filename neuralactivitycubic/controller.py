@@ -19,11 +19,12 @@ class App:
 
     def __init__(self):
         self.view = WidgetsInterface()
+        self._bind_buttons_of_view_to_functions_of_model()
         self.pixel_conversion = 1/plt.rcParams['figure.dpi']
 
 
     def _setup_interaction_between_model_and_view(self) -> None:
-        self._bind_buttons_of_view_to_functions_of_model()
+        # self._bind_buttons_of_view_to_functions_of_model()
         self.model.setup_connection_to_update_infos_in_view(self.view.update_infos)
         self.model.setup_connection_to_display_results(self.view.main_screen.show_output_screen, self.view.main_screen.output, self.pixel_conversion)
 
@@ -59,7 +60,7 @@ class App:
         self.view.main_screen.show_output_screen()
         with self.view.main_screen.output:
             fig = plt.figure(figsize = (600*self.pixel_conversion, 400*self.pixel_conversion))
-            if representative_job.focus_area_enabled == True:
+            if representative_job.focus_area_enabled:
                 results.plot_roi_boundaries(representative_job.focus_area, 'cyan', 'solid', 2)
             if representative_job.rois_source == 'file':
                 for roi in representative_job.all_rois:
@@ -71,8 +72,7 @@ class App:
 
     def _run_button_clicked(self, change) -> None:
         self.view.enable_analysis(False)
-        user_settings = self.view.export_user_settings()
-        self.model.run_analysis(user_settings)
+        self.model.run_analysis()
         self.model.add_info_to_logs(f'Processing of all jobs completed! Feel free to load more data & continue analyzing!', True, 100.0)
         self.view.enable_analysis(True)
 
@@ -80,8 +80,7 @@ class App:
     def _preview_window_size_button_clicked(self, change) -> None:
         self.view.main_screen.show_output_screen()
         with self.view.main_screen.output:
-            user_settings = self.view.export_user_settings()
-            preview_fig, preview_ax = self.model.preview_window_size(user_settings)
+            preview_fig, preview_ax = self.model.preview_window_size()
             preview_fig.set_figheight(400 * self.pixel_conversion)
             preview_fig.tight_layout()
             plt.show(preview_fig)
