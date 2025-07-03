@@ -18,34 +18,34 @@ from datetime import datetime
 from shapely import get_coordinates
 
 # %% ../nbs/04_processing.ipynb 4
-from typing import Tuple, Dict, List, Any, Union
+from .input import DataLoader, ROI, GridWrapperROILoader
+from .datamodels import Config
+from .analysis import AnalysisROI
+from . import results
 
 # %% ../nbs/04_processing.ipynb 5
-from .input import DataLoader, ROI, GridWrapperROILoader
-from . import results
-from .analysis import AnalysisROI
-
-# %% ../nbs/04_processing.ipynb 6
-def process_analysis_rois(analysis_roi: AnalysisROI, configs: Dict[str, Any]) -> AnalysisROI:
-    analysis_roi.compute_mean_intensity_timeseries(configs['use_frame_range'], configs['start_frame_idx'], configs['end_frame_idx'])
-    if np.mean(analysis_roi.mean_intensity_over_time) >= configs['mean_signal_threshold']:
-        analysis_roi.detect_peaks(configs['signal_to_noise_ratio'], configs['min_octave_span'], configs['noise_window_size'])
-        analysis_roi.estimate_baseline(configs['baseline_estimation_method'])
+def process_analysis_rois(analysis_roi: AnalysisROI, config: Config) -> AnalysisROI:
+    analysis_roi.compute_mean_intensity_timeseries(config.use_frame_range, config.start_frame_idx, config.end_frame_idx)
+    if np.mean(analysis_roi.mean_intensity_over_time) >= config.mean_signal_threshold:
+        analysis_roi.detect_peaks(config.signal_to_noise_ratio, config.min_octave_span, config.noise_window_size)
+        analysis_roi.estimate_baseline(config.baseline_estimation_method)
         analysis_roi.compute_area_under_curve()
         analysis_roi.compute_amplitude_and_delta_f_over_f()
-        analysis_roi.compute_variance_area(configs['variance_window_size'])
+        analysis_roi.compute_variance_area(config.variance_window_size)
     return analysis_roi
 
-# %% ../nbs/04_processing.ipynb 7
+# %% ../nbs/04_processing.ipynb 6
 class AnalysisJob:
 
     def __init__(self, 
                  number_of_parallel_processes: int,
-                 data_loaders: Dict[str, Union[DataLoader, List[DataLoader]]]
+                 data_loaders: dict[str, DataLoader | list[DataLoader]],
+                 results_dir: Path | None = None
                 ) -> None:
         self.number_of_parallel_processes = number_of_parallel_processes
         self.recording_loader = data_loaders['recording']
-        self.parent_dir_path = self.recording_loader.filepath.parent  
+        self.parent_dir_path = self.recording_loader.filepath.parent
+        self.results_dir = results_dir
         if 'rois' in data_loaders.keys():
             self.rois_source = 'file'
             self.roi_loaders = data_loaders['rois']
@@ -60,7 +60,7 @@ class AnalysisJob:
             self.focus_area = None
 
     
-    def preview_window_size(self, window_size: int) -> Tuple[Figure, Axes]:
+    def preview_window_size(self, window_size: int) -> tuple[Figure, Axes]:
         self.load_data_into_memory(window_size)
         grid_configs = self.roi_loaders[0].configs
         fig, ax = results.plot_window_size_preview(self.recording.preview, grid_configs, self.focus_area)
@@ -68,24 +68,24 @@ class AnalysisJob:
 
     
     def load_data_into_memory(self, window_size: int) -> None:
-        if hasattr(self, 'recording') == False:
+        if not hasattr(self, 'recording'):
             self.recording = self.recording_loader.load_and_parse_file_content()
-        if hasattr(self, 'all_analysis_rois') == False:
+        if not hasattr(self, 'all_analysis_rois'):
             self.all_analysis_rois = self._create_all_analysis_rois(window_size)
         elif self.rois_source == 'grid':
             if self.roi_loaders[0].window_size != window_size:
                 self.all_analysis_rois = self._create_all_analysis_rois(window_size)
 
 
-    def _create_all_analysis_rois(self, window_size: int) -> List[AnalysisROI]:     
+    def _create_all_analysis_rois(self, window_size: int) -> list[AnalysisROI]:     
         self.all_rois = self._load_data_from_all_roi_loaders(window_size)
-        if self.focus_area_enabled == True:
+        if self.focus_area_enabled:
             self.focus_area = self.focus_area_loader.load_and_parse_file_content()[0]
             self.all_rois = self._filter_rois_by_focus_area()
         return self._create_analysis_rois()
 
     
-    def _load_data_from_all_roi_loaders(self, window_size: int) -> List[ROI]:
+    def _load_data_from_all_roi_loaders(self, window_size: int) -> list[ROI]:
         all_rois = []
         for roi_loader in self.roi_loaders:
             if type(roi_loader) == GridWrapperROILoader:
@@ -98,12 +98,12 @@ class AnalysisJob:
         return all_rois
     
 
-    def _filter_rois_by_focus_area(self) -> List[ROI]:
+    def _filter_rois_by_focus_area(self) -> list[ROI]:
         filtered_rois = [roi for roi in self.all_rois if roi.as_polygon.within(self.focus_area.as_polygon)]
         return filtered_rois
         
 
-    def _create_analysis_rois(self) -> List[AnalysisROI]:
+    def _create_analysis_rois(self) -> list[AnalysisROI]:
         all_analysis_rois = []
         if self.rois_source == 'file':
             self._create_and_add_label_ids_to_all_rois_from_file()
@@ -117,7 +117,7 @@ class AnalysisJob:
         return all_analysis_rois
 
 
-    def _create_and_add_label_ids_to_all_rois_from_file(self) -> List[str]:
+    def _create_and_add_label_ids_to_all_rois_from_file(self) -> None:
         roi_count = len(self.all_rois)
         zfill_factor = int(np.log10(roi_count)) + 1
         for idx, roi in enumerate(self.all_rois):
@@ -125,26 +125,13 @@ class AnalysisJob:
             roi.add_label_id(label_id)
 
     
-    def run_analysis(self,
-                     grid_size: int,
-                     use_frame_range: bool,
-                     start_frame_idx: int,
-                     end_frame_idx: int,
-                     mean_signal_threshold: float,
-                     signal_to_noise_ratio: float,
-                     min_octave_span: float,
-                     noise_window_size: int,
-                     baseline_estimation_method: str,                     
-                     include_variance: bool,
-                     variance_window_size: int
-                    ) -> None:
+    def run_analysis(self, config: Config) -> None:
         self._set_analysis_start_datetime()
-        self.load_data_into_memory(grid_size)
-        configs = locals()
-        configs.pop('self')
+        self.load_data_into_memory(config.grid_size)
+        self._ensure_results_dir_exists()
         copy_of_all_analysis_rois = self.all_analysis_rois.copy()
         with multiprocessing.Pool(processes = self.number_of_parallel_processes) as pool:
-            processed_analysis_rois = pool.starmap(process_analysis_rois, [(analysis_roi, configs) for analysis_roi in copy_of_all_analysis_rois])
+            processed_analysis_rois = pool.starmap(process_analysis_rois, [(analysis_roi, config) for analysis_roi in copy_of_all_analysis_rois])
         self.all_analysis_rois = processed_analysis_rois
 
 
@@ -153,22 +140,14 @@ class AnalysisJob:
             self.analysis_start_datetime = datetime.now(users_local_timezone) 
 
 
-    def create_results(self, 
-                       save_overview_png: bool,
-                       save_summary_results: bool,
-                       save_single_trace_results: bool,
-                       min_peak_count: int,
-                       mean_signal_threshold: float,
-                       signal_to_noise_ratio: float
-                      ) -> None:
-        self._ensure_results_dir_exists()
-        activity_filtered_analysis_rois = [roi for roi in self.all_analysis_rois if roi.peaks_count >= min_peak_count]
+    def create_results(self, config: Config) -> None:
+        activity_filtered_analysis_rois = [roi for roi in self.all_analysis_rois if roi.peaks_count >= config.min_peak_count]
         self.activity_overview_plot = results.plot_activity_overview(analysis_rois_with_sufficient_activity = activity_filtered_analysis_rois,
                                                                      preview_image = self.recording.preview,
                                                                      indicate_activity = True,
                                                                      focus_area = self.focus_area,
                                                                      grid_configs = self.grid_configs)
-        if save_overview_png == True:
+        if config.save_overview_png:
             self.activity_overview_plot[0].savefig(self.results_dir_path.joinpath('activity_overview.png'), dpi = 300)
             label_id_overview_fig, label_id_overview_ax = results.plot_rois_with_label_id_overview(analysis_rois_with_sufficient_activity = activity_filtered_analysis_rois,
                                                                                                    preview_image = self.recording.preview,
@@ -176,31 +155,34 @@ class AnalysisJob:
                                                                                                    grid_configs = self.grid_configs)
             label_id_overview_fig.savefig(self.results_dir_path.joinpath('ROI_label_IDs_overview.png'), dpi = 300)
             plt.close()
-        if save_summary_results == True:
+        if config.save_summary_results:
             self._create_and_save_csv_result_files(activity_filtered_analysis_rois)
             self._create_and_save_individual_traces_pdf_result_file(activity_filtered_analysis_rois)
-        if save_single_trace_results == True:
+        if config.save_single_trace_results:
             self._create_and_save_single_trace_results_as_csv(activity_filtered_analysis_rois)
 
 
     def _ensure_results_dir_exists(self, subdir_name_to_check: str | None = None) -> None:
-        if hasattr(self, 'results_dir_path') == False:
+        if not hasattr(self, 'results_dir_path'):
             prefix_with_datetime = self.analysis_start_datetime.strftime('%Y_%m_%d_%H-%M-%S_results_for')
             recording_filename_without_extension = self.recording.filepath.name.replace(self.recording.filepath.suffix, '')
-            if self.focus_area_enabled == True:
+            if self.focus_area_enabled:
                 focus_area_filename_without_extension = self.focus_area.test_filepath.name.replace(self.focus_area.test_filepath.suffix, '')
-                results_dir_name = f'{prefix_with_datetime}_{recording_filename_without_extension}_with_{focus_area_filename_without_extension}'                
+                results_dir_name = f'{prefix_with_datetime}_{recording_filename_without_extension}_with_{focus_area_filename_without_extension}'
             else:
                 results_dir_name = f'{prefix_with_datetime}_{recording_filename_without_extension}'
-            self.results_dir_path = self.parent_dir_path.joinpath(results_dir_name)
-            self.results_dir_path.mkdir()
+            if self.results_dir is not None:
+                self.results_dir_path = self.results_dir
+            else:
+                self.results_dir_path = self.parent_dir_path.joinpath(results_dir_name)
+            self.results_dir_path.mkdir(exist_ok=True, parents=True)
         if type(subdir_name_to_check) == str:
             subdir_path = self.results_dir_path.joinpath(subdir_name_to_check)
-            if subdir_path.is_dir() == False:
+            if not subdir_path.is_dir():
                 subdir_path.mkdir()
 
 
-    def _create_variance_area_dataframe(self, filtered_rois: List[AnalysisROI]) -> pd.DataFrame:
+    def _create_variance_area_dataframe(self, filtered_rois: list[AnalysisROI]) -> pd.DataFrame:
         data = {'ROI label ID': [],
                 'Variance Area': []}
         for roi in filtered_rois:
@@ -210,7 +192,7 @@ class AnalysisJob:
         return df
     
     
-    def _create_and_save_csv_result_files(self, filtered_rois: List[AnalysisROI]) -> None:
+    def _create_and_save_csv_result_files(self, filtered_rois: list[AnalysisROI]) -> None:
         if len(filtered_rois) > 0:
             df_variance_areas = self._create_variance_area_dataframe(filtered_rois)
             df_variance_areas.to_csv(self.results_dir_path.joinpath('Variance_area_results.csv'), index = False)
@@ -232,7 +214,7 @@ class AnalysisJob:
             df_all_auc_results.to_csv(self.results_dir_path.joinpath('AUC_results.csv'), index = False)
 
     
-    def _create_and_save_individual_traces_pdf_result_file(self, filtered_rois: List[AnalysisROI]) -> None:
+    def _create_and_save_individual_traces_pdf_result_file(self, filtered_rois: list[AnalysisROI]) -> None:
             filepath = self.results_dir_path.joinpath('Individual_traces_with_identified_events.pdf')
             with PdfPages(filepath) as pdf:
                 for indicate_activity in [True, False]:
@@ -248,9 +230,10 @@ class AnalysisJob:
                     plt.close()
 
 
-    def _create_and_save_single_trace_results_as_csv(self, filtered_rois: List[AnalysisROI]) -> None:
-        self._ensure_results_dir_exists(subdir_name_to_check='single_traces')
+    def _create_and_save_single_trace_results_as_csv(self, filtered_rois: list[AnalysisROI]) -> None:
+        # self._ensure_results_dir_exists(subdir_name_to_check='single_traces')
         single_trace_subdir_path = self.results_dir_path.joinpath('single_traces')
+        single_trace_subdir_path.mkdir(parents = True, exist_ok = True)
         for analysis_roi in filtered_rois:
             df_single_trace = self._initialize_single_trace_df(analysis_roi)
             for peak_idx in df_single_trace[df_single_trace['is_peak'] == True].index:
