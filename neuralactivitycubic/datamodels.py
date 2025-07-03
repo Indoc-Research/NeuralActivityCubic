@@ -306,6 +306,8 @@ class Peak(BaseDataClass):
     peak_type: str | None = None
 
 # %% ../nbs/07_datamodels.ipynb 3
+from fastcore.test import test_fail
+
 filepath = '../test_data/00/spiking_neuron.avi'
 
 correct_general_config = Config().to_dict()
