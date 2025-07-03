@@ -27,6 +27,8 @@ from re import compile
 from dataclasses import replace
 from shutil import rmtree
 
+from fastcore.test import test_fail
+
 parent_directory = '../test_data/00/'
 filepath = '../test_data/00/spiking_neuron.avi'
 results_filepath = '../test_data/00/results'
