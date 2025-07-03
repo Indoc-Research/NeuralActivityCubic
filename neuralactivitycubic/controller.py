@@ -34,7 +34,7 @@ class App:
         self.view.analysis_settings_panel.run_analysis_button.on_click(self._run_button_clicked)
         self.view.analysis_settings_panel.preview_window_size_button.on_click(self._preview_window_size_button_clicked)
 
-    
+
     def launch(self) -> None:
         display(self.view.widget)
 
@@ -52,7 +52,7 @@ class App:
             self.model.add_info_to_logs(f'Data import completed! {len(self.model.analysis_job_queue)} job(s) in queue.', True, 100.0)
             self.view.enable_analysis()
 
-    
+
     def _display_preview_of_representative_job(self, window_size: int) -> None:
         representative_job = self.model.analysis_job_queue[0]
         representative_job.load_data_into_memory(window_size)
@@ -64,7 +64,7 @@ class App:
                 results.plot_roi_boundaries(representative_job.focus_area, 'cyan', 'solid', 2)
             if representative_job.rois_source == 'file':
                 for roi in representative_job.all_rois:
-                    results.plot_roi_boundaries(roi, 'magenta', 'solid', 1)                 
+                    results.plot_roi_boundaries(roi, 'magenta', 'solid', 1)
             plt.imshow(representative_job.recording.preview, cmap = 'gray')
             plt.tight_layout()
             plt.show()
@@ -72,6 +72,8 @@ class App:
 
     def _run_button_clicked(self, change) -> None:
         self.view.enable_analysis(False)
+        user_settings = self.view.export_user_settings()
+        self.model.config = user_settings
         self.model.run_analysis()
         self.model.add_info_to_logs(f'Processing of all jobs completed! Feel free to load more data & continue analyzing!', True, 100.0)
         self.view.enable_analysis(True)

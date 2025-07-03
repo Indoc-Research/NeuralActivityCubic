@@ -115,22 +115,22 @@ class Config(BaseDataClass):
     Attributes:
         ### General Settings ###
 
-        data_source_path (Path, default=None):
+        data_source_path (str, default=None):
             Path to the source data file or directory to be analyzed. Must comply with the source data structure
             that is defined for the corresponding usage modes (see here:
             https://indoc-research.github.io/NeuralActivityCubic/using_the_gui.html#source-data-structure).
             Alternatively, source data locations can be defined using `recording_filepath`, `roi_filepath`,
             and `focus_area_filepath`.
 
-        recording_filepath (Path, default=None):
+        recording_filepath (str, default=None):
             Path to the recording file to be analyzed. Can be used instead of `data_source_path` to
             define the source data location.
 
-        roi_filepath (Path | list[Path], default=None):
+        roi_filepath (str | list[str], default=None):
             Path or list of Paths to files that define the ROIs that are to be analyzed when `roi_mode = file`.
             Can be used instead of `data_source_path` to define source data locations.
 
-        focus_area_filepath (Path | list[Path], default=None):
+        focus_area_filepath (str | list[str], default=None):
             Path or list of Paths to files that define the focus areas to which analysis shall be restricted
             when `focus_area_enabled = True`. Can be used instead of `data_source_path` to define source data
             locations.
@@ -236,7 +236,7 @@ class Config(BaseDataClass):
     data_source_path: str = None
     end_frame_idx: int = 500
     focus_area_enabled: bool = False
-    focus_area_filepath: str = None
+    focus_area_filepath: str | list[str] = None
     grid_size: int = 10
     include_variance: bool = False
     mean_signal_threshold: float = 10.0
@@ -255,24 +255,28 @@ class Config(BaseDataClass):
     use_frame_range: bool = False
     variance_window_size: int = 15
 
+    # lazy collection of all filepaths
+    _paths = ['data_source_path', 'recording_filepath', 'roi_filepath', 'focus_area_filepath', 'results_filepath']
+
 
     def __post_init__(self):
+
+        def _transform_filepath_or_list(fp: str | list[str] | None) -> Path | list[Path] | None:
+            """
+            Transform a string or list of strings to a Path or list of Paths.
+            """
+            if isinstance(fp, str):
+                return Path(fp)
+            elif isinstance(fp, list):
+                return [Path(p) for p in fp]
+            else:
+                return None
+
         if self.data_source_path is not None:
             if self.roi_filepath is not None or self.recording_filepath is not None:
                 raise ValueError('Cannot specify both `data_source_path` and `roi_filepath` or `recording_filepath`')
-        if type(self.roi_filepath) is str:
-            # if roi_filepath is a string, convert it to a Path
-            self.roi_filepath = Path(self.roi_filepath)
-        elif isinstance(self.roi_filepath, list):
-            # if roi_filepath is a list of strings, convert each to Path
-            self.roi_filepath = [Path(roi) for roi in self.roi_filepath]
-        elif self.roi_filepath is None:
-            # if roi_filepath is None, set it to None
-            self.roi_filepath = None
-        self.focus_area_filepath = Path(self.focus_area_filepath) if self.focus_area_filepath else None
-        self.data_source_path = Path(self.data_source_path) if self.data_source_path else None
-        self.recording_filepath = Path(self.recording_filepath) if self.recording_filepath else None
-        self.results_filepath = Path(self.results_filepath) if self.results_filepath else None
+        for attr in self._paths:
+            setattr(self, attr, _transform_filepath_or_list(getattr(self, attr)))
 
     def to_json(self) -> str:
         """Returning contents of the dataclass as a JSON string."""
