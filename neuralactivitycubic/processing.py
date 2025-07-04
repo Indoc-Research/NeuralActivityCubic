@@ -172,8 +172,7 @@ class AnalysisJob:
             self._create_and_save_individual_traces_pdf_result_file(activity_filtered_analysis_rois)
         if config.save_single_trace_results:
             self._create_and_save_single_trace_results_as_csv(activity_filtered_analysis_rois)
-        export_to_nwb = True
-        if export_to_nwb == True:
+        if config.export_to_nwb:
             self._export_all_data_to_nwb()
  
     def _export_all_data_to_nwb(self) -> None:

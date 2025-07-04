@@ -216,6 +216,13 @@ class Config(BaseDataClass):
             Path to the directory where analysis results will be saved. If not specified, results are saved in the
             current working directory.
 
+        export_to_nwb (bool, default=False):
+            Whether to generate an additional NWB (NeurodataWithoutBorders - https://nwb.org/) file alongside
+            the standard result outputs. NWB is an open standard for organizing and sharing
+            neurophysiology data, supporting long-term accessibility, reproducibility, and
+            integration with other neuroscience tools. Enabling this option enhances data
+            portability and compliance with community best practices.
+
         save_overview_png (bool, default=True):
             Whether to save an overview PNG image summarizing the analysis results.
 
@@ -235,6 +242,7 @@ class Config(BaseDataClass):
     customize_octave_filtering: bool = False
     data_source_path: str = None
     end_frame_idx: int = 500
+    export_to_nwb: bool = True
     focus_area_enabled: bool = False
     focus_area_filepath: str | list[str] = None
     grid_size: int = 10
@@ -319,6 +327,7 @@ example_general_config = dict(
     customize_octave_filtering=False,
     data_source_path=filepath,
     end_frame_idx=500,
+    export_to_nwb=False,
     focus_area_enabled=False,
     focus_area_filepath=None,
     grid_size=10,
