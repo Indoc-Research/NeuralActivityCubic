@@ -209,7 +209,7 @@ class Config(BaseDataClass):
             Path to the directory where analysis results will be saved. If not specified, results are saved in the
             current working directory.
 
-        export_to_nwb (bool, default=False):
+        export_to_nwb (bool, default=True):
             Whether to generate an additional NWB (NeurodataWithoutBorders - https://nwb.org/) file alongside
             the standard result outputs. NWB is an open standard for organizing and sharing
             neurophysiology data, supporting long-term accessibility, reproducibility, and
