@@ -68,6 +68,7 @@ class Model:
         self.callback_view_show_output_screen = show_output_screen
         self.view_output = output
         self.pixel_conversion = pixel_conversion
+        self.gui_enabled = True
         # self._check_if_gui_setup_is_completed()
 
 
@@ -289,7 +290,7 @@ class Model:
             self.logs.save_current_logs(analysis_job.results_dir_path)
 
 
-    def preview_window_size(self) -> tuple[Figure, Axes]:
+    def preview_window_size(self, grid_size) -> tuple[Figure, Axes]:
         job_for_preview = self.analysis_job_queue[0]
-        preview_fig, preview_ax = job_for_preview.preview_window_size(self.config.grid_size)
+        preview_fig, preview_ax = job_for_preview.preview_window_size(grid_size)
         return preview_fig, preview_ax

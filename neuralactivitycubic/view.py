@@ -125,7 +125,7 @@ class SourceDataPanel:
         self.user_settings_batch_mode.observe(self._change_batch_mode_config)
         self.user_settings_focus_area_enabled.observe(self._change_focus_area_config)
         self.user_settings_roi_mode.observe(self._change_roi_mode_config)
-        self.user_settings_data_source_path.register_callback(self._data_source_path_chosen)
+        # self.user_settings_data_source_path.register_callback(self._data_source_path_chosen)
         # Arrange elements:
         source_data_settings_box = w.HBox([processing_modes_box,
                                            self.user_settings_data_source_path,
@@ -180,27 +180,7 @@ class SourceDataPanel:
         if change['name'] == 'value':
             roi_mode = self.user_settings_roi_mode.value
             fake_change = {'name': 'value', 'new': roi_mode}
-            self._change_roi_mode_config(fake_change)                     
-
-
-    def _data_source_path_chosen(self, file_chooser_obj) -> None:
-        if file_chooser_obj.value is not None:
-            enable_loading = False
-            source_data_path = Path(file_chooser_obj.value)
-            if self.user_settings_roi_mode.value == 'file':
-                if source_data_path.is_dir():
-                    enable_loading = True
-            else:
-                if (self.user_settings_batch_mode.value == True) or (self.user_settings_focus_area_enabled.value == True):
-                    if source_data_path.is_dir():
-                        enable_loading = True
-                else:
-                    if source_data_path.is_file():
-                        enable_loading = True
-            if enable_loading:
-                self.load_source_data_button = change_widget_state(self.load_source_data_button, disabled = False, tooltip = 'Click to load the selected source data')
-            else:
-                self.load_source_data_button = change_widget_state(self.load_source_data_button, disabled = True, tooltip = 'Please select which source data to load!')
+            self._change_roi_mode_config(fake_change)
 
 # %% ../nbs/01_view.ipynb 8
 class AnalysisSettingsPanel:
@@ -222,10 +202,10 @@ class AnalysisSettingsPanel:
                                                                       layout = w.Layout(width = width_percentage_core_widgets), style = {'description_width': description_width})
         self.user_settings_noise_window_size = w.BoundedIntText(description = 'NWS: ', tooltip = 'Noise window size', value = 200, min = 10, max = 1000, step = 1, disabled = True,
                                                                 layout = w.Layout(width = width_percentage_core_widgets), style = {'description_width': description_width})
-        self.user_settings_mean_signal_threshold = w.BoundedFloatText(description = 'SAT: ', tooltip = 'Signal average threshold', value = 10.0, min = 0.0, max = 255.0, step = 0.5,
+        self.user_settings_mean_signal_threshold = w.BoundedFloatText(description = 'MST: ', tooltip = 'Mean signal threshold', value = 10.0, min = 0.0, max = 255.0, step = 0.5,
                                                                          disabled = True, layout = w.Layout(width = width_percentage_core_widgets), 
                                                                          style = {'description_width': description_width})
-        self.user_settings_min_peak_count = w.BoundedIntText(description = 'MAC: ', tooltip = 'Minimum activity counts', value = 2, min = 0, max = 100, step = 1, disabled = True,
+        self.user_settings_min_peak_count = w.BoundedIntText(description = 'MPC: ', tooltip = 'Minimum peak count', value = 2, min = 0, max = 100, step = 1, disabled = True,
                                                                       layout = w.Layout(width = width_percentage_core_widgets), style = {'description_width': description_width})
         self.user_settings_baseline_estimation_method = w.Dropdown(description = 'Baseline estimation method: ',
                                                                    value = 'asls', 
@@ -254,21 +234,21 @@ class AnalysisSettingsPanel:
         
         dashed_separator_line = w.HTML(value = "<hr style='border: none; border-bottom: 1px dashed;'>", layout = w.Layout(width = '95%'))
         optional_info = w.Label(value = 'Optional Settings:', style = {'text_align': 'left', 'font_weight': 'bold'}, layout = w.Layout(width = '90%'))
-        self.user_settings_include_variance = w.Checkbox(description = 'include variance', value = False, indent = False, disabled = True, 
+        self.user_settings_include_variance = w.Checkbox(description = 'Include variance', value = False, indent = False, disabled = True,
                                                          layout = w.Layout(width = '35%'), style = {'description_width': 'initial'})
         self.user_settings_variance_window_size = w.BoundedIntText(description = 'Variance:', disabled = True,
                                                          value = 15, min = 5, max = 200, step = 5,
                                                          style = {'description_width': 'initial'},
                                                          layout = w.Layout(width = '65%', visibility = 'hidden'))
-        self.user_settings_use_frame_range = w.Checkbox(description = 'analyze interval', indent = False,
+        self.user_settings_use_frame_range = w.Checkbox(description = 'Analyze interval', indent = False,
                                                                          value = False, disabled = True, layout = w.Layout(width = '35%'), 
                                                                          style = {'description_width': 'initial'})
         self.user_settings_frame_interval_to_analyze = w.IntRangeSlider(description = 'Frames:', disabled = True, 
                                                                         value = (0, 500), min = 0, max = 500, step = 1, 
                                                                         style = {'description_width': 'initial'}, layout = w.Layout(width = '65%', visibility = 'hidden'))
-        self.user_settings_customize_octave_filtering = w.Checkbox(description = 'configure octaves', value = False, disabled = True, indent = False,
+        self.user_settings_customize_octave_filtering = w.Checkbox(description = 'Customize octave filtering', value = False, disabled = True, indent = False,
                                                           layout = w.Layout(width = '35%'), style = {'description_width': 'initial'})
-        self.user_settings_min_octave_span = w.BoundedFloatText(description = 'Min. octaves:', tooltip = 'Minimum octaves a ridge needs to span', disabled = True,
+        self.user_settings_min_octave_span = w.BoundedFloatText(description = 'Minimum octaves span:', tooltip = 'Minimum octaves a ridge needs to span', disabled = True,
                                                                              value = 1.0, min = 0.1, max = 30.0, step = 0.05,
                                                                              style = {'description_width': 'initial'},
                                                                              layout = w.Layout(width = '65%', visibility = 'hidden'))
@@ -283,14 +263,15 @@ class AnalysisSettingsPanel:
 
         results_info = w.Label(value = 'Results Settings:', style = {'text_align': 'left', 'font_weight': 'bold'}, layout = w.Layout(width = '90%'))
         self.user_settings_save_overview_png = w.Checkbox(description = 'Save overview plot', value = True, disabled = True, style = {'description_width': 'initial'})
-        self.user_settings_save_summary_results = w.Checkbox(description = 'Save detailed results', value = True, disabled = True, style = {'description_width': 'initial'})
+        self.user_settings_save_summary_results = w.Checkbox(description = 'Save summary results', value = True, disabled = True, style = {'description_width': 'initial'})
+        self.user_settings_save_single_trace_results = w.Checkbox(description = 'Save single trace results', value = False, disabled = True, style = {'description_width': 'initial'})
         self.run_analysis_button = w.Button(description = 'Run Analysis',
                                             disabled = True,
                                             tooltip = 'You have to load some data first, before you can run the analysis!',
                                             button_style = '',
                                             icon = 'rocket',
                                             layout = w.Layout(width = '90%'))
-        results_settings = w.VBox([w.HBox([self.user_settings_save_overview_png, self.user_settings_save_summary_results],
+        results_settings = w.VBox([w.HBox([self.user_settings_save_overview_png, self.user_settings_save_summary_results, self.user_settings_save_single_trace_results],
                                           layout = w.Layout(width = '100%', align_items = 'flex-start'))],
                                    layout = w.Layout(width = '90%', align_items = 'flex-start', align_content = 'flex-start', justify_content = 'flex-start'))
         # Enable event handling:
@@ -409,7 +390,27 @@ class WidgetsInterface:
 
     def _setup_observer_for_roi_mode_config_change(self) -> None:
         self.source_data_panel.user_settings_roi_mode.observe(self._enable_window_size_widgets)
+        self.source_data_panel.user_settings_data_source_path.register_callback(self._data_source_path_chosen)
 
+    def _data_source_path_chosen(self, file_chooser_obj) -> None:
+        self.enable_analysis(False)
+        if file_chooser_obj.value is not None:
+            enable_loading = False
+            source_data_path = Path(file_chooser_obj.value)
+            if self.source_data_panel.user_settings_roi_mode.value == 'file':
+                if source_data_path.is_dir():
+                    enable_loading = True
+            else:
+                if (self.source_data_panel.user_settings_batch_mode.value == True) or (self.source_data_panel.user_settings_focus_area_enabled.value == True):
+                    if source_data_path.is_dir():
+                        enable_loading = True
+                else:
+                    if source_data_path.is_file():
+                        enable_loading = True
+            if enable_loading:
+                self.source_data_panel.load_source_data_button = change_widget_state(self.source_data_panel.load_source_data_button, disabled = False, tooltip = 'Click to load the selected source data')
+            else:
+                self.source_data_panel.load_source_data_button = change_widget_state(self.source_data_panel.load_source_data_button, disabled = True, tooltip = 'Please select which source data to load!')
 
     def _enable_window_size_widgets(self, change) -> None:
         if change['name'] == 'value':
@@ -420,7 +421,7 @@ class WidgetsInterface:
                 if self.analysis_settings_panel.user_settings_signal_to_noise_ratio.disabled:
                     pass
                 else:
-                    change_widget_state(self.analysis_settings_panel.user_settings_window_size, disabled = False)
+                    change_widget_state(self.analysis_settings_panel.user_settings_grid_size, disabled = False)
                     change_widget_state(self.analysis_settings_panel.preview_window_size_button, disabled = False)                
 
 
@@ -459,7 +460,7 @@ class WidgetsInterface:
 
     def enable_analysis(self, enable: bool=True) -> None:
         roi_mode = self.source_data_panel.user_settings_roi_mode.value
-        self.analysis_settings_panel.enable_analysis_settings(enable, roi_mode)     
+        self.analysis_settings_panel.enable_analysis_settings(enable, roi_mode)
 
 # %% ../nbs/01_view.ipynb 11
 class SourceDataStructureWidget:
