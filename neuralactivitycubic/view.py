@@ -391,23 +391,22 @@ class WidgetsInterface:
     def _setup_observer_for_roi_mode_config_change(self) -> None:
         self.source_data_panel.user_settings_roi_mode.observe(self._enable_window_size_widgets)
         self.source_data_panel.user_settings_data_source_path.register_callback(self._data_source_path_chosen)
-    def _should_enable_loading(self, source_data_path: Path, roi_mode: str, batch_mode: bool, focus_area_enabled: bool) -> bool:
-        if roi_mode == 'file':
-            return source_data_path.is_dir()
-        if batch_mode or focus_area_enabled:
-            return source_data_path.is_dir()
-        return source_data_path.is_file()
 
     def _data_source_path_chosen(self, file_chooser_obj) -> None:
         self.enable_analysis(False)
         if file_chooser_obj.value is not None:
+            enable_loading = False
             source_data_path = Path(file_chooser_obj.value)
-            enable_loading = self._should_enable_loading(
-                source_data_path,
-                self.source_data_panel.user_settings_roi_mode.value,
-                self.source_data_panel.user_settings_batch_mode.value,
-                self.source_data_panel.user_settings_focus_area_enabled.value
-            )
+            if self.source_data_panel.user_settings_roi_mode.value == 'file':
+                if source_data_path.is_dir():
+                    enable_loading = True
+            else:
+                if (self.source_data_panel.user_settings_batch_mode.value == True) or (self.source_data_panel.user_settings_focus_area_enabled.value == True):
+                    if source_data_path.is_dir():
+                        enable_loading = True
+                else:
+                    if source_data_path.is_file():
+                        enable_loading = True
             if enable_loading:
                 self.source_data_panel.load_source_data_button = change_widget_state(self.source_data_panel.load_source_data_button, disabled = False, tooltip = 'Click to load the selected source data')
             else:
