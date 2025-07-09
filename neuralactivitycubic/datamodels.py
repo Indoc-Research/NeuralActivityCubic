@@ -19,8 +19,8 @@ class BaselineEstimationMethod(str, Enum):
     """
     ASLS = 'asls'
     FABC = 'fabc'
-    PASLS = 'pasls'
-    SDD = 'sdd'
+    PASLS = 'psalsa'
+    SDD = 'std_distribution'
 
     def __str__(self):
         return self.value
