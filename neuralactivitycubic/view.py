@@ -91,7 +91,7 @@ class UserInfoPanel:
                 width = '95%'
             )
         )
-        return w.VBox(
+        widget = w.VBox(
             [
                 info_overview_box,
                 self.detailed_logs_accordion,
@@ -99,6 +99,8 @@ class UserInfoPanel:
             ],
             layout = w.Layout(align_items = 'center')
         )
+        widget.add_class('box-info-panel')
+        return widget
 
 
     def add_new_logs(self, message: str) -> None:
@@ -224,6 +226,7 @@ class SourceDataPanel:
             ],
             layout = w.Layout(width = '95%', align_items = 'center')
         )
+        general_settings_box.add_class('box-general-settings')
         # Return the complete widget:
         return w.HBox([general_settings_box], layout = w.Layout(width = '100%', justify_content = 'center'))
 
@@ -628,6 +631,7 @@ class AnalysisSettingsPanel:
                                         run_analysis_box,
                                         self.vertical_spacer],
                                        layout = w.Layout(height = '612px', width = '33%', align_items = 'center', border_top = '1px solid', border_bottom = '1px solid'))
+        analysis_settings_box.add_class('box-analysis-settings')
         return analysis_settings_box
 
     def enable_analysis_settings(self, enable_all_widgets: bool, roi_mode: str) -> None:
@@ -690,6 +694,7 @@ class MainScreen:
                 border_bottom = '1px solid'
             )
         )
+        self.widget.add_class('box-main-screen')
         self.current_screen = None
 
     @property
@@ -744,6 +749,7 @@ class WidgetsInterface:
             ],
             layout = w.Layout(align_items = 'stretch', border = '1px solid')
         )
+        self.widget.add_class('box-na3-gui')
         self.main_screen.show_welcome_screen()
         self.source_data_panel.settings.batch_mode.observe(self._enable_window_size_widgets)
         self.source_data_panel.settings.focus_area_enabled.observe(self._enable_window_size_widgets)
