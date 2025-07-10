@@ -62,7 +62,9 @@ class UserInfoPanel:
         self.detailed_logs_output = w.Output(layout = w.Layout(max_height = '200px', y_overflow='scroll'))
         self.detailed_logs_accordion = w.Accordion(children = [self.detailed_logs_output], titles = ('Detailed logs', ), selected_index = None, layout = w.Layout(width = '95%'))
         vertical_spacer = w.HTML(value = '', layout = w.Layout(height = '15px'))
-        return w.VBox([info_overview_box, self.detailed_logs_accordion, vertical_spacer], layout = w.Layout(align_items = 'center'))
+        widget = w.VBox([info_overview_box, self.detailed_logs_accordion, vertical_spacer], layout = w.Layout(align_items = 'center'))
+        widget.add_class('box-info-panel')
+        return widget
 
 
     def add_new_logs(self, message: str) -> None:
@@ -132,6 +134,7 @@ class SourceDataPanel:
                                            self.load_source_data_button], 
                                           layout = w.Layout(width = '100%', justify_content = 'space-between'))
         general_settings_box = w.VBox([io_source_data_info, source_data_settings_box, vertical_spacer], layout = w.Layout(width = '95%', align_items = 'center'))
+        general_settings_box.add_class('box-general-settings')
         return w.HBox([general_settings_box], layout = w.Layout(width = '100%', justify_content = 'center'))
 
 
@@ -209,7 +212,7 @@ class AnalysisSettingsPanel:
         self.widget = self._build_default_widget()
 
 
-    def _build_default_widget(self) -> None:
+    def _build_default_widget(self) -> w.VBox:
         width_percentage_core_widgets = '95%'
         description_width = '35px'
         # Create and configure all elements:
@@ -312,6 +315,7 @@ class AnalysisSettingsPanel:
                                         self.run_analysis_button,
                                         vertical_spacer],
                                        layout = w.Layout(height = '512px', width = '33%', align_items = 'center', border_top = '1px solid', border_bottom = '1px solid'))
+        analysis_settings_box.add_class('box-analysis-settings')
         return analysis_settings_box
 
     
@@ -366,6 +370,7 @@ class MainScreen:
         self.output_screen = self._build_output_screen()
         self.widget = w.VBox([], layout = w.Layout(height = '512px', width = '67%', justify_content = 'center', align_items = 'center', 
                                                                 border_top = '1px solid', border_left = '1px solid', border_bottom = '1px solid'))
+        self.widget.add_class('box-main-screen')
         self.show_welcome_screen()
 
     def _build_welcome_screen(self) -> w.VBox:
@@ -404,6 +409,7 @@ class WidgetsInterface:
         self.widget = w.VBox([self.source_data_panel.widget, 
                               w.HBox([self.analysis_settings_panel.widget, self.main_screen.widget]),
                               self.user_info_panel.widget], layout = w.Layout(align_items = 'stretch', border = '1px solid'))
+        self.widget.add_class('box-na3-gui')
         self._setup_observer_for_roi_mode_config_change()
 
 
