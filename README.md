@@ -84,7 +84,7 @@ import neuralactivitycubic as na3
 na3.open_gui()
 ```
 
-![GUI of NA³.](./media/welcome_to_na3.png)
+![GUI of NA³.](./nbs/media/welcome_to_na3.png)
 
 ## Developer Guide
 
