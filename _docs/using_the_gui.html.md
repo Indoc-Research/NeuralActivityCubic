@@ -576,7 +576,7 @@ recording. The exact computation is as follows, where:
 
 - `self.mean_intensity_over_time.shape[0]` = Number of frames in the
   recording (potentially limited by analysis interval)
-- `octaves_ridge_needs_to_spann` = the value you set via `Min. Octaves`
+- `min_octave_span` = the value you set via `Min. Octaves`
 
 ``` python
 widths = np.logspace(np.log10(1), np.log10(self.mean_intensity_over_time.shape[0]), 100)

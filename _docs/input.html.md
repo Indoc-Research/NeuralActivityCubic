@@ -6,7 +6,7 @@
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L20"
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L26"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### FocusAreaPathRestrictions
@@ -20,7 +20,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L29"
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L35"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Data
@@ -33,7 +33,7 @@ inheritance.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L40"
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L46"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Recording
@@ -46,7 +46,7 @@ inheritance.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L86"
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L92"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### ROI
@@ -61,7 +61,7 @@ inheritance.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L104"
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L117"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### DataLoader
@@ -74,7 +74,7 @@ inheritance.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L115"
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L128"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GridWrapperROILoader
@@ -87,7 +87,7 @@ inheritance.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L174"
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L187"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### RecordingLoader
@@ -100,7 +100,7 @@ inheritance.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L227"
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L240"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### AVILoader
@@ -113,7 +113,20 @@ inheritance.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L233"
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L246"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### NWBRecordingLoader
+
+>  NWBRecordingLoader (filepath:pathlib.Path)
+
+*Helper class that provides a standard way to create an ABC using
+inheritance.*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L262"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### ROILoader
@@ -126,7 +139,7 @@ inheritance.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L258"
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L287"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### ImageJROILoader
@@ -136,12 +149,25 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 *Helper class that provides a standard way to create an ABC using
 inheritance.*
 
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L314"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### NWBROILoader
+
+>  NWBROILoader (filepath:pathlib.Path)
+
+*Helper class that provides a standard way to create an ABC using
+inheritance.*
+
 ## Loader Factories
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L285"
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L335"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### DataLoaderFactory
@@ -154,7 +180,7 @@ inheritance.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L323"
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L373"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### RecordingLoaderFactory
@@ -167,7 +193,7 @@ inheritance.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L331"
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L384"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### ROILoaderFactory
@@ -180,7 +206,7 @@ inheritance.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L339"
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L395"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_filepaths_with_supported_extension_in_dirpath
@@ -194,7 +220,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L355"
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/input.py#L411"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### RecLoaderROILoaderCombinator
@@ -202,3 +228,53 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 >  RecLoaderROILoaderCombinator (dir_path:pathlib.Path)
 
 *Initialize self. See help(type(self)) for accurate signature.*
+
+``` python
+# Specification of filepaths that can be used for testing:
+
+### ImageJ ROI filepaths:
+valid_imagej_roi_filepath_1 = Path('../test_data/00/RoiSet_spiking.zip')
+valid_imagej_roi_filepath_2 = Path('../test_data/00/focus_area/focus_spiking.roi')
+### NWB ROI filepath:
+valid_nwb_roi_filepath = Path('../test_data/02/spiking_neuron.nwb')
+
+### AVI Recording filepath:
+valid_avi_recording_filepath = Path('../test_data/00/spiking_neuron.avi')
+### NWB Recording filepath:
+valid_nwb_recording_filepath = Path('../test_data/02/spiking_neuron.nwb')
+
+### A filepath of an unsupported file type:
+unsupported_filepath = Path('../test_data/00/example_test_results_for_spiking_neuron/activity_overview.png')
+```
+
+``` python
+roi_loader_factory = ROILoaderFactory()
+
+# tests that the ROILoaderFactory returns the correct Loader subclass for the respective file types:
+assert isinstance(roi_loader_factory.get_loader(valid_imagej_roi_filepath_1), ImageJROILoader)
+assert isinstance(roi_loader_factory.get_loader(valid_imagej_roi_filepath_2), ImageJROILoader)
+assert isinstance(roi_loader_factory.get_loader(valid_nwb_roi_filepath), NWBROILoader)
+
+# tests that the ROILoaderFactory raises a NotImplementedError for an unsupported file type:
+assert test_unsupported_file_extension(roi_loader_factory, unsupported_filepath)
+
+# tests that the individual Loader subclass correctly loads and parses the file content into ROI instances:
+assert test_successful_roi_loading(valid_imagej_roi_filepath_1)
+assert test_successful_roi_loading(valid_imagej_roi_filepath_2)
+assert test_successful_roi_loading(valid_nwb_roi_filepath)
+```
+
+``` python
+recording_loader_factory = RecordingLoaderFactory()
+
+# tests that the RecordingLoaderFactory returns the correct Loader subclass for the respective file types:
+assert isinstance(recording_loader_factory.get_loader(valid_avi_recording_filepath), AVILoader)
+assert isinstance(recording_loader_factory.get_loader(valid_nwb_recording_filepath), NWBRecordingLoader)
+
+# tests that the RecordingLoaderFactory raises a NotImplementedError for an unsupported file type:
+assert test_unsupported_file_extension(recording_loader_factory, unsupported_filepath)
+
+# tests that the individual Loader subclass correctly loads and parses the file content into Recording instances:
+assert test_successful_recording_loading(valid_avi_recording_filepath)
+assert test_successful_recording_loading(valid_nwb_recording_filepath)
+```
