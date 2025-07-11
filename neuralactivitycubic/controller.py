@@ -80,9 +80,10 @@ class App:
 
 
     def _preview_window_size_button_clicked(self, change) -> None:
+        grid_size = self.view.export_user_settings().grid_size
         self.view.main_screen.show_output_screen()
         with self.view.main_screen.output:
-            preview_fig, preview_ax = self.model.preview_window_size()
+            preview_fig, preview_ax = self.model.preview_window_size(grid_size)
             preview_fig.set_figheight(400 * self.pixel_conversion)
             preview_fig.tight_layout()
             plt.show(preview_fig)

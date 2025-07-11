@@ -6,25 +6,23 @@
 __all__ = ['BaselineEstimatorFactory', 'AnalysisROI']
 
 # %% ../nbs/05_analysis.ipynb 3
+from .input import ROI
+from .datamodels import Peak
 import numpy as np
 import pandas as pd
 from scipy import signal
 from pybaselines import Baseline
 from collections import Counter
-from shapely import Polygon, get_coordinates
+from shapely import get_coordinates
 from skimage.measure import grid_points_in_poly
 
-from typing import Optional, Tuple, Dict, List, Callable
+from typing import Callable
 
 # %% ../nbs/05_analysis.ipynb 4
-from .input import ROI
-from .datamodels import Peak
-
-# %% ../nbs/05_analysis.ipynb 5
 class BaselineEstimatorFactory:
         
     @property
-    def supported_baseline_estimation_methods(self) -> Dict[str, Callable]:
+    def supported_baseline_estimation_methods(self) -> dict[str, Callable]:
         supported_baseline_estimation_methods = {'asls': Baseline().asls,
                                                  'fabc': Baseline().fabc,
                                                  'psalsa': Baseline().psalsa,
@@ -35,10 +33,10 @@ class BaselineEstimatorFactory:
         baseline_estimation_method = self.supported_baseline_estimation_methods[algorithm_acronym]
         return baseline_estimation_method
 
-# %% ../nbs/05_analysis.ipynb 6
+# %% ../nbs/05_analysis.ipynb 5
 class AnalysisROI:
     
-    def __init__(self, roi: ROI, row_col_offset: Tuple[int, int], zstack: np.ndarray):
+    def __init__(self, roi: ROI, row_col_offset: tuple[int, int], zstack: np.ndarray):
         self.label_id = roi.label_id
         self.as_polygon = roi.as_polygon
         self.boundary_row_col_coords = roi.boundary_row_col_coords
@@ -59,7 +57,7 @@ class AnalysisROI:
 
     
     def compute_mean_intensity_timeseries(self, use_frame_range: bool, start_frame_idx: int, end_frame_idx: int) -> None:
-        if use_frame_range == True:
+        if use_frame_range:
             self.mean_intensity_over_time = np.mean(self.zstack[start_frame_idx:end_frame_idx], axis = (1,2,3), where = self.as_mask)
         else:
             self.mean_intensity_over_time = np.mean(self.zstack, axis = (1,2,3), where = self.as_mask)
@@ -154,7 +152,7 @@ class AnalysisROI:
         return interpolation_evaluated_intersection_frame_idx
     
 
-    def _classify_area_under_curve_types(self, data_for_auc_classification: Dict[str, List]) -> None:
+    def _classify_area_under_curve_types(self, data_for_auc_classification: dict[str, list]) -> None:
         if len(data_for_auc_classification['all_intersection_frame_idxs_pairs']) != len(set(data_for_auc_classification['all_intersection_frame_idxs_pairs'])):
             counter = Counter(data_for_auc_classification['all_intersection_frame_idxs_pairs'])
             reoccuring_intersection_frame_idxs = [pair_of_intersection_frame_idxs for pair_of_intersection_frame_idxs, count in counter.items() if count > 1]
@@ -170,7 +168,7 @@ class AnalysisROI:
                 peak.peak_type = 'isolated'
 
     
-    def compute_amplitude_and_delta_f_over_f(self):
+    def compute_amplitude_and_delta_f_over_f(self) -> None:
         for peak in self.peaks.values():
             peak.amplitude = self.mean_intensity_over_time[peak.frame_idx] - self.baseline[peak.frame_idx]
             peak.delta_f_over_f = peak.amplitude / self.baseline[peak.frame_idx]

@@ -8,8 +8,8 @@ __all__ = ['Logger', 'Model']
 # %% ../nbs/02_model.ipynb 3
 from pathlib import Path
 from datetime import datetime, timezone
+from matplotlib.pyplot import show
 import ipywidgets as w
-import matplotlib.pyplot as plt
 import multiprocessing
 
 # %% ../nbs/02_model.ipynb 4
@@ -57,45 +57,22 @@ class Model:
             config = Config(data_source_path=config)
         self.config = config
         self.gui_enabled = False
+        self.callback_view_update_infos = None
+        self.callback_view_show_output_screen = None
+        self.view_output = None
+        self.pixel_conversion = None
 
 
     def setup_connection_to_update_infos_in_view(self, update_infos: Callable) -> None:
         self.callback_view_update_infos = update_infos
-        # self._check_if_gui_setup_is_completed()
+        self.gui_enabled = True
 
 
     def setup_connection_to_display_results(self, show_output_screen: Callable, output: w.Output, pixel_conversion: float) -> None:
         self.callback_view_show_output_screen = show_output_screen
         self.view_output = output
         self.pixel_conversion = pixel_conversion
-        # self._check_if_gui_setup_is_completed()
-
-
-    # def _check_if_gui_setup_is_completed(self) -> None:
-    #     checklist_expected_attributes_with_type = {'callback_view_update_infos': Callable,
-    #                                                'callback_view_show_output_screen': Callable,
-    #                                                'view_output': w.Output,
-    #                                                'pixel_conversion': float}
-    #     confirmed_attributes = []
-    #     failed_attributes = []
-    #     for attribute_name, expected_type in checklist_expected_attributes_with_type.items():
-    #         if hasattr(self, attribute_name):
-    #             attribute = getattr(self, attribute_name)
-    #             if type(attribute) == expected_type:
-    #                 confirmed_attributes.append(True)
-    #             elif isinstance(attribute, expected_type):
-    #                 confirmed_attributes.append(True)
-    #             else:
-    #                 failed_attributes.append(attribute_name)
-    #         else:
-    #             failed_attributes.append(attribute_name)
-    #     if len(confirmed_attributes) == len(checklist_expected_attributes_with_type.keys()):
-    #         self.gui_enabled = True
-    #         self.add_info_to_logs('NA3 GUI initialization completed. Start by selecting and loading source data.', True)
-    #     else:
-    #         self.gui_enabled = False
-    #         for attribute_name in failed_attributes:
-    #             self.add_info_to_logs(f'Setup of {attribute_name} missing before GUI connection can be enabled.')
+        self.gui_enabled = True
 
 
     def add_info_to_logs(self, message: str, display_in_gui: bool = False, progress_in_percent: float | None = None) -> None:
@@ -112,8 +89,8 @@ class Model:
             self.logs.clear_logs()
             # self._check_if_gui_setup_is_completed()
 
-
-    def _get_all_subdir_paths_with_rec_file(self, top_level_dir_path: Path) -> list[Path]:
+    @staticmethod
+    def _get_all_subdir_paths_with_rec_file(top_level_dir_path: Path) -> list[Path]:
         rec_loader_factory = RecordingLoaderFactory()
         supported_extensions_for_recordings = rec_loader_factory.all_supported_extensions
         all_subdir_paths_that_contain_a_supported_recording_file = []
@@ -126,13 +103,14 @@ class Model:
         return all_subdir_paths_that_contain_a_supported_recording_file
 
 
-    def _create_analysis_jobs_for_single_rec(self) -> None:
-        if self.config.recording_filepath:
-            recording_filepath = self.config.recording_filepath
-        else:
-            recording_filepath = self.config.data_source_path
-        self.add_info_to_logs(f'Starting with Job creation(s) for {recording_filepath}', True)
-        recording_loader = self._get_recording_loader(recording_filepath)
+    def _create_analysis_jobs_for_single_rec(self, recording_path: Path = None) -> None:
+        if not recording_path:
+            if self.config.recording_filepath:
+                recording_path = self.config.recording_filepath
+            else:
+                recording_path = self.config.data_source_path
+        self.add_info_to_logs(f'Starting with Job creation(s) for {str(recording_path)}', True)
+        recording_loader = self._get_recording_loader(recording_path)
 
 
         if self.config.roi_filepath:
@@ -147,7 +125,7 @@ class Model:
         if self.config.focus_area_filepath:
             focus_area_filepath = self.config.focus_area_filepath
         else:
-            focus_area_filepath = self.config.data_source_path
+            focus_area_filepath = recording_path
         if self.config.focus_area_enabled:
             focus_area_dir_path = self._get_focus_area_dir_path(focus_area_filepath)
             if focus_area_dir_path is None:
@@ -160,14 +138,14 @@ class Model:
                 for idx, focus_area_loader in enumerate(all_focus_area_loaders):
                     analysis_job_with_focus_area = self._create_single_analysis_job(recording_loader, roi_loaders, focus_area_loader)
                     self.analysis_job_queue.append(analysis_job_with_focus_area)
-                    job_creation_message = (f'Successfully created {idx + 1} out of {len(all_focus_area_loaders)} job(s) for {recording_filepath} '
+                    job_creation_message = (f'Successfully created {idx + 1} out of {len(all_focus_area_loaders)} job(s) for {recording_path} '
                                             f'at queue position: #{len(self.analysis_job_queue)}.')
                     self.add_info_to_logs(job_creation_message, True)
         else:
             analysis_job = self._create_single_analysis_job(recording_loader, roi_loaders)
             self.analysis_job_queue.append(analysis_job)
-            self.add_info_to_logs(f'Successfully created a single job for {recording_filepath} at queue position: #{len(self.analysis_job_queue)}.', True)
-        self.add_info_to_logs(f'Finished Job creation(s) for {recording_filepath}!', True)
+            self.add_info_to_logs(f'Successfully created a single job for {recording_path} at queue position: #{len(self.analysis_job_queue)}.', True)
+        self.add_info_to_logs(f'Finished Job creation(s) for {recording_path}!', True)
 
 
     def _get_recording_loader(self, source_path: Path) -> RecordingLoader:
@@ -261,7 +239,7 @@ class Model:
             all_subdir_paths_with_rec_file = self._get_all_subdir_paths_with_rec_file(self.config.data_source_path)
             all_subdir_paths_with_rec_file.sort()
             for idx, subdir_path in enumerate(all_subdir_paths_with_rec_file):
-                self._create_analysis_jobs_for_single_rec()
+                self._create_analysis_jobs_for_single_rec(subdir_path)
         else:
             self._create_analysis_jobs_for_single_rec()
         self.add_info_to_logs('All job creation(s) completed.', True, 100.0)
@@ -281,7 +259,7 @@ class Model:
                     activity_overview_fig = analysis_job.activity_overview_plot[0]
                     activity_overview_fig.set_figheight(400 * self.pixel_conversion)
                     activity_overview_fig.tight_layout()
-                    plt.show(activity_overview_fig)
+                    show(activity_overview_fig)
             self._save_user_settings_as_json(analysis_job)
             self.logs.save_current_logs(analysis_job.results_dir_path)
         self.add_info_to_logs('Updating all log files to contain all logs as final step. All valid logs files will end with this message.')
@@ -289,7 +267,7 @@ class Model:
             self.logs.save_current_logs(analysis_job.results_dir_path)
 
 
-    def preview_window_size(self) -> tuple[Figure, Axes]:
+    def preview_window_size(self, grid_size) -> tuple[Figure, Axes]:
         job_for_preview = self.analysis_job_queue[0]
-        preview_fig, preview_ax = job_for_preview.preview_window_size(self.config.grid_size)
+        preview_fig, preview_ax = job_for_preview.preview_window_size(grid_size)
         return preview_fig, preview_ax
