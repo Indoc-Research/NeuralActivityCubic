@@ -125,7 +125,7 @@ class Model:
         if self.config.focus_area_filepath:
             focus_area_filepath = self.config.focus_area_filepath
         else:
-            focus_area_filepath = self.config.data_source_path
+            focus_area_filepath = recording_path
         if self.config.focus_area_enabled:
             focus_area_dir_path = self._get_focus_area_dir_path(focus_area_filepath)
             if focus_area_dir_path is None:
