@@ -10,7 +10,11 @@
   </url>
   <url>
     <loc>https://ddoll.github.io/NeuralActivityCubic/model.html</loc>
+<<<<<<< HEAD
     <lastmod>2025-12-15T15:13:39.733Z</lastmod>
+=======
+    <lastmod>2025-07-13T00:46:11.274Z</lastmod>
+>>>>>>> fb1f145 (literate docs for model completed)
   </url>
   <url>
     <loc>https://ddoll.github.io/NeuralActivityCubic/using_the_gui.html</loc>

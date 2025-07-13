@@ -5,7 +5,7 @@
 # %% auto 0
 __all__ = ['Logger', 'Model']
 
-# %% ../nbs/02_model.ipynb 5
+# %% ../nbs/02_model.ipynb 10
 # Actual functional dependencies:
 # external:
 from pathlib import Path
@@ -26,7 +26,7 @@ from typing import Callable
 from matplotlib.figure import Figure
 from matplotlib.axes._axes import Axes
 
-# %% ../nbs/02_model.ipynb 7
+# %% ../nbs/02_model.ipynb 13
 class Logger:
 
     """
@@ -60,7 +60,7 @@ class Logger:
         print(f'Logs saved to {filepath}')
 
 
-# %% ../nbs/02_model.ipynb 9
+# %% ../nbs/02_model.ipynb 28
 class Model:
 
     def __init__(self, 
@@ -80,7 +80,7 @@ class Model:
         self.view_output = None
         self.pixel_conversion = None
 
-# %% ../nbs/02_model.ipynb 11
+# %% ../nbs/02_model.ipynb 31
 @patch
 def create_analysis_jobs(self: Model
                         ) -> None:
@@ -99,34 +99,7 @@ def create_analysis_jobs(self: Model
         self._create_analysis_jobs_for_single_rec()
     self.add_info_to_logs('All job creation(s) completed.', True, 100.0)
 
-# %% ../nbs/02_model.ipynb 13
-@patch
-def run_analysis(self: Model
-                ) -> None:
-    self._display_configs()
-    self.add_info_to_logs('Starting analysis...', True)
-    for job_idx in range(len(self.analysis_job_queue)):
-        analysis_job = self.analysis_job_queue.pop(0)
-        self.add_info_to_logs(f'Starting to process analysis job with index #{job_idx}.')
-        analysis_job.run_analysis(self.config)
-        self.add_info_to_logs(f'Analysis successfully completed. Continue with creation of results.. ')
-        analysis_job.create_results(self.config, self.nwb_metadata)
-        self.add_info_to_logs(f'Results successfully created at: {analysis_job.results_dir_path}')
-        if self.gui_enabled:
-            self.callback_view_show_output_screen()
-            with self.view_output:
-                activity_overview_fig = analysis_job.activity_overview_plot[0]
-                activity_overview_fig.set_figheight(400 * self.pixel_conversion)
-                activity_overview_fig.tight_layout()
-                show(activity_overview_fig)
-        self._save_user_settings_as_json(analysis_job)
-        self.result_directories.append(analysis_job.results_dir_path)
-        self.add_info_to_logs('Updating all log files to contain all logs as final step. All valid logs files will end with this message.')
-        self.logs.save_current_logs(analysis_job.results_dir_path)
-    else:
-        gc.collect()
-
-# %% ../nbs/02_model.ipynb 15
+# %% ../nbs/02_model.ipynb 33
 @patch
 def _ensure_data_from_previous_jobs_was_removed(self: Model
                                                ) -> None:
@@ -134,9 +107,8 @@ def _ensure_data_from_previous_jobs_was_removed(self: Model
     self.analysis_job_queue = []
     self.logs.clear_logs()
 
-# %% ../nbs/02_model.ipynb 16
+
 @patch
-#@staticmethod
 def _get_all_subdir_paths_with_rec_file(self: Model, 
                                         top_level_dir_path: Path
                                        ) -> list[Path]:
@@ -151,7 +123,8 @@ def _get_all_subdir_paths_with_rec_file(self: Model,
                     all_subdir_paths_that_contain_a_supported_recording_file.append(elem)
     return all_subdir_paths_that_contain_a_supported_recording_file
 
-# %% ../nbs/02_model.ipynb 17
+
+
 @patch
 def _create_analysis_jobs_for_single_rec(self: Model, 
                                          recording_path: Path = None,
@@ -211,7 +184,7 @@ def _create_analysis_jobs_for_single_rec(self: Model,
         self.add_info_to_logs(f'Successfully created a single job for {recording_path} at queue position: #{len(self.analysis_job_queue)}.', True)
     self.add_info_to_logs(f'Finished Job creation(s) for {recording_path}!', True)
 
-# %% ../nbs/02_model.ipynb 18
+
 @patch
 def _get_recording_loader(self: Model, 
                           source_path: Path
@@ -236,7 +209,7 @@ def _get_recording_loader(self: Model,
     recording_loader = rec_loader_factory.get_loader(filepath)
     return recording_loader
 
-# %% ../nbs/02_model.ipynb 19
+
 @patch
 def _get_all_roi_loaders(self: Model, 
                          data_source_path: Path
@@ -247,7 +220,7 @@ def _get_all_roi_loaders(self: Model,
     all_roi_loaders = [roi_loader_factory.get_loader(roi_filepath) for roi_filepath in all_filepaths_with_supported_filetype_extensions]
     return all_roi_loaders
 
-# %% ../nbs/02_model.ipynb 20
+
 @patch
 def _get_focus_area_dir_path(self: Model, 
                              source_path: Path
@@ -276,7 +249,7 @@ def _get_focus_area_dir_path(self: Model,
         focus_area_dir_path = dirs_with_valid_name[0]
     return focus_area_dir_path
 
-# %% ../nbs/02_model.ipynb 21
+
 @patch
 def _create_single_analysis_job(self: Model,
                                 recording_loader: RecordingLoader,
@@ -291,7 +264,34 @@ def _create_single_analysis_job(self: Model,
         data_loaders['focus_area'] = focus_area_loader
     return AnalysisJob(self.num_processes, data_loaders, result_filepath)
 
-# %% ../nbs/02_model.ipynb 23
+# %% ../nbs/02_model.ipynb 35
+@patch
+def run_analysis(self: Model
+                ) -> None:
+    self._display_configs()
+    self.add_info_to_logs('Starting analysis...', True)
+    for job_idx in range(len(self.analysis_job_queue)):
+        analysis_job = self.analysis_job_queue.pop(0)
+        self.add_info_to_logs(f'Starting to process analysis job with index #{job_idx}.')
+        analysis_job.run_analysis(self.config)
+        self.add_info_to_logs(f'Analysis successfully completed. Continue with creation of results.. ')
+        analysis_job.create_results(self.config, self.nwb_metadata)
+        self.add_info_to_logs(f'Results successfully created at: {analysis_job.results_dir_path}')
+        if self.gui_enabled:
+            self.callback_view_show_output_screen()
+            with self.view_output:
+                activity_overview_fig = analysis_job.activity_overview_plot[0]
+                activity_overview_fig.set_figheight(400 * self.pixel_conversion)
+                activity_overview_fig.tight_layout()
+                show(activity_overview_fig)
+        self._save_user_settings_as_json(analysis_job)
+        self.result_directories.append(analysis_job.results_dir_path)
+        self.add_info_to_logs('Updating all log files to contain all logs as final step. All valid logs files will end with this message.')
+        self.logs.save_current_logs(analysis_job.results_dir_path)
+    else:
+        gc.collect()
+
+# %% ../nbs/02_model.ipynb 38
 @patch
 def _display_configs(self: Model
                     ) -> None:
@@ -300,7 +300,7 @@ def _display_configs(self: Model
     for line in self.config.display_all_attributes():
         self.add_info_to_logs(line)
 
-# %% ../nbs/02_model.ipynb 24
+
 @patch
 def _save_user_settings_as_json(self: Model, 
                                 analysis_job: AnalysisJob
@@ -316,24 +316,7 @@ def _save_user_settings_as_json(self: Model,
     with open(filepath, 'w+') as user_settings_json:
         user_settings_json.write(self.config.to_json())
 
-# %% ../nbs/02_model.ipynb 26
-@patch
-def add_info_to_logs(self: Model, 
-                     message: str, 
-                     display_in_gui: bool = False, 
-                     progress_in_percent: float | None = None
-                    ) -> None:
-    self.logs.add_new_log(message)
-    if (display_in_gui == True) and (self.gui_enabled == True): 
-        self.callback_view_update_infos(message, progress_in_percent)
-
-
-    def add_info_to_logs(self, message: str, display_in_gui: bool = False, progress_in_percent: float | None = None) -> None:
-        self.logs.add_new_log(message)
-        if (display_in_gui == True) and (self.gui_enabled == True): 
-            self.callback_view_update_infos(message, progress_in_percent)
-
-# %% ../nbs/02_model.ipynb 28
+# %% ../nbs/02_model.ipynb 40
 @patch
 def setup_connection_to_update_infos_in_view(self: Model, 
                                              update_infos: Callable
@@ -342,7 +325,7 @@ def setup_connection_to_update_infos_in_view(self: Model,
     self.callback_view_update_infos = update_infos
     self.gui_enabled = True 
 
-# %% ../nbs/02_model.ipynb 29
+# %% ../nbs/02_model.ipynb 42
 @patch
 def setup_connection_to_display_results(self: Model, 
                                         show_output_screen: Callable, 
@@ -355,7 +338,7 @@ def setup_connection_to_display_results(self: Model,
     self.pixel_conversion = pixel_conversion
     self.gui_enabled = True
 
-# %% ../nbs/02_model.ipynb 31
+# %% ../nbs/02_model.ipynb 45
 @patch
 def preview_window_size(self: Model, 
                         grid_size
@@ -363,3 +346,14 @@ def preview_window_size(self: Model,
     job_for_preview = self.analysis_job_queue[0]
     preview_fig, preview_ax = job_for_preview.preview_window_size(grid_size)
     return preview_fig, preview_ax
+
+# %% ../nbs/02_model.ipynb 48
+@patch
+def add_info_to_logs(self: Model, 
+                     message: str, 
+                     display_in_gui: bool = False, 
+                     progress_in_percent: float | None = None
+                    ) -> None:
+    self.logs.add_new_log(message)
+    if (display_in_gui == True) and (self.gui_enabled == True): 
+        self.callback_view_update_infos(message, progress_in_percent)
