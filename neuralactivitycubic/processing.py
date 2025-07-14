@@ -58,7 +58,7 @@ class AnalysisJob:
         self.recording_loader = data_loaders['recording']
         self.parent_dir_path = self.recording_loader.filepath.parent
         self.results_dir = results_dir
-        self.results_dir_path = None
+        self.results_dir_path: Path | None = None
         if 'rois' in data_loaders.keys():
             self.rois_source = 'file'
             self.roi_loaders = data_loaders['rois']
@@ -303,6 +303,11 @@ class AnalysisJob:
     
 
     def _create_results_dir(self) -> Path:
+        """
+        Creates and returns the directory path where analysis results will be saved.
+
+        The directory name is constructed using the analysis start datetime, the recording filename, and optionally the focus area filename if focus area is enabled. If a custom results directory was provided during initialization, it is used instead. The method ensures the directory exists (creates it if necessary) and returns the Path object for the results directory.
+        """
         prefix_with_datetime = self.analysis_start_datetime.strftime('%Y_%m_%d_%H-%M-%S_results_for')
         recording_filename_without_extension = self.recording.filepath.name.replace(self.recording.filepath.suffix, '')
         if self.focus_area_enabled:
