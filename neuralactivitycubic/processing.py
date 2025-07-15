@@ -58,6 +58,7 @@ class AnalysisJob:
         self.recording_loader = data_loaders['recording']
         self.parent_dir_path = self.recording_loader.filepath.parent
         self.results_dir = results_dir
+        self.results_dir_path: Path | None = None
         if 'rois' in data_loaders.keys():
             self.rois_source = 'file'
             self.roi_loaders = data_loaders['rois']
@@ -140,7 +141,7 @@ class AnalysisJob:
     def run_analysis(self, config: Config) -> None:
         self._set_analysis_start_datetime()
         self.load_data_into_memory(config.grid_size)
-        self._ensure_results_dir_exists()
+        self.results_dir_path = self._create_results_dir()
         copy_of_all_analysis_rois = self.all_analysis_rois.copy()
         with multiprocessing.Pool(processes = self.number_of_parallel_processes) as pool:
             processed_analysis_rois = pool.starmap(process_analysis_rois, [(analysis_roi, config) for analysis_roi in copy_of_all_analysis_rois])
@@ -301,25 +302,25 @@ class AnalysisJob:
         return info
     
 
+    def _create_results_dir(self) -> Path:
+        """
+        Creates and returns the directory path where analysis results will be saved.
 
-    def _ensure_results_dir_exists(self, subdir_name_to_check: str | None = None) -> None:
-        if not hasattr(self, 'results_dir_path'):
-            prefix_with_datetime = self.analysis_start_datetime.strftime('%Y_%m_%d_%H-%M-%S_results_for')
-            recording_filename_without_extension = self.recording.filepath.name.replace(self.recording.filepath.suffix, '')
-            if self.focus_area_enabled:
-                focus_area_filename_without_extension = self.focus_area.filepath.name.replace(self.focus_area.filepath.suffix, '')
-                results_dir_name = f'{prefix_with_datetime}_{recording_filename_without_extension}_with_{focus_area_filename_without_extension}'
-            else:
-                results_dir_name = f'{prefix_with_datetime}_{recording_filename_without_extension}'
-            if self.results_dir is not None:
-                self.results_dir_path = self.results_dir
-            else:
-                self.results_dir_path = self.parent_dir_path.joinpath(results_dir_name)
-            self.results_dir_path.mkdir(exist_ok=True, parents=True)
-        if type(subdir_name_to_check) == str:
-            subdir_path = self.results_dir_path.joinpath(subdir_name_to_check)
-            if not subdir_path.is_dir():
-                subdir_path.mkdir()
+        The directory name is constructed using the analysis start datetime, the recording filename, and optionally the focus area filename if focus area is enabled. If a custom results directory was provided during initialization, it is used instead. The method ensures the directory exists (creates it if necessary) and returns the Path object for the results directory.
+        """
+        prefix_with_datetime = self.analysis_start_datetime.strftime('%Y_%m_%d_%H-%M-%S_results_for')
+        recording_filename_without_extension = self.recording.filepath.name.replace(self.recording.filepath.suffix, '')
+        if self.focus_area_enabled:
+            focus_area_filename_without_extension = self.focus_area.filepath.name.replace(self.focus_area.filepath.suffix, '')
+            results_dir_name = f'{prefix_with_datetime}_{recording_filename_without_extension}_with_{focus_area_filename_without_extension}'
+        else:
+            results_dir_name = f'{prefix_with_datetime}_{recording_filename_without_extension}'
+        if self.results_dir is not None:
+            results_dir_path = self.results_dir
+        else:
+            results_dir_path = self.parent_dir_path.joinpath(results_dir_name)
+        results_dir_path.mkdir(exist_ok=True, parents=True)
+        return results_dir_path
 
 
     def _create_variance_area_dataframe(self, filtered_rois: list[AnalysisROI]) -> pd.DataFrame:
@@ -371,7 +372,6 @@ class AnalysisJob:
 
 
     def _create_and_save_single_trace_results_as_csv(self, filtered_rois: list[AnalysisROI]) -> None:
-        # self._ensure_results_dir_exists(subdir_name_to_check='single_traces')
         single_trace_subdir_path = self.results_dir_path.joinpath('single_traces')
         single_trace_subdir_path.mkdir(parents = True, exist_ok = True)
         for analysis_roi in filtered_rois:
