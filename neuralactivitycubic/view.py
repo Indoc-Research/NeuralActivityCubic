@@ -745,6 +745,8 @@ class WidgetsInterface:
             layout = w.Layout(align_items = 'stretch', border = '1px solid')
         )
         self.main_screen.show_welcome_screen()
+        self.source_data_panel.settings.batch_mode.observe(self._enable_window_size_widgets)
+        self.source_data_panel.settings.focus_area_enabled.observe(self._enable_window_size_widgets)
         self.source_data_panel.settings.roi_mode.observe(self._enable_window_size_widgets)
         self.source_data_panel.settings.data_source_path.register_callback(self._data_source_path_chosen)
 
@@ -773,7 +775,7 @@ class WidgetsInterface:
         return self.source_data_panel.settings.data_source_path.value
 
 
-    def _data_source_path_chosen(self, file_chooser_obj) -> None:
+    def _data_source_path_chosen(self, file_chooser_obj = None) -> None:
         self.enable_analysis(False)
         if file_chooser_obj.value is not None:
             enable_loading = False
@@ -799,16 +801,17 @@ class WidgetsInterface:
                                     tooltip = 'Please select which source data to load!')
 
     def _enable_window_size_widgets(self, change) -> None:
-        if change['name'] == 'value':
-            if change['new'] == 'file':
-                change_widget_state(self.analysis_settings_panel.settings.grid_size, disabled = True)
-                change_widget_state(self.analysis_settings_panel.preview_window_size_button, disabled = True)
-            else:
-                if self.analysis_settings_panel.settings.signal_to_noise_ratio.disabled:
-                    pass
-                else:
-                    change_widget_state(self.analysis_settings_panel.settings.grid_size, disabled = False)
-                    change_widget_state(self.analysis_settings_panel.preview_window_size_button, disabled = False)                
+        self.enable_analysis(False)
+        # if change['name'] == 'value':
+        #     if change['new'] == 'file':
+        #         change_widget_state(self.analysis_settings_panel.settings.grid_size, disabled = True)
+        #         change_widget_state(self.analysis_settings_panel.preview_window_size_button, disabled = True)
+        #     else:
+        #         if self.analysis_settings_panel.settings.signal_to_noise_ratio.disabled:
+        #             pass
+        #         else:
+        #             change_widget_state(self.analysis_settings_panel.settings.grid_size, disabled = False)
+        #             change_widget_state(self.analysis_settings_panel.preview_window_size_button, disabled = False)
 
 
     def update_infos(self, logs_message: str | None = None, progress_in_percent: float | None = None) -> None:
@@ -823,6 +826,6 @@ class WidgetsInterface:
         self.analysis_settings_panel.settings.frame_interval_to_analyze.value = (1, total_frames + 1)
 
 
-    def enable_analysis(self, enable: bool=True) -> None:
+    def enable_analysis(self, enable: bool = True) -> None:
         roi_mode = self.source_data_panel.settings.roi_mode.value
         self.analysis_settings_panel.enable_analysis_settings(enable, roi_mode)

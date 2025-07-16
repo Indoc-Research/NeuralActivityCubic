@@ -48,7 +48,7 @@ class App:
         else:
             self._display_preview_of_representative_job(self.view.grid_size)
             self.model.add_info_to_logs(f'Data import completed! {len(self.model.analysis_job_queue)} job(s) in queue.', True, 100.0)
-            self.view.enable_analysis()
+            self.view.enable_analysis(True)
 
 
     def _display_preview_of_representative_job(self, grid_size: int) -> None:

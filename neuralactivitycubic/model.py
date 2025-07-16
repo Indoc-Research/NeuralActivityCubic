@@ -116,7 +116,7 @@ class Model:
         if self.config.roi_filepath:
             roi_filepath = self.config.roi_filepath
         else:
-            roi_filepath = self.config.data_source_path
+            roi_filepath = recording_path
         if self.config.roi_mode == 'file':
             roi_loaders = self._get_all_roi_loaders(roi_filepath)
         else:
