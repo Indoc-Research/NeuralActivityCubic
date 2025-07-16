@@ -6,8 +6,7 @@
 __all__ = ['Logger', 'Model']
 
 # %% ../nbs/02_model.ipynb 10
-# Actual functional dependencies:
-# external:
+# External functional dependencies:
 from pathlib import Path
 from datetime import datetime, timezone
 from matplotlib.pyplot import show
@@ -16,15 +15,16 @@ import multiprocessing
 from fastcore.basics import patch
 import gc
 
-# and internal:
+# External dependencies for type hints:
+from typing import Callable
+from matplotlib.figure import Figure
+from matplotlib.axes._axes import Axes
+
+# Internal dependencies
 from .datamodels import Config
 from .processing import AnalysisJob
 from .input import RecordingLoaderFactory, ROILoaderFactory, RecordingLoader, ROILoader, get_filepaths_with_supported_extension_in_dirpath, FocusAreaPathRestrictions
 
-# Finally, some dependencies regarding type hints:
-from typing import Callable
-from matplotlib.figure import Figure
-from matplotlib.axes._axes import Axes
 
 # %% ../nbs/02_model.ipynb 13
 class Logger:

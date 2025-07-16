@@ -58,7 +58,7 @@ model.run_analysis()
 Boom, that´s it! Your data is analyzed, and results are saved. We made
 this even more accessible for you, by the way, in the api module. If
 you´re planning to use neuralactivitycubic programmatically, we highly
-recommend you checkout it out.
+recommend you check it out.
 
 ### 🧩 Literate Programming in Action
 
@@ -111,19 +111,14 @@ examples, and tests with the actual source code. We hope you like it!
 ### 🛠️ Import all dependencies
 
 Everybody needs some help - and we´re standing on the shoulders of some
-<<<<<<< HEAD
-giants here. Let´s start by importing all dependencies we need:
-=======
 giants here. Let´s start by importing all dependencies we need to make
 neuralactivitycubic work:
->>>>>>> fb1f145 (literate docs for model completed)
 
 <details open class="code-fold">
 <summary>Exported source</summary>
 
 ``` python
-# Actual functional dependencies:
-# external:
+# External functional dependencies:
 from pathlib import Path
 from datetime import datetime, timezone
 from matplotlib.pyplot import show
@@ -132,22 +127,19 @@ import multiprocessing
 from fastcore.basics import patch
 import gc
 
-# and internal:
-from neuralactivitycubic.datamodels import Config
-from neuralactivitycubic.processing import AnalysisJob
-from neuralactivitycubic.input import RecordingLoaderFactory, ROILoaderFactory, RecordingLoader, ROILoader, get_filepaths_with_supported_extension_in_dirpath, FocusAreaPathRestrictions
-
-# Finally, some dependencies regarding type hints:
+# External dependencies for type hints:
 from typing import Callable
 from matplotlib.figure import Figure
 from matplotlib.axes._axes import Axes
+
+# Internal dependencies
+from neuralactivitycubic.datamodels import Config
+from neuralactivitycubic.processing import AnalysisJob
+from neuralactivitycubic.input import RecordingLoaderFactory, ROILoaderFactory, RecordingLoader, ROILoader, get_filepaths_with_supported_extension_in_dirpath, FocusAreaPathRestrictions
 ```
 
 </details>
 
-<<<<<<< HEAD
-Now let´s get started:
-=======
 ## 📘 Start of the *source code*
 
 Ready? Grab a coffee and enjoy the tour through the module! Let’s jump
@@ -166,16 +158,11 @@ does. It logs messages with precise UTC timestamps and can:
 - Save logs to disk in a simple text file
 
 - Clear logs when switching contexts or rerunning jobs
->>>>>>> fb1f145 (literate docs for model completed)
 
 ------------------------------------------------------------------------
 
 <a
-<<<<<<< HEAD
 href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L30"
-=======
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L29"
->>>>>>> fb1f145 (literate docs for model completed)
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Logger
@@ -225,47 +212,32 @@ class Logger:
 
 </details>
 
-<<<<<<< HEAD
-Next up is the
-[`Model`](https://ddoll.github.io/NeuralActivityCubic/model.html#model),
-which is at the absolute core of `neuralactivitycubic`. After
-initialization of a
-[`Model`](https://ddoll.github.io/NeuralActivityCubic/model.html#model)
-object, there are only two more calls you need to make to run a
-fullblown analysis with `na3`. You can see this in the implementation of
-the `api.run_analysis()` wrapper, which actually also represents the way
-we intend you to use `na3` programmatically.
-
-Therefore, we´ll instead continue gradually diving deeper into the inner
-workings of this class and let you in on our thoughts, reasons, and
-intentions of the different aspects.
-=======
 Its usage is simple, but invaluable for debugging and traceability.
 Here´s a short example of how to interact with the
 [`Logger`](https://ddoll.github.io/NeuralActivityCubic/model.html#logger):
 
 ``` python
-# Let´s create a logger:
+# Create a logger instance
 logger = Logger()
 
-# Add some random messages to log:
-logger.add_new_log('Pretending to start the analysis ...')
-logger.add_new_log('.. ba bi bu bup ..')
-logger.add_new_log('.. I guess you got the hang of it now?')
+# Simulate logging workflow
+logger.add_new_log('Starting simulated analysis...')
+logger.add_new_log('Loading data...')
+logger.add_new_log('Data successfully loaded.')
 ```
 
-    13-07-25 00:46:11.142592 (UTC): Pretending to start the analysis ...
-    13-07-25 00:46:11.142743 (UTC): .. ba bi bu bup ..
-    13-07-25 00:46:11.142808 (UTC): .. I guess you got the hang of it now?
+    15-12-25 15:59:06.264866 (UTC): Starting simulated analysis...
+    15-12-25 15:59:06.264905 (UTC): Loading data...
+    15-12-25 15:59:06.264921 (UTC): Data successfully loaded.
 
 ``` python
 # Access what has been logged so far:
 logger.get_logs()
 ```
 
-    ['13-07-25 00:46:11.142592 (UTC): Pretending to start the analysis ...',
-     '13-07-25 00:46:11.142743 (UTC): .. ba bi bu bup ..',
-     '13-07-25 00:46:11.142808 (UTC): .. I guess you got the hang of it now?']
+    ['15-12-25 15:59:06.264866 (UTC): Starting simulated analysis...',
+     '15-12-25 15:59:06.264905 (UTC): Loading data...',
+     '15-12-25 15:59:06.264921 (UTC): Data successfully loaded.']
 
 And if you´d like to save the logs, you can do so pretty easily as
 well - just be aware that it expects a `pathlib.Path` object that
@@ -390,7 +362,6 @@ before it becomes a problem.
 Next up is the
 [`Model`](https://ddoll.github.io/NeuralActivityCubic/model.html#model),
 which sits right at the core of `neuralactivitycubic`:
->>>>>>> fb1f145 (literate docs for model completed)
 
 ------------------------------------------------------------------------
 
@@ -430,12 +401,6 @@ class Model:
 
 </details>
 
-<<<<<<< HEAD
-Well, let´s actually get started with those two methods that run the
-fullblown analysis and also represent the highest level functions in the
-[`Model`](https://ddoll.github.io/NeuralActivityCubic/model.html#model).
-They are:
-=======
 This constructor sets up everything needed to use na3 in either
 programmatic, batch, or GUI mode.
 
@@ -466,23 +431,17 @@ of private helpers to figure out how to match recordings, ROI masks, and
 focus area files.
 
 Let’s take a look:
->>>>>>> fb1f145 (literate docs for model completed)
 
 ------------------------------------------------------------------------
 
 <a
-<<<<<<< HEAD
 href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L85"
-=======
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L82"
->>>>>>> fb1f145 (literate docs for model completed)
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Model.create_analysis_jobs
 
 >  Model.create_analysis_jobs ()
 
-<<<<<<< HEAD
 <details open class="code-fold">
 <summary>Exported source</summary>
 
@@ -508,68 +467,6 @@ def create_analysis_jobs(self: Model
 
 </details>
 
-and:
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L104"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### Model.run_analysis
-
->  Model.run_analysis ()
-
-=======
->>>>>>> fb1f145 (literate docs for model completed)
-<details open class="code-fold">
-<summary>Exported source</summary>
-
-``` python
-@patch
-<<<<<<< HEAD
-def run_analysis(self: Model
-                ) -> None:
-    self._display_configs()
-    self.add_info_to_logs('Starting analysis...', True)
-    for job_idx in range(len(self.analysis_job_queue)):
-        analysis_job = self.analysis_job_queue.pop(0)
-        self.add_info_to_logs(f'Starting to process analysis job with index #{job_idx}.')
-        analysis_job.run_analysis(self.config)
-        self.add_info_to_logs(f'Analysis successfully completed. Continue with creation of results.. ')
-        analysis_job.create_results(self.config, self.nwb_metadata)
-        self.add_info_to_logs(f'Results successfully created at: {analysis_job.results_dir_path}')
-        if self.gui_enabled:
-            self.callback_view_show_output_screen()
-            with self.view_output:
-                activity_overview_fig = analysis_job.activity_overview_plot[0]
-                activity_overview_fig.set_figheight(400 * self.pixel_conversion)
-                activity_overview_fig.tight_layout()
-                show(activity_overview_fig)
-        self._save_user_settings_as_json(analysis_job)
-        self.result_directories.append(analysis_job.results_dir_path)
-        self.add_info_to_logs('Updating all log files to contain all logs as final step. All valid logs files will end with this message.')
-        self.logs.save_current_logs(analysis_job.results_dir_path)
-    else:
-        gc.collect()
-=======
-def create_analysis_jobs(self: Model
-                        ) -> None:
-    self._ensure_data_from_previous_jobs_was_removed()
-    self.add_info_to_logs('Basic configurations for data import validated. Starting creation of analysis job(s)...', True)
-    if self.config.batch_mode:
-        all_subdir_paths_with_rec_file = self._get_all_subdir_paths_with_rec_file(self.config.data_source_path)
-        all_subdir_paths_with_rec_file.sort()
-        for idx, subdir_path in enumerate(all_subdir_paths_with_rec_file):
-            self._create_analysis_jobs_for_single_rec(subdir_path)
-    else:
-        self._create_analysis_jobs_for_single_rec()
-    self.add_info_to_logs('All job creation(s) completed.', True, 100.0)
->>>>>>> fb1f145 (literate docs for model completed)
-```
-
-</details>
-
 This method acts like a scout: it ventures into the provided folder(s),
 searches for files that NA³ knows how to handle, and sets up one or more
 analysis jobs based on what it finds.
@@ -590,7 +487,9 @@ The actual logic for locating those files and assembling jobs doesn’t
 live directly in `create_analysis_jobs()` — instead, it’s delegated to a
 series of helper methods. These methods do the real legwork and are
 marked as private by convention, meaning they’re not intended to be
-called from outside the Model class.
+called from outside the Model class. Each isolates a specific aspect of
+the analysis job creation, like locating recordings or mapping ROI
+files, making it easier to extend or debug individual steps.
 
 For your convenience, we’ve bundled all of them together in the next
 code block so you can collapse them as a group, skim through them if you
@@ -603,23 +502,12 @@ like, and then jump back into the higher-level functionality.
 @patch
 def _ensure_data_from_previous_jobs_was_removed(self: Model
                                                ) -> None:
-<<<<<<< HEAD
     self.add_info_to_logs('Loading of new source data. All previously created jobs & logs will be deleted.', True)
     self.analysis_job_queue = []
     self.logs.clear_logs()
-```
-=======
-    # if we are deleting all data anyway, why bother checking?
-    if len(self.analysis_job_queue) > 0:
-        self.add_info_to_logs('Loading of new source data. All previously created jobs & logs will be deleted.', True)
-        self.analysis_job_queue = []
-        self.logs.clear_logs()
-        # self._check_if_gui_setup_is_completed()
->>>>>>> fb1f145 (literate docs for model completed)
 
 
 @patch
-#@staticmethod
 def _get_all_subdir_paths_with_rec_file(self: Model, 
                                         top_level_dir_path: Path
                                        ) -> list[Path]:
@@ -638,16 +526,10 @@ def _get_all_subdir_paths_with_rec_file(self: Model,
 
 @patch
 def _create_analysis_jobs_for_single_rec(self: Model, 
-<<<<<<< HEAD
                                          recording_path: Path = None,
                                          result_path: Path = None
                                         ) -> None:
     if recording_path is None:
-=======
-                                         recording_path: Path = None
-                                        ) -> None:
-    if not recording_path:
->>>>>>> fb1f145 (literate docs for model completed)
         if self.config.recording_filepath:
             recording_path = self.config.recording_filepath
         else:
@@ -768,18 +650,11 @@ def _get_focus_area_dir_path(self: Model,
 
 
 @patch
-<<<<<<< HEAD
 def _create_single_analysis_job(self: Model,
                                 recording_loader: RecordingLoader,
                                 roi_loaders: list[ROILoader] | None,
                                 focus_area_loader: ROILoader = None,
                                 result_filepath: Path = None
-=======
-def _create_single_analysis_job(self: Model, 
-                                recording_loader: RecordingLoader, 
-                                roi_loaders: list[ROILoader] | None, 
-                                focus_area_loader: ROILoader | None = None
->>>>>>> fb1f145 (literate docs for model completed)
                                ) -> AnalysisJob:
     data_loaders = {'recording': recording_loader}
     if roi_loaders is not None:
@@ -813,7 +688,7 @@ This method takes care of everything:
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L253"
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L269"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Model.run_analysis
@@ -825,23 +700,16 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ``` python
 @patch
-<<<<<<< HEAD
-def _display_configs(self: Model
-                    ) -> None:
-    self.add_info_to_logs('Configurations for Analysis Settings and Result Creation validated successfully.', True)
-    self.add_info_to_logs(f'Analysis Settings are:')
-    for line in self.config.display_all_attributes():
-        self.add_info_to_logs(line)
-=======
 def run_analysis(self: Model
                 ) -> None:
     self._display_configs()
     self.add_info_to_logs('Starting analysis...', True)
-    for job_idx, analysis_job in enumerate(self.analysis_job_queue):
+    for job_idx in range(len(self.analysis_job_queue)):
+        analysis_job = self.analysis_job_queue.pop(0)
         self.add_info_to_logs(f'Starting to process analysis job with index #{job_idx}.')
         analysis_job.run_analysis(self.config)
         self.add_info_to_logs(f'Analysis successfully completed. Continue with creation of results.. ')
-        analysis_job.create_results(self.config)
+        analysis_job.create_results(self.config, self.nwb_metadata)
         self.add_info_to_logs(f'Results successfully created at: {analysis_job.results_dir_path}')
         if self.gui_enabled:
             self.callback_view_show_output_screen()
@@ -851,11 +719,11 @@ def run_analysis(self: Model
                 activity_overview_fig.tight_layout()
                 show(activity_overview_fig)
         self._save_user_settings_as_json(analysis_job)
+        self.result_directories.append(analysis_job.results_dir_path)
+        self.add_info_to_logs('Updating all log files to contain all logs as final step. All valid logs files will end with this message.')
         self.logs.save_current_logs(analysis_job.results_dir_path)
-    self.add_info_to_logs('Updating all log files to contain all logs as final step. All valid logs files will end with this message.')
-    for job_idx, analysis_job in enumerate(self.analysis_job_queue):
-        self.logs.save_current_logs(analysis_job.results_dir_path)
->>>>>>> fb1f145 (literate docs for model completed)
+    else:
+        gc.collect()
 ```
 
 </details>
@@ -884,8 +752,6 @@ for convenience to enable optional collapsing. 👇
 
 ``` python
 @patch
-<<<<<<< HEAD
-=======
 def _display_configs(self: Model
                     ) -> None:
     self.add_info_to_logs('Configurations for Analysis Settings and Result Creation validated successfully.', True)
@@ -895,7 +761,6 @@ def _display_configs(self: Model
 
 
 @patch
->>>>>>> fb1f145 (literate docs for model completed)
 def _save_user_settings_as_json(self: Model, 
                                 analysis_job: AnalysisJob
                                ) -> None:
@@ -939,63 +804,7 @@ previews. Let’s look at them:
 ------------------------------------------------------------------------
 
 <a
-<<<<<<< HEAD
 href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L321"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### Model.add_info_to_logs
-
->  Model.add_info_to_logs (message:str, display_in_gui:bool=False,
->                              progress_in_percent:float|None=None)
-
-<details open class="code-fold">
-<summary>Exported source</summary>
-
-``` python
-@patch
-def add_info_to_logs(self: Model, 
-                     message: str, 
-                     display_in_gui: bool = False, 
-                     progress_in_percent: float | None = None
-                    ) -> None:
-    self.logs.add_new_log(message)
-    if (display_in_gui == True) and (self.gui_enabled == True): 
-        self.callback_view_update_infos(message, progress_in_percent)
-
-
-    def add_info_to_logs(self, message: str, display_in_gui: bool = False, progress_in_percent: float | None = None) -> None:
-        self.logs.add_new_log(message)
-        if (display_in_gui == True) and (self.gui_enabled == True): 
-            self.callback_view_update_infos(message, progress_in_percent)
-```
-
-</details>
-
-In addition to the text output, the
-[`Model`](https://ddoll.github.io/NeuralActivityCubic/model.html#model)
-can also produce some visual outputs. This is particularly of relevance,
-when the
-[`Model`](https://ddoll.github.io/NeuralActivityCubic/model.html#model)
-is connected to the graphical user interface (GUI) of
-`neuralactivitycubic`. In that case, the output it generates (e.g. logs,
-plots, or figures) are rendered in the intended widgets. Since we´re
-following the
-[Model-View-Controller](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller)
-pattern, this connection between the *model* (literally this
-[`Model`](https://ddoll.github.io/NeuralActivityCubic/model.html#model)
-class) and the *view* (the GUI implemented in `01_view.ipynb`) is
-established via the *controller* (the
-[`App`](https://ddoll.github.io/NeuralActivityCubic/controller.html#app)
-implemented in `00_controller.ipynb`) by calling the following two
-public methods:
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L338"
-=======
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L303"
->>>>>>> fb1f145 (literate docs for model completed)
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Model.setup_connection_to_update_infos_in_view
@@ -1028,11 +837,7 @@ sent live to the GUI’s log panel.
 ------------------------------------------------------------------------
 
 <a
-<<<<<<< HEAD
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L347"
-=======
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L312"
->>>>>>> fb1f145 (literate docs for model completed)
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L330"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Model.setup_connection_to_display_results
@@ -1077,11 +882,7 @@ GUI while trying to figure out which grid size you should use:
 ------------------------------------------------------------------------
 
 <a
-<<<<<<< HEAD
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L360"
-=======
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L325"
->>>>>>> fb1f145 (literate docs for model completed)
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L343"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Model.preview_window_size
@@ -1124,7 +925,7 @@ GUI.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L334"
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L352"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Model.add_info_to_logs
@@ -1434,7 +1235,6 @@ for directory in results_directory.iterdir():
 # cleanup
 rmtree(results_directory)
 ```
-<<<<<<< HEAD
 
 ``` python
 # confirm that model can be executed with focus mode:
@@ -1531,5 +1331,3 @@ for directory in results_directory.iterdir():
 # cleanup
 rmtree(results_directory)
 ```
-=======
->>>>>>> fb1f145 (literate docs for model completed)
