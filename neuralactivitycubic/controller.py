@@ -39,7 +39,7 @@ class App:
 
 
     def _load_data_button_clicked(self, change) -> None:
-        self.model = Model(self.view.data_source_path)
+        self.model = Model(self.view.export_user_settings())
         self._setup_interaction_between_model_and_view()
         self.model.create_analysis_jobs()
         if len(self.model.analysis_job_queue) < 1:
