@@ -804,7 +804,7 @@ class WidgetsInterface:
                 change_widget_state(self.analysis_settings_panel.settings.grid_size, disabled = True)
                 change_widget_state(self.analysis_settings_panel.preview_window_size_button, disabled = True)
             else:
-                if self.analysis_settings_panel.ettings.signal_to_noise_ratio.disabled:
+                if self.analysis_settings_panel.settings.signal_to_noise_ratio.disabled:
                     pass
                 else:
                     change_widget_state(self.analysis_settings_panel.settings.grid_size, disabled = False)
