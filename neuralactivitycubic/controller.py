@@ -24,7 +24,6 @@ class App:
 
 
     def _setup_interaction_between_model_and_view(self) -> None:
-        # self._bind_buttons_of_view_to_functions_of_model()
         self.model.setup_connection_to_update_infos_in_view(self.view.update_infos)
         self.model.setup_connection_to_display_results(self.view.main_screen.show_output_screen, self.view.main_screen.output, self.pixel_conversion)
 
@@ -40,22 +39,21 @@ class App:
 
 
     def _load_data_button_clicked(self, change) -> None:
-        user_settings = self.view.export_user_settings()
-        self.model = Model(user_settings)
+        self.model = Model(self.view.export_user_settings())
         self._setup_interaction_between_model_and_view()
         self.model.create_analysis_jobs()
         if len(self.model.analysis_job_queue) < 1:
             self.model.add_info_to_logs('Failed to create any analysis job(s). Please inspect logs for more details!', True)
             self.view.user_info_panel.progress_bar.bar_style = 'danger'
         else:
-            self._display_preview_of_representative_job(window_size = user_settings.grid_size)
+            self._display_preview_of_representative_job(self.view.grid_size)
             self.model.add_info_to_logs(f'Data import completed! {len(self.model.analysis_job_queue)} job(s) in queue.', True, 100.0)
-            self.view.enable_analysis()
+            self.view.enable_analysis(True)
 
 
-    def _display_preview_of_representative_job(self, window_size: int) -> None:
+    def _display_preview_of_representative_job(self, grid_size: int) -> None:
         representative_job = self.model.analysis_job_queue[0]
-        representative_job.load_data_into_memory(window_size)
+        representative_job.load_data_into_memory(grid_size)
         self.view.adjust_widgets_to_loaded_data(total_frames = representative_job.recording.zstack.shape[0])
         self.view.main_screen.show_output_screen()
         with self.view.main_screen.output:
@@ -72,18 +70,16 @@ class App:
 
     def _run_button_clicked(self, change) -> None:
         self.view.enable_analysis(False)
-        user_settings = self.view.export_user_settings()
-        self.model.config = user_settings
+        self.model.config = self.view.export_user_settings()
         self.model.run_analysis()
         self.model.add_info_to_logs(f'Processing of all jobs completed! Feel free to load more data & continue analyzing!', True, 100.0)
         self.view.enable_analysis(True)
 
 
     def _preview_window_size_button_clicked(self, change) -> None:
-        grid_size = self.view.export_user_settings().grid_size
         self.view.main_screen.show_output_screen()
         with self.view.main_screen.output:
-            preview_fig, preview_ax = self.model.preview_window_size(grid_size)
+            preview_fig, preview_ax = self.model.preview_window_size(self.view.grid_size)
             preview_fig.set_figheight(400 * self.pixel_conversion)
             preview_fig.tight_layout()
             plt.show(preview_fig)
