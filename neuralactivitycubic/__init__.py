@@ -1,4 +1,4 @@
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 
 from neuralactivitycubic.controller import open_gui
 from neuralactivitycubic.api import run_analysis
