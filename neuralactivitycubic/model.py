@@ -265,11 +265,7 @@ class Model:
         self.add_info_to_logs('Starting analysis...', True)
         for job_idx, analysis_job in enumerate(self.analysis_job_queue):
             self.add_info_to_logs(f'Starting to process analysis job with index #{job_idx}.')
-            self.add_info_to_logs(f'predef results dir: {analysis_job.results_dir}')
-            self.add_info_to_logs(f'Results dir: {analysis_job.results_dir_path}')
             analysis_job.run_analysis(self.config)
-            self.add_info_to_logs(f'postdef results dir: {analysis_job._create_results_dir()}')
-            self.add_info_to_logs(f'Results dir: {analysis_job.results_dir_path}')
             self.add_info_to_logs(f'Analysis successfully completed. Continue with creation of results.. ')
             analysis_job.create_results(self.config)
             self.add_info_to_logs(f'Results successfully created at: {analysis_job.results_dir_path}')
