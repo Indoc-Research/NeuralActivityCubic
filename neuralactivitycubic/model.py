@@ -103,8 +103,8 @@ class Model:
         return all_subdir_paths_that_contain_a_supported_recording_file
 
 
-    def _create_analysis_jobs_for_single_rec(self, recording_path: Path = None) -> None:
-        if not recording_path:
+    def _create_analysis_jobs_for_single_rec(self, recording_path: Path = None, result_path: Path = None) -> None:
+        if recording_path is None:
             if self.config.recording_filepath:
                 recording_path = self.config.recording_filepath
             else:
@@ -116,7 +116,8 @@ class Model:
         if self.config.roi_filepath:
             roi_filepath = self.config.roi_filepath
         else:
-            roi_filepath = recording_path
+            roi_filepath = recording_loader.filepath.parent
+
         if self.config.roi_mode == 'file':
             roi_loaders = self._get_all_roi_loaders(roi_filepath)
         else:
@@ -125,24 +126,34 @@ class Model:
         if self.config.focus_area_filepath:
             focus_area_filepath = self.config.focus_area_filepath
         else:
-            focus_area_filepath = recording_path
+            focus_area_filepath = recording_loader.filepath.parent
+
+        if result_path is None:
+            if self.config.results_filepath:
+                result_path = self.config.results_filepath
+            else:
+                result_path = recording_loader.filepath.parent
+
         if self.config.focus_area_enabled:
             focus_area_dir_path = self._get_focus_area_dir_path(focus_area_filepath)
             if focus_area_dir_path is None:
-                analysis_job = self._create_single_analysis_job(recording_loader, roi_loaders)
+                analysis_job = self._create_single_analysis_job(recording_loader, roi_loaders, result_filepath=result_path)
                 self.analysis_job_queue.append(analysis_job)
                 self.add_info_to_logs(f'Successfully created a single job for {focus_area_filepath} at queue position: #{len(self.analysis_job_queue)}.', True)
             else:
                 all_focus_area_loaders = self._get_all_roi_loaders(focus_area_dir_path)
                 assert len(all_focus_area_loaders) > 0, f'Focus Area analysis enabled, but no focus area ROIs could be found. Please revisit your source data and retry!'
                 for idx, focus_area_loader in enumerate(all_focus_area_loaders):
-                    analysis_job_with_focus_area = self._create_single_analysis_job(recording_loader, roi_loaders, focus_area_loader)
+                    if result_path is None:
+                        if self.config.results_filepath:
+                            result_path = self.config.results_filepath / focus_area_loader.filepath.stem
+                    analysis_job_with_focus_area = self._create_single_analysis_job(recording_loader, roi_loaders, focus_area_loader, result_filepath=result_path)
                     self.analysis_job_queue.append(analysis_job_with_focus_area)
                     job_creation_message = (f'Successfully created {idx + 1} out of {len(all_focus_area_loaders)} job(s) for {recording_path} '
                                             f'at queue position: #{len(self.analysis_job_queue)}.')
                     self.add_info_to_logs(job_creation_message, True)
         else:
-            analysis_job = self._create_single_analysis_job(recording_loader, roi_loaders)
+            analysis_job = self._create_single_analysis_job(recording_loader, roi_loaders, result_filepath=result_path)
             self.analysis_job_queue.append(analysis_job)
             self.add_info_to_logs(f'Successfully created a single job for {recording_path} at queue position: #{len(self.analysis_job_queue)}.', True)
         self.add_info_to_logs(f'Finished Job creation(s) for {recording_path}!', True)
@@ -170,7 +181,8 @@ class Model:
         return recording_loader
 
 
-    def _get_all_roi_loaders(self, data_source_path: Path) -> list[ROILoader]:
+    @staticmethod
+    def _get_all_roi_loaders(data_source_path: Path) -> list[ROILoader]:
         assert data_source_path.is_dir(), f'You must provide a directory as source data when using ROI mode or enabling Focus Areas. Please revisit your input data and retry.'
         roi_loader_factory = ROILoaderFactory()
         all_filepaths_with_supported_filetype_extensions = get_filepaths_with_supported_extension_in_dirpath(data_source_path, roi_loader_factory.all_supported_extensions)
@@ -204,13 +216,13 @@ class Model:
         return focus_area_dir_path
 
 
-    def _create_single_analysis_job(self, recording_loader: RecordingLoader, roi_loaders: list[ROILoader] | None, focus_area_loader: ROILoader | None = None) -> AnalysisJob:
+    def _create_single_analysis_job(self, recording_loader: RecordingLoader, roi_loaders: list[ROILoader] | None, focus_area_loader: ROILoader = None, result_filepath: Path = None) -> AnalysisJob:
         data_loaders = {'recording': recording_loader}
         if roi_loaders is not None:
             data_loaders['rois'] = roi_loaders
         if focus_area_loader is not None:
             data_loaders['focus_area'] = focus_area_loader
-        return AnalysisJob(self.num_processes, data_loaders, self.config.results_filepath)
+        return AnalysisJob(self.num_processes, data_loaders, result_filepath)
 
 
     def _display_configs(self) -> None:
@@ -239,7 +251,11 @@ class Model:
             all_subdir_paths_with_rec_file = self._get_all_subdir_paths_with_rec_file(self.config.data_source_path)
             all_subdir_paths_with_rec_file.sort()
             for idx, subdir_path in enumerate(all_subdir_paths_with_rec_file):
-                self._create_analysis_jobs_for_single_rec(subdir_path)
+                if self.config.results_filepath:
+                    result_path = self.config.results_filepath / subdir_path.name
+                else:
+                    result_path = subdir_path
+                self._create_analysis_jobs_for_single_rec(subdir_path, result_path)
         else:
             self._create_analysis_jobs_for_single_rec()
         self.add_info_to_logs('All job creation(s) completed.', True, 100.0)
@@ -249,7 +265,11 @@ class Model:
         self.add_info_to_logs('Starting analysis...', True)
         for job_idx, analysis_job in enumerate(self.analysis_job_queue):
             self.add_info_to_logs(f'Starting to process analysis job with index #{job_idx}.')
+            self.add_info_to_logs(f'predef results dir: {analysis_job.results_dir}')
+            self.add_info_to_logs(f'Results dir: {analysis_job.results_dir_path}')
             analysis_job.run_analysis(self.config)
+            self.add_info_to_logs(f'postdef results dir: {analysis_job._create_results_dir()}')
+            self.add_info_to_logs(f'Results dir: {analysis_job.results_dir_path}')
             self.add_info_to_logs(f'Analysis successfully completed. Continue with creation of results.. ')
             analysis_job.create_results(self.config)
             self.add_info_to_logs(f'Results successfully created at: {analysis_job.results_dir_path}')
