@@ -73,7 +73,6 @@ class App:
         self.model.config = self.view.export_user_settings()
         if self.view.analysis_settings_panel.settings.export_to_nwb:
             self.model.nwb_metadata = self.view.export_nwb_metadata()
-        print(self.model.nwb_metadata)
         self.model.run_analysis()
         self.model.add_info_to_logs(f'Processing of all jobs completed! Feel free to load more data & continue analyzing!', True, 100.0)
         self.view.enable_analysis(True)

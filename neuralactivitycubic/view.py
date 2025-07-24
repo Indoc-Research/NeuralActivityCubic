@@ -365,7 +365,7 @@ class NWBMetadataPanel:
             ],
             layout = w.Layout(
                 align_items = 'center',
-                border_bottom = '1px solid'
+                border_bottom = '1px solid',
             )
         )
         widget.add_class('box-info-panel')
@@ -851,7 +851,13 @@ class AnalysisSettingsPanel:
                         self.settings.save_single_trace_results,
                         self.settings.export_to_nwb
                     ], layout = w.Layout(width = '100%', align_items = 'flex-start'))
-            ], layout = w.Layout(width = '90%', align_items = 'flex-start', align_content = 'flex-start', justify_content = 'center'))
+            ], layout = w.Layout(
+                width = '90%',
+                align_items = 'flex-start',
+                align_content = 'flex-start',
+                justify_content = 'center'
+            )
+        )
 
         run_analysis_box = w.VBox(
             [self.run_analysis_button],
