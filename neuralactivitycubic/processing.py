@@ -158,7 +158,7 @@ class AnalysisJob:
         results_dir_path.mkdir(exist_ok=True, parents=True)
         return results_dir_path
 
-
+    
     def run_analysis(self, config: Config) -> None:
         self.analysis_start_datetime = datetime.now(tzlocal())
         self.load_data_into_memory(config.grid_size)

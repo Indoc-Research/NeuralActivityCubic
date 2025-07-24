@@ -133,7 +133,6 @@ class UserInfoPanel:
 
 # %% ../nbs/01_view.ipynb 7
 class NWBMetadataPanel:
-
     @dataclass
     class NWBMetadata:
         experiment_description: w.Text = None
@@ -180,7 +179,7 @@ class NWBMetadataPanel:
         self.metadata.description = w.Textarea()
         self.metadata.location = w.Text()
         self.metadata.calcium_indicator = w.Text()
-        self.metadata.excitation_wavelength = w.BoundedFloatText()
+        self.metadata.excitation_wavelength = w.BoundedFloatText(min=0.0, max=1400.0)
         self.metadata.emission_wavelength = w.BoundedFloatText()
         self.metadata.imaging_description = w.Textarea()
         self.general_section = w.VBox(
@@ -192,7 +191,7 @@ class NWBMetadataPanel:
                     [
                         w.Label(
                             'Experiment description: ',
-                            layout=w.Layout(width = '150px')
+                            layout=w.Layout(width='150px')
                         ),
                         self.metadata.experiment_description,
                     ],
@@ -201,7 +200,7 @@ class NWBMetadataPanel:
                     [
                         w.Label(
                             'Experimenter: ',
-                            layout=w.Layout(width = '150px')
+                            layout=w.Layout(width='150px')
                         ),
                         self.metadata.experimenter,
                     ]
@@ -210,7 +209,7 @@ class NWBMetadataPanel:
                     [
                         w.Label(
                             'Lab: ',
-                            layout=w.Layout(width = '150px')
+                            layout=w.Layout(width='150px')
                         ),
                         self.metadata.lab,
                     ]
@@ -219,7 +218,7 @@ class NWBMetadataPanel:
                     [
                         w.Label(
                             'Institution: ',
-                            layout=w.Layout(width = '150px')
+                            layout=w.Layout(width='150px')
                         ),
                         self.metadata.institution,
                     ]
@@ -228,16 +227,16 @@ class NWBMetadataPanel:
                     [
                         w.Label(
                             'Additional notes: ',
-                            layout=w.Layout(width = '150px')
+                            layout=w.Layout(width='150px')
                         ),
                         self.metadata.notes,
                     ]
                 ),
             ],
-            layout = w.Layout(
-                justify_content = 'flex-start',
-                align_items = 'flex-start',
-                width = '100%'
+            layout=w.Layout(
+                justify_content='flex-start',
+                align_items='flex-start',
+                width='100%'
             )
         )
         self.microscope_section = w.VBox(
@@ -249,7 +248,7 @@ class NWBMetadataPanel:
                     [
                         w.Label(
                             'Model number: ',
-                            layout=w.Layout(width = '150px')
+                            layout=w.Layout(width='150px')
                         ),
                         self.metadata.model_number,
                     ],
@@ -258,7 +257,7 @@ class NWBMetadataPanel:
                     [
                         w.Label(
                             'Manufacturer: ',
-                            layout=w.Layout(width = '150px')
+                            layout=w.Layout(width='150px')
                         ),
                         self.metadata.manufacturer,
                     ]
@@ -267,16 +266,16 @@ class NWBMetadataPanel:
                     [
                         w.Label(
                             'Description: ',
-                            layout=w.Layout(width = '150px')
+                            layout=w.Layout(width='150px')
                         ),
                         self.metadata.description,
                     ]
                 ),
             ],
-            layout = w.Layout(
-                justify_content = 'flex-start',
-                align_items = 'flex-start',
-                width = '100%'
+            layout=w.Layout(
+                justify_content='flex-start',
+                align_items='flex-start',
+                width='100%'
             )
         )
         self.imaging_section = w.VBox(
@@ -288,7 +287,7 @@ class NWBMetadataPanel:
                     [
                         w.Label(
                             'Location: ',
-                            layout=w.Layout(width = '150px')
+                            layout=w.Layout(width='150px')
                         ),
                         self.metadata.location,
                     ],
@@ -297,7 +296,7 @@ class NWBMetadataPanel:
                     [
                         w.Label(
                             'Calcium indicator: ',
-                            layout=w.Layout(width = '150px')
+                            layout=w.Layout(width='150px')
                         ),
                         self.metadata.calcium_indicator,
                     ]
@@ -306,7 +305,7 @@ class NWBMetadataPanel:
                     [
                         w.Label(
                             'Excitation wavelength: ',
-                            layout=w.Layout(width = '150px')
+                            layout=w.Layout(width='150px')
                         ),
                         self.metadata.excitation_wavelength,
                     ]
@@ -315,7 +314,7 @@ class NWBMetadataPanel:
                     [
                         w.Label(
                             'Emission wavelength: ',
-                            layout=w.Layout(width = '150px')
+                            layout=w.Layout(width='150px')
                         ),
                         self.metadata.emission_wavelength,
                     ]
@@ -324,16 +323,16 @@ class NWBMetadataPanel:
                     [
                         w.Label(
                             'Additional notes: ',
-                            layout=w.Layout(width = '150px')
+                            layout=w.Layout(width='150px')
                         ),
                         self.metadata.imaging_description,
                     ]
                 ),
             ],
-            layout = w.Layout(
-                justify_content = 'flex-start',
-                align_items = 'flex-start',
-                width = '100%'
+            layout=w.Layout(
+                justify_content='flex-start',
+                align_items='flex-start',
+                width='100%'
             )
         )
 
@@ -348,24 +347,24 @@ class NWBMetadataPanel:
             layout=w.Layout(width='100%')
         )
         nwb_metadata_accordion = w.Accordion(
-            children = [metadata_sections],
-            titles = ('NWB Metadata', ),
-            selected_index = None,
-            layout = w.Layout(width = '95%')
+            children=[metadata_sections],
+            titles=('NWB Metadata',),
+            selected_index=None,
+            layout=w.Layout(width='95%')
         )
         info = w.HTML(
             value="<p style='font-size:16px; font-weight:bold; text-align:center;'>NWB Metadata</p>",
-            layout = w.Layout(width = '95%')
+            layout=w.Layout(width='95%')
         )
         widget = w.VBox(
             [
                 info,
                 nwb_metadata_accordion,
-                w.HTML(value = '', layout = w.Layout(height = '15px'))
+                w.HTML(value='', layout=w.Layout(height='15px'))
             ],
-            layout = w.Layout(
-                align_items = 'center',
-                border_bottom = '1px solid',
+            layout=w.Layout(
+                align_items='center',
+                border_bottom='1px solid',
             )
         )
         widget.add_class('box-info-panel')
