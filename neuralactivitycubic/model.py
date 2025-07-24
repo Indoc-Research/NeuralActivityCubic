@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 from matplotlib.pyplot import show
 import ipywidgets as w
 import multiprocessing
+import gc
 
 # %% ../nbs/02_model.ipynb 4
 from typing import Callable
@@ -52,6 +53,7 @@ class Model:
     def __init__(self, config: Config | str) -> None:
         self.num_processes = multiprocessing.cpu_count()
         self.analysis_job_queue = []
+        self.result_directories = []
         self.logs = Logger()
         if isinstance(config, str):
             config = Config(data_source_path=config)
@@ -82,12 +84,9 @@ class Model:
 
 
     def _ensure_data_from_previous_jobs_was_removed(self) -> None:
-        # if we are deleting all data anyway, why bother checking?
-        if len(self.analysis_job_queue) > 0:
-            self.add_info_to_logs('Loading of new source data. All previously created jobs & logs will be deleted.', True)
-            self.analysis_job_queue = []
-            self.logs.clear_logs()
-            # self._check_if_gui_setup_is_completed()
+        self.add_info_to_logs('Loading of new source data. All previously created jobs & logs will be deleted.', True)
+        self.analysis_job_queue = []
+        self.logs.clear_logs()
 
     @staticmethod
     def _get_all_subdir_paths_with_rec_file(top_level_dir_path: Path) -> list[Path]:
@@ -263,7 +262,8 @@ class Model:
     def run_analysis(self) -> None:
         self._display_configs()
         self.add_info_to_logs('Starting analysis...', True)
-        for job_idx, analysis_job in enumerate(self.analysis_job_queue):
+        for job_idx in range(len(self.analysis_job_queue)):
+            analysis_job = self.analysis_job_queue.pop(0)
             self.add_info_to_logs(f'Starting to process analysis job with index #{job_idx}.')
             analysis_job.run_analysis(self.config)
             self.add_info_to_logs(f'Analysis successfully completed. Continue with creation of results.. ')
@@ -277,10 +277,11 @@ class Model:
                     activity_overview_fig.tight_layout()
                     show(activity_overview_fig)
             self._save_user_settings_as_json(analysis_job)
+            self.result_directories.append(analysis_job.results_dir_path)
+            self.add_info_to_logs('Updating all log files to contain all logs as final step. All valid logs files will end with this message.')
             self.logs.save_current_logs(analysis_job.results_dir_path)
-        self.add_info_to_logs('Updating all log files to contain all logs as final step. All valid logs files will end with this message.')
-        for job_idx, analysis_job in enumerate(self.analysis_job_queue):
-            self.logs.save_current_logs(analysis_job.results_dir_path)
+        else:
+            gc.collect()
 
 
     def preview_window_size(self, grid_size) -> tuple[Figure, Axes]:

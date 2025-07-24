@@ -56,7 +56,6 @@ class AnalysisJob:
                 ) -> None:
         self.number_of_parallel_processes = number_of_parallel_processes
         self.recording_loader = data_loaders['recording']
-        self.recording = self.recording_loader.load_and_parse_file_content()
         self.results_dir = results_dir
         self.results_dir_path: Path | None = None
         self.analysis_start_datetime: datetime | None = None
@@ -82,6 +81,7 @@ class AnalysisJob:
 
     
     def load_data_into_memory(self, window_size: int) -> None:
+        self.recording = self.recording_loader.load_and_parse_file_content()
         if not hasattr(self, 'all_analysis_rois'):
             self.all_analysis_rois = self._create_all_analysis_rois(window_size)
         elif self.rois_source == 'grid':
