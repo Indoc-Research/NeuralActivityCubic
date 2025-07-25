@@ -56,9 +56,9 @@ class AnalysisJob:
                 ) -> None:
         self.number_of_parallel_processes = number_of_parallel_processes
         self.recording_loader = data_loaders['recording']
-        self.parent_dir_path = self.recording_loader.filepath.parent
         self.results_dir = results_dir
         self.results_dir_path: Path | None = None
+        self.analysis_start_datetime: datetime | None = None
         if 'rois' in data_loaders.keys():
             self.rois_source = 'file'
             self.roi_loaders = data_loaders['rois']
@@ -81,8 +81,7 @@ class AnalysisJob:
 
     
     def load_data_into_memory(self, window_size: int) -> None:
-        if not hasattr(self, 'recording'):
-            self.recording = self.recording_loader.load_and_parse_file_content()
+        self.recording = self.recording_loader.load_and_parse_file_content()
         if not hasattr(self, 'all_analysis_rois'):
             self.all_analysis_rois = self._create_all_analysis_rois(window_size)
         elif self.rois_source == 'grid':
@@ -137,20 +136,35 @@ class AnalysisJob:
             label_id = str(idx + 1).zfill(zfill_factor)
             roi.add_label_id(label_id)
 
+    def _create_results_dir(self) -> Path:
+        """
+        Creates and returns the directory path where analysis results will be saved.
+
+        The directory name is constructed using the analysis start datetime, the recording filename, and optionally the focus area filename if focus area is enabled. If a custom results directory was provided during initialization, it is used instead. The method ensures the directory exists (creates it if necessary) and returns the Path object for the results directory.
+        """
+        prefix_with_datetime = self.analysis_start_datetime.strftime('%Y_%m_%d_%H-%M-%S_results_for')
+        recording_filename = self.recording.filepath.stem
+        if self.focus_area_enabled:
+            focus_area_filename = self.focus_area.filepath.stem
+            results_dir_name = f'{prefix_with_datetime}_{recording_filename}_with_{focus_area_filename}'
+        else:
+            results_dir_name = f'{prefix_with_datetime}_{recording_filename}'
+        if self.results_dir is not None:
+            results_dir_path = self.results_dir / results_dir_name
+        else:
+            results_dir_path = self.recording.filepath.parent / results_dir_name
+        results_dir_path.mkdir(exist_ok=True, parents=True)
+        return results_dir_path
+
     
     def run_analysis(self, config: Config) -> None:
-        self._set_analysis_start_datetime()
+        self.analysis_start_datetime = datetime.now(tzlocal())
         self.load_data_into_memory(config.grid_size)
         self.results_dir_path = self._create_results_dir()
         copy_of_all_analysis_rois = self.all_analysis_rois.copy()
         with multiprocessing.Pool(processes = self.number_of_parallel_processes) as pool:
             processed_analysis_rois = pool.starmap(process_analysis_rois, [(analysis_roi, config) for analysis_roi in copy_of_all_analysis_rois])
         self.all_analysis_rois = processed_analysis_rois
-
-
-    def _set_analysis_start_datetime(self) -> None:
-            users_local_timezone = datetime.now().astimezone().tzinfo
-            self.analysis_start_datetime = datetime.now(users_local_timezone) 
 
 
     def create_results(self, config: Config) -> None:
@@ -300,27 +314,6 @@ class AnalysisJob:
                 info['peaks_auc'] = [peak.area_under_curve for peak in analysis_roi.peaks.values()]
                 info['peaks_classification'] = [peak.peak_type for peak in analysis_roi.peaks.values()]
         return info
-    
-
-    def _create_results_dir(self) -> Path:
-        """
-        Creates and returns the directory path where analysis results will be saved.
-
-        The directory name is constructed using the analysis start datetime, the recording filename, and optionally the focus area filename if focus area is enabled. If a custom results directory was provided during initialization, it is used instead. The method ensures the directory exists (creates it if necessary) and returns the Path object for the results directory.
-        """
-        prefix_with_datetime = self.analysis_start_datetime.strftime('%Y_%m_%d_%H-%M-%S_results_for')
-        recording_filename_without_extension = self.recording.filepath.name.replace(self.recording.filepath.suffix, '')
-        if self.focus_area_enabled:
-            focus_area_filename_without_extension = self.focus_area.filepath.name.replace(self.focus_area.filepath.suffix, '')
-            results_dir_name = f'{prefix_with_datetime}_{recording_filename_without_extension}_with_{focus_area_filename_without_extension}'
-        else:
-            results_dir_name = f'{prefix_with_datetime}_{recording_filename_without_extension}'
-        if self.results_dir is not None:
-            results_dir_path = self.results_dir
-        else:
-            results_dir_path = self.parent_dir_path.joinpath(results_dir_name)
-        results_dir_path.mkdir(exist_ok=True, parents=True)
-        return results_dir_path
 
 
     def _create_variance_area_dataframe(self, filtered_rois: list[AnalysisROI]) -> pd.DataFrame:
