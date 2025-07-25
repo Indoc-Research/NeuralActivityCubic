@@ -58,6 +58,7 @@ class Model:
         if isinstance(config, str):
             config = Config(data_source_path=config)
         self.config = config
+        self.nwb_metadata = None
         self.gui_enabled = False
         self.callback_view_update_infos = None
         self.callback_view_show_output_screen = None
@@ -267,7 +268,7 @@ class Model:
             self.add_info_to_logs(f'Starting to process analysis job with index #{job_idx}.')
             analysis_job.run_analysis(self.config)
             self.add_info_to_logs(f'Analysis successfully completed. Continue with creation of results.. ')
-            analysis_job.create_results(self.config)
+            analysis_job.create_results(self.config, self.nwb_metadata)
             self.add_info_to_logs(f'Results successfully created at: {analysis_job.results_dir_path}')
             if self.gui_enabled:
                 self.callback_view_show_output_screen()
