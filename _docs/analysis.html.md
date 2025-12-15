@@ -6,7 +6,7 @@
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/analysis.py#L24"
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/analysis.py#L22"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### BaselineEstimatorFactory
@@ -18,27 +18,12 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/analysis.py#L40"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### Peak
-
->  Peak (frame_idx:int, intensity:float, amplitude:Optional[float]=None,
->            delta_f_over_f:Optional[float]=None,
->            has_neighboring_intersections:Optional[bool]=None, frame_idxs_of_ne
->            ighboring_intersections:Optional[Tuple[int,int]]=None,
->            area_under_curve:Optional[float]=None,
->            peak_type:Optional[str]=None)
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/analysis.py#L52"
+href="https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/analysis.py#L37"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### AnalysisROI
 
 >  AnalysisROI (roi:neuralactivitycubic.input.ROI,
->                   row_col_offset:Tuple[int,int], zstack:numpy.ndarray)
+>                   row_col_offset:tuple[int,int], zstack:numpy.ndarray)
 
 *Initialize self. See help(type(self)) for accurate signature.*

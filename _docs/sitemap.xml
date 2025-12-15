@@ -1,43 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://ddoll.github.io/NeuralActivityCubic/index.html</loc>
-    <lastmod>2025-05-12T08:06:26.520Z</lastmod>
+    <loc>https://ddoll.github.io/NeuralActivityCubic/installation.html</loc>
+    <lastmod>2025-12-15T13:42:43.041Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ddoll.github.io/NeuralActivityCubic/07_datamodels.html</loc>
+<<<<<<< HEAD
+    <lastmod>2025-12-15T14:10:06.401Z</lastmod>
   </url>
   <url>
     <loc>https://ddoll.github.io/NeuralActivityCubic/model.html</loc>
-    <lastmod>2025-05-13T13:57:28.072Z</lastmod>
+    <lastmod>2025-12-15T15:59:06.289Z</lastmod>
   </url>
   <url>
     <loc>https://ddoll.github.io/NeuralActivityCubic/using_the_gui.html</loc>
-    <lastmod>2025-05-12T08:06:26.403Z</lastmod>
+    <lastmod>2025-12-15T14:10:06.765Z</lastmod>
   </url>
   <url>
     <loc>https://ddoll.github.io/NeuralActivityCubic/results.html</loc>
-    <lastmod>2025-05-12T08:06:26.474Z</lastmod>
+    <lastmod>2025-12-15T14:10:05.869Z</lastmod>
+=======
+    <lastmod>2025-12-15T13:45:57.401Z</lastmod>
   </url>
   <url>
-    <loc>https://ddoll.github.io/NeuralActivityCubic/view.html</loc>
-    <lastmod>2025-05-13T13:57:28.060Z</lastmod>
+    <loc>https://ddoll.github.io/NeuralActivityCubic/model.html</loc>
+    <lastmod>2025-12-15T13:42:43.121Z</lastmod>
   </url>
   <url>
-    <loc>https://ddoll.github.io/NeuralActivityCubic/processing.html</loc>
-    <lastmod>2025-05-12T08:06:26.509Z</lastmod>
+    <loc>https://ddoll.github.io/NeuralActivityCubic/using_the_gui.html</loc>
+    <lastmod>2025-12-15T13:42:43.045Z</lastmod>
   </url>
   <url>
-    <loc>https://ddoll.github.io/NeuralActivityCubic/installation.html</loc>
-    <lastmod>2025-05-12T08:06:26.386Z</lastmod>
+    <loc>https://ddoll.github.io/NeuralActivityCubic/results.html</loc>
+    <lastmod>2025-12-15T13:42:43.121Z</lastmod>
+>>>>>>> 0f1e066 (literate docs model v1)
   </url>
   <url>
-    <loc>https://ddoll.github.io/NeuralActivityCubic/controller.html</loc>
-    <lastmod>2025-05-12T08:06:26.487Z</lastmod>
-  </url>
-  <url>
-    <loc>https://ddoll.github.io/NeuralActivityCubic/analysis.html</loc>
-    <lastmod>2025-05-12T08:06:26.423Z</lastmod>
+    <loc>https://ddoll.github.io/NeuralActivityCubic/index.html</loc>
+    <lastmod>2025-12-15T13:42:43.041Z</lastmod>
   </url>
   <url>
     <loc>https://ddoll.github.io/NeuralActivityCubic/input.html</loc>
-    <lastmod>2025-05-12T08:06:26.583Z</lastmod>
+<<<<<<< HEAD
+    <lastmod>2025-12-15T14:10:06.401Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ddoll.github.io/NeuralActivityCubic/controller.html</loc>
+    <lastmod>2025-12-15T15:13:39.925Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ddoll.github.io/NeuralActivityCubic/08_api.html</loc>
+    <lastmod>2025-12-15T14:10:06.401Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ddoll.github.io/NeuralActivityCubic/analysis.html</loc>
+    <lastmod>2025-12-15T14:10:05.869Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ddoll.github.io/NeuralActivityCubic/processing.html</loc>
+    <lastmod>2025-12-15T14:10:05.869Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ddoll.github.io/NeuralActivityCubic/view.html</loc>
+    <lastmod>2025-12-15T14:10:05.869Z</lastmod>
+=======
+    <lastmod>2025-12-15T13:42:43.105Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ddoll.github.io/NeuralActivityCubic/controller.html</loc>
+    <lastmod>2025-12-15T13:42:43.085Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ddoll.github.io/NeuralActivityCubic/08_api.html</loc>
+    <lastmod>2025-12-15T13:42:43.077Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ddoll.github.io/NeuralActivityCubic/analysis.html</loc>
+    <lastmod>2025-12-15T13:42:43.089Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ddoll.github.io/NeuralActivityCubic/processing.html</loc>
+    <lastmod>2025-12-15T13:42:43.157Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ddoll.github.io/NeuralActivityCubic/view.html</loc>
+    <lastmod>2025-12-15T13:42:43.177Z</lastmod>
+>>>>>>> 0f1e066 (literate docs model v1)
   </url>
 </urlset>

@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.39">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Using NA³ via the GUI – neuralactivitycubic</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-cee5a6e0a1092ddbcbc2ace3d9ac7e54.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-contrib/videojs/video.min.js"></script>
+<link href="site_libs/quarto-contrib/videojs/video-js.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="Using NA³ via the GUI – neuralactivitycubic">
+<meta property="og:description" content="Computation of local and signal-close-to-noise calcium activity">
+<meta property="og:image" content="https://ddoll.github.io/NeuralActivityCubic/data:image/png;base64,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">
+<meta property="og:site_name" content="neuralactivitycubic">
+<meta name="twitter:title" content="Using NA³ via the GUI – neuralactivitycubic">
+<meta name="twitter:description" content="Computation of local and signal-close-to-noise calcium activity">
+<meta name="twitter:image" content="https://ddoll.github.io/NeuralActivityCubic/data:image/png;base64,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">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">neuralactivitycubic</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./installation.html">User Guides</a></li><li class="breadcrumb-item"><a href="./using_the_gui.html">Using NA³ via the GUI</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome to NeuralActivityCubic</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">User Guides</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./using_the_gui.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Using NA³ via the GUI</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">API</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./controller.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">controller</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./view.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">view</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./model.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./input.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">input</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./processing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">processing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./results.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">results</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#launching-the-gui" id="toc-launching-the-gui" class="nav-link active" data-scroll-target="#launching-the-gui">Launching the GUI</a></li>
+  <li><a href="#quick-walkthrough" id="toc-quick-walkthrough" class="nav-link" data-scroll-target="#quick-walkthrough">Quick Walkthrough</a></li>
+  <li><a href="#general-settings" id="toc-general-settings" class="nav-link" data-scroll-target="#general-settings">General Settings</a>
+  <ul class="collapse">
+  <li><a href="#roi-modes" id="toc-roi-modes" class="nav-link" data-scroll-target="#roi-modes">ROI modes</a></li>
+  <li><a href="#batch-mode" id="toc-batch-mode" class="nav-link" data-scroll-target="#batch-mode">Batch mode</a></li>
+  <li><a href="#focus-areas" id="toc-focus-areas" class="nav-link" data-scroll-target="#focus-areas">Focus areas</a></li>
+  <li><a href="#source-data-structure" id="toc-source-data-structure" class="nav-link" data-scroll-target="#source-data-structure">Source data structure</a></li>
+  </ul></li>
+  <li><a href="#analysis-settings" id="toc-analysis-settings" class="nav-link" data-scroll-target="#analysis-settings">Analysis Settings</a>
+  <ul class="collapse">
+  <li><a href="#grid-size" id="toc-grid-size" class="nav-link" data-scroll-target="#grid-size">Grid Size</a></li>
+  <li><a href="#signal-to-noise-ratio-snr" id="toc-signal-to-noise-ratio-snr" class="nav-link" data-scroll-target="#signal-to-noise-ratio-snr">Signal-to-Noise Ratio (SNR)</a></li>
+  <li><a href="#noise-window-size-nws" id="toc-noise-window-size-nws" class="nav-link" data-scroll-target="#noise-window-size-nws">Noise Window Size (NWS)</a></li>
+  <li><a href="#signal-average-threshold-sat" id="toc-signal-average-threshold-sat" class="nav-link" data-scroll-target="#signal-average-threshold-sat">Signal Average Threshold (SAT)</a></li>
+  <li><a href="#minimal-activity-counts-mac" id="toc-minimal-activity-counts-mac" class="nav-link" data-scroll-target="#minimal-activity-counts-mac">Minimal Activity Counts (MAC)</a></li>
+  <li><a href="#baseline-estimation-method" id="toc-baseline-estimation-method" class="nav-link" data-scroll-target="#baseline-estimation-method">Baseline Estimation Method</a></li>
+  </ul></li>
+  <li><a href="#optional-settings" id="toc-optional-settings" class="nav-link" data-scroll-target="#optional-settings">Optional settings</a>
+  <ul class="collapse">
+  <li><a href="#include-variance" id="toc-include-variance" class="nav-link" data-scroll-target="#include-variance">Include Variance</a></li>
+  <li><a href="#analyze-interval" id="toc-analyze-interval" class="nav-link" data-scroll-target="#analyze-interval">Analyze Interval</a></li>
+  <li><a href="#configure-octaves" id="toc-configure-octaves" class="nav-link" data-scroll-target="#configure-octaves">Configure Octaves</a></li>
+  </ul></li>
+  <li><a href="#result-settings" id="toc-result-settings" class="nav-link" data-scroll-target="#result-settings">Result settings</a>
+  <ul class="collapse">
+  <li><a href="#save-overview-plot" id="toc-save-overview-plot" class="nav-link" data-scroll-target="#save-overview-plot">Save Overview Plot</a></li>
+  <li><a href="#save-detailed-results" id="toc-save-detailed-results" class="nav-link" data-scroll-target="#save-detailed-results">Save Detailed Results</a></li>
+  </ul></li>
+  <li><a href="#generated-results" id="toc-generated-results" class="nav-link" data-scroll-target="#generated-results">Generated Results</a>
+  <ul class="collapse">
+  <li><a href="#logs-user-settings" id="toc-logs-user-settings" class="nav-link" data-scroll-target="#logs-user-settings">Logs &amp; User Settings</a></li>
+  <li><a href="#activity-overview" id="toc-activity-overview" class="nav-link" data-scroll-target="#activity-overview">Activity Overview</a></li>
+  <li><a href="#activity-traces-with-identified-events" id="toc-activity-traces-with-identified-events" class="nav-link" data-scroll-target="#activity-traces-with-identified-events">Activity Traces with Identified Events</a></li>
+  <li><a href="#csv-encoded-results" id="toc-csv-encoded-results" class="nav-link" data-scroll-target="#csv-encoded-results">CSV-encoded Results</a></li>
+  </ul></li>
+  <li><a href="#wed-love-to-hear-your-feedback" id="toc-wed-love-to-hear-your-feedback" class="nav-link" data-scroll-target="#wed-love-to-hear-your-feedback">We´d love to hear your Feedback:</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/ddoll/NeuralActivityCubic/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="using_the_gui.html.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./installation.html">User Guides</a></li><li class="breadcrumb-item"><a href="./using_the_gui.html">Using NA³ via the GUI</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Using NA³ via the GUI</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We´re still putting a few finishing touches onto the new implementation of NA³, so please be aware that this version remains under active development and should not yet be considered as a stable release.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We´re currently working on a paper describing our work in more details - make sure you stay tuned and regularly check these docs for updates!</p>
+</div>
+</div>
+<section id="launching-the-gui" class="level2">
+<h2 class="anchored" data-anchor-id="launching-the-gui">Launching the GUI</h2>
+<p>After you successfully completed the installation of NA³ (e.g.&nbsp;by following our <a href="https://indoc-research.github.io/NeuralActivityCubic/installation.html">Installation Guide</a>), please open a JupyterNotebook to launch the GUI of NA³.</p>
+<p>To do this, open the Anaconda Prompt terminal (or the terminal of your choice) and make sure the virtual environment in which you installed NA³ is active. If you followed our installation guide, you should see that the input line starts with <code>(na3)</code>. If this is not the case, you can always activate it by running the following command:</p>
+<div id="6c65cd6a-d751-43a7-bd43-d1bc0c09d95c" class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>conda activate na3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>With the virtual environment in which you installed NA³ activated, please execute the following command in the terminal:</p>
+<div id="1f2c5c34-d9f8-4eee-8cd2-3a28d941888a" class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>jupyter<span class="op">-</span>lab</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next, open a new JupyterNotebook by clicking on the “Python 3 (ipykernel)” button in the <em>Notebook</em> section. In this JupyterNotebook, paste the following code in a cell:</p>
+<div id="47770492-2cd8-4335-b660-0d2ff28b09d0" class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> neuralactivitycubic <span class="im">as</span> na3</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>na3.open_gui()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then, as a final step, execute the cell, for instance by clicking on the little play icon on top while the cell is selected and the GUI of NA³ will open in the Notebook:</p>
+<div class="quarto-video"><video id="video_shortcode_videojs_video1" class="video-js vjs-default-skin vjs-fluid" controls="" preload="auto" data-setup="{}" title=""><source src="./media/launch_na3_gui.mp4"></video></div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If you´re working on a smaller screen, e.g.&nbsp;if you´re using a notebook, you can use the keyboard shortcut <code>Ctrl + b</code> to collapse the file explorer panel of JupyterLab to the left of the JupyterNotebook to give you some extra horizontal space. You can always use the same keyboard shortcut again to bring it back again if needed.</p>
+</div>
+</div>
+</section>
+<section id="quick-walkthrough" class="level2">
+<h2 class="anchored" data-anchor-id="quick-walkthrough">Quick Walkthrough</h2>
+<p>We´re all busy people and documentation can be quite exhaustive to read. Thus, here´s a quick walkthrough of NA³´s core functionalities that should allow you to get going with your own first tests:</p>
+<div class="quarto-video"><video id="video_shortcode_videojs_video2" class="video-js vjs-default-skin vjs-fluid" controls="" preload="auto" data-setup="{}" title=""><source src="./media/GUI_walkthrough.mp4"></video></div>
+<p>For more detailed descriptions of the individual features and settings, please see the sections below.</p>
+</section>
+<section id="general-settings" class="level2">
+<h2 class="anchored" data-anchor-id="general-settings">General Settings</h2>
+<p>The first section of NA³’s GUI prompts you to specify the general settings of your analysis before being able to continue. Most importantly, the selections will have an impact on the structure and organization of your source data that NA³ expects. Thus, please make sure you consult the Source Data Structure section below to check what structure is requested for your specific combination of settings.</p>
+<section id="roi-modes" class="level3">
+<h3 class="anchored" data-anchor-id="roi-modes">ROI modes</h3>
+<p>NA³´s core functionality is to compute the signal intensity over time for defined regions of interest (ROIs) within the whole image. You either have the chance to provide source data that defines these ROIs (“Predefined ROIs”), or you can use NA³´s “Grid” mode to automatically create congruent square ROIs over your recording with adjustable sizes (<code>Grid size</code> - see Analysis Settings) that will be analyzed.</p>
+<section id="grid-congruent-squares" class="level4">
+<h4 class="anchored" data-anchor-id="grid-congruent-squares">Grid (congruent squares)</h4>
+<p>The main advantage of NA³´s Grid mode is that it does not require any additional input other than your recording file to start the analysis with NA³. This can be especially useful in high-throughput settings, as it eliminates additional (potentially manual) preprocessing steps to generate ROIs.</p>
+</section>
+<section id="predefined-rois" class="level4">
+<h4 class="anchored" data-anchor-id="predefined-rois">Predefined ROIs</h4>
+<p>Sometimes you want to investigate specific features instead of the whole field of view, though. For this, NA³ provides the option for you to provide predefined ROIs along with your source data. Currently, only ROIs created with the <a href="https://imagej.net/">ImageJ tools</a> are supported.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The predefined ROI filetype that your are using is currently not supported? That needs to be changed! Please drop us your feature request via <a href="https://github.com/Indoc-Research/NeuralActivityCubic/issues/new">GitHub</a> and we´ll implement it for you asap.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="batch-mode" class="level3">
+<h3 class="anchored" data-anchor-id="batch-mode">Batch mode</h3>
+<p>The period of trouble shooting and of adjusting individual experimental parameters is finally over and you are ready to process all your data at once? That´s awesome, congrats! As an additional reward, NA³ offers you a batch mode feature: You select your entire dataset as source data and then only have to specify the settings once, hit “Run Analysis” and then leave for a well deserved end-of-day, while NA³ and your computer do the heavy lifting for you and process your entire dataset, recording after recording. Batch mode is compatible with all ROI-modes (Grid &amp; predefined ROIs), and can even be combined with Focus Areas.</p>
+</section>
+<section id="focus-areas" class="level3">
+<h3 class="anchored" data-anchor-id="focus-areas">Focus areas</h3>
+<p>This feature is for those of you who want - or may need - to squeeze out every single percent of processing speed. It allows you to provide another ROI (or even set of ROIs), to which NA³ will restrict it´s analysis, while ignoring any ROIs that reside outside of these Focus Areas. Since processing of each ROI takes ~ the same amount of time (it can be considered a linear operation), not processing 50 % of the ROIs will cut your processing time almost in half! We tried to illustrate this with the following example, in which we used NA³´s Grid mode with the Focus Area being disabled or enabled, saving ~2/3´s of processing time:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./media/focus_area_speed_boost.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption>Focus Area mode to max out performance.</figcaption>
+</figure>
+</div>
+</section>
+<section id="source-data-structure" class="level3">
+<h3 class="anchored" data-anchor-id="source-data-structure">Source data structure</h3>
+<p>NA³ expects your source data to be organized in a very specific manner for it to function correctly, and this structure looks slightly different, depending on which processing modes you want to use. We actually spent quite some time thinking about it, with the intention of creating a structure that does not result in conflicts when you start switching between modes when exploring what method fits your data best and requires you to constantly re-adjust your source data. But this will only become evident over time when people like you test and use NA³ - so we´d highly appreciate your feedback, especially if you should run into some issues with the required source data structures! Please open an issue on GitHub and we´re eager to fix it.</p>
+<p>To understand what source data structure is expected for your specific combination of processing modes, we provide you with representative examples for each. Please expand the following sections to browse through them. In all cases, the “Source Data Path” that you have to select when using NA³ is always the file/folder that is shown at the very top and is highlighted in magenta (e.g.&nbsp;the parent directory <code>your_dataset/</code> or <code>single_recording/</code>, or the recording file itself <code>your_recording_file.avi</code>):</p>
+<div class="callout callout-style-default callout-note callout-titled" title="ROI-mode: Grid">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ROI-mode: Grid
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="callout callout-style-simple callout-tip callout-titled" title="Focus Area: OFF">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Focus Area: OFF
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>This is as straightforward as it gets! All you need to do is select the recording file you´d like to analyze:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./media/Source_Data_Structure_Grid-ON_Focus-OFF_Batch-OFF_cropped.png" class="img-fluid figure-img" width="600"></p>
+<figcaption>Batch-mode: OFF | ROI-mode: Grid (congruent squares) | Focus Area: OFF</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-tip callout-titled" title="Focus Area: ON">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Focus Area: ON
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>This requires you to organize your data within a directory (called <code>single_recording</code> in this example) which contains your recording file and another subdirectory in which the Focus Area ROI(s) are located. This subdirectory must be called <code>focus_areas</code> for NA³ to be able to recognize it:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./media/Source_Data_Structure_Grid-ON_Focus-ON_Batch-OFF_cropped.png" class="img-fluid figure-img" width="600"></p>
+<figcaption>Batch-mode: OFF | ROI-mode: Grid (congruent squares) | Focus Area: ON</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="ROI-mode: predefined ROIs">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ROI-mode: predefined ROIs
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="callout callout-style-simple callout-tip callout-titled" title="Focus Area: OFF">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Focus Area: OFF
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Using predefined ROIs for analysis rather than the automatically generated Grid requires you to organize your source data within a directory (called <code>single_recording</code> in this example), which contains a single recording file (e.g.&nbsp;<code>your_recording.avi</code> in this example) and as many ROI files as you need. In this example, there is only a single <code>predefined_ROIs.zip</code> file, which was generated with ImageJ2 and which contains multiple ROIs. You could, however, also provide each ROI individually, e.g.&nbsp;as <code>ROI_a.roi</code>, <code>ROI_b.roi</code>, and so on.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./media/Source_Data_Structure_Grid-OFF_Focus-OFF_Batch-OFF_cropped.png" class="img-fluid figure-img" width="600"></p>
+<figcaption>Batch-mode: OFF | ROI-mode: predefined ROIs | Focus Area: OFF</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-tip callout-titled" title="Focus Area: ON">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Focus Area: ON
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Using predefined ROIs for analysis rather than the automatically generated Grid requires you to organize your source data within a directory (called <code>single_recording</code> in this example), which contains a single recording file (e.g.&nbsp;<code>your_recording.avi</code> in this example) and as many ROI files as you need. In this example, there is only a single <code>predefined_ROIs.zip</code> file, which was generated with ImageJ2 and which contains multiple ROIs. You could, however, also provide each ROI individually, e.g.&nbsp;as <code>ROI_a.roi</code>, <code>ROI_b.roi</code>, and so on.</p>
+<p>For NA³ to differentiate between predefined ROIs you´d like to analyze, and ROIs that are intended as Focus Areas, you have to provide the Focus Area ROIs within a subdirectory that must be named <code>focus_areas</code>. In this directory, you can provide as many ROI files as needed, just like for the predefined ROIs.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./media/Source_Data_Structure_Grid-OFF_Focus-ON_Batch-OFF_cropped.png" class="img-fluid figure-img" width="600"></p>
+<figcaption>Batch-mode: OFF | ROI-mode: predefined ROIs | Focus Area: ON</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled" title="Batch mode: ON">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Batch mode: ON
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>With activate batch mode, you essentially have to provide the same data structure as described above for each individual recording, and then organize all recordings as nested directory. You can find some representative examples again for all possible mode combinations with enabled batch mode below:</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="ROI-mode: Grid">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ROI-mode: Grid
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="callout callout-style-simple callout-tip no-icon callout-titled" title="Focus Area: OFF">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Focus Area: OFF
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>In this case, you only need to separate the respective recording files in individual subdirectories:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./media/Source_Data_Structure_Grid-ON_Focus-OFF_Batch-ON_cropped.png" class="img-fluid figure-img" width="600"></p>
+<figcaption>Batch-mode: ON | ROI-mode: Grid (congruent squares) | Focus Area: OFF</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-tip no-icon callout-titled" title="Focus Area: ON">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Focus Area: ON
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>With enabled Focus Area, you can specify focus area ROIs for each recording individually. For this, you have to add a subdirectory called <code>focus_areas</code> within the respective recording subdirectory. Please note, that you can add different focus area ROIs for each recording, and you can also opt to not provide any focus area ROIs for individual recordings - here, the entire field of view will then be analyzed.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./media/Source_Data_Structure_Grid-ON_Focus-ON_Batch-ON.png" class="img-fluid figure-img" width="600"></p>
+<figcaption>Batch-mode: ON | ROI-mode: Grid (congruent squares) | Focus Area: ON</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="ROI-mode: predefined ROIs">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ROI-mode: predefined ROIs
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="callout callout-style-simple callout-tip no-icon callout-titled" title="Focus Area: OFF">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Focus Area: OFF
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>If you´d like to use batch mode processing in combination of using predefined ROIs for analyses, please organize your individual recordings together with the corresponding ROI files into separate subdirectories. Please note, that you can (obviously) provide different ROI files for each recording, and that they also don´t have to be of the same filetype (e.g.&nbsp;<code>.zip</code> and <code>.roi</code> files in this example):</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./media/Source_Data_Structure_Grid-OFF_Focus-OFF_Batch-ON.png" class="img-fluid figure-img" width="600"></p>
+<figcaption>Batch-mode: ON | ROI-mode: predefined ROIs | Focus Area: OFF</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-tip no-icon callout-titled" title="Focus Area: ON">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Focus Area: ON
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>To use predefined ROIs with enabled Focus Area and batch mode, please provide your data organized as depicted below. Again, please note that any combination of ROI files - for both predefined ROIs and Focus Areas - is possible. For the Focus Areas, it´s also supported to not provide ROIs for individual recordings. You always have to provide some predefined ROIs, though, if you select this mode.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./media/Source_Data_Structure_Grid-OFF_Focus-ON_Batch-ON.png" class="img-fluid figure-img" width="600"></p>
+<figcaption>Batch-mode: ON | ROI-mode: predefined ROIs | Focus Area: ON</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="analysis-settings" class="level2">
+<h2 class="anchored" data-anchor-id="analysis-settings">Analysis Settings</h2>
+<p>NA³ provides you with several option to configure the analysis exactly as you need it for your specific dataset. There are a few settings, however, that are strictly required (grouped here in the “Analysis Settings”) and some that are optional (correpsondingly in the “Optional Settings”). For all required settings, there are default values specified that NA³ will use if you don´t change them. They certainly provide a generic good-fit, but you might want to tweak some of them as needed to accomodate for some special characteristics of your individual dataset!</p>
+<section id="grid-size" class="level3">
+<h3 class="anchored" data-anchor-id="grid-size">Grid Size</h3>
+<p>Allows you to specify the size in pixel of the congruent squares that will be generated and used as ROIs for analysis. For instance, selecting “10” means that NA³ will create 10 x 10 pixel squares as ROIs for analysis. You can use the <em>Preview</em> button next to the slider widget to create a preview of how the grid would look like on your specific data. Moreover, NA³ will highlight the area within the field of view within which the indicated squares will be analyzed by a cyan box. This can be of interest, as NA³ might crop your image - depending on the dimensions of your field of view and the selected grid size - to ensure equal sizes of the square ROIs across the entire field of view. Again, as an example, if your field of view is 432 x 567 px, and you specify a grid size of 10 x 10 px, NA³ will crop your field of view by 2 and 7 pixels, respectively - i.e.&nbsp;to 430 x 560 px - to be able to fill the entire (remaining) field of view with congruent squares.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Please note that this setting is only available in the ROI mode “Grid (congruent squares)” is selected.</p>
+</div>
+</div>
+</section>
+<section id="signal-to-noise-ratio-snr" class="level3">
+<h3 class="anchored" data-anchor-id="signal-to-noise-ratio-snr">Signal-to-Noise Ratio (SNR)</h3>
+<p>To identify peaks within the signal intensity trace (i.e.&nbsp;a timeseries of bit-values) for each analysis ROI, NA³ leverages the <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.find_peaks_cwt.html">find_peaks_cwt</a> function implemented by SciPy. The SNR value you specify in NA³ will be used as <code>min_snr</code> in when calling the <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.find_peaks_cwt.html">find_peaks_cwt</a> function.</p>
+</section>
+<section id="noise-window-size-nws" class="level3">
+<h3 class="anchored" data-anchor-id="noise-window-size-nws">Noise Window Size (NWS)</h3>
+<p>The SNR value you specify in NA³ will be used as <code>window_size</code> in when calling the <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.find_peaks_cwt.html">find_peaks_cwt</a> function.</p>
+</section>
+<section id="signal-average-threshold-sat" class="level3">
+<h3 class="anchored" data-anchor-id="signal-average-threshold-sat">Signal Average Threshold (SAT)</h3>
+<p>This value allows you to correct for global background noise. For each analysis ROI, NA³ computes the mean intensity value over the entire timeseries for the specified analysis interval. Only if this “average signal” matches or exceeds the defined SAT value, peak detection computations will be performed for this analysis ROI.</p>
+</section>
+<section id="minimal-activity-counts-mac" class="level3">
+<h3 class="anchored" data-anchor-id="minimal-activity-counts-mac">Minimal Activity Counts (MAC)</h3>
+<p>Allows to filter out analysis ROIs with too few peaks. If there were less peaks detected for a given analysis ROI than defined as MAC, this ROI will be excluded from the final results.</p>
+</section>
+<section id="baseline-estimation-method" class="level3">
+<h3 class="anchored" data-anchor-id="baseline-estimation-method">Baseline Estimation Method</h3>
+<p>NA³ computes area-under-curve for the identified peaks. In order to do so, a baseline for the signal is required. For this, NA³ leverages a selection of the baseline estimation methods offered by <a href="https://pybaselines.readthedocs.io/en/latest/">pybaselines</a>:</p>
+<ul>
+<li><p>Asymmetric Least Squares: Uses the <a href="https://pybaselines.readthedocs.io/en/latest/api/pybaselines/api/index.html#pybaselines.api.Baseline.asls">asls</a> method with it´s default values. See <a href="https://pybaselines.readthedocs.io/en/latest/algorithms/whittaker.html#asls-asymmetric-least-squares">here</a> for additional information and representative baseline computations using this method.</p></li>
+<li><p>Fully Automatic Baseline Correction: Uses the <a href="https://pybaselines.readthedocs.io/en/latest/api/pybaselines/api/index.html#pybaselines.api.Baseline.fabc">fabc</a> method with it´s default values. See <a href="https://pybaselines.readthedocs.io/en/latest/algorithms/classification.html#fabc-fully-automatic-baseline-correction">here</a> for additional information and representative baseline computations using this method.</p></li>
+<li><p>Peaked Signal’s Asymmetric Least Squares Algorithm: Uses the <a href="https://pybaselines.readthedocs.io/en/latest/api/pybaselines/api/index.html#pybaselines.api.Baseline.psalsa">asls</a> method with it´s default values. See <a href="https://pybaselines.readthedocs.io/en/latest/algorithms/whittaker.html#psalsa-peaked-signal-s-asymmetric-least-squares-algorithm">here</a> for additional information and representative baseline computations using this method.</p></li>
+<li><p>Standard Deviation Distribution: Uses the <a href="https://pybaselines.readthedocs.io/en/latest/api/pybaselines/api/index.html#pybaselines.api.Baseline.std_distribution">asls</a> method with it´s default values. See <a href="https://pybaselines.readthedocs.io/en/latest/algorithms/classification.html#std-distribution-standard-deviation-distribution">here</a> for additional information and representative baseline computations using this method.</p></li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled" title="Not the Baseline Estimation method you´re looking for?!">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Not the Baseline Estimation method you´re looking for?!
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>With the highly modular design of NA³, it is very straightforward for us to implement any of the baseline estimation methods provided by the <a href="https://pybaselines.readthedocs.io/en/latest/">pybaselines</a> Python package. So if there is another one that sparks your interest or is absolutely crucial for your specific analysis - don´t hesitate for even a second! Please drop us your request directly via <a href="https://github.com/Indoc-Research/NeuralActivityCubic/issues/new">GitHub</a> and we´ll be happy to implement it for you.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="optional-settings" class="level2">
+<h2 class="anchored" data-anchor-id="optional-settings">Optional settings</h2>
+<p>NA³ also provides you with some optional settings. These are - as their category indicates - not required for processing of your Calcium Imaging data, but enable you to make some very specifc adjustments. To enable them, click the check box and the corresponding settings widget will appear - uncheck the checkbox again, and the settings widgets dissapear (and the settings you made will be ignored).</p>
+<section id="include-variance" class="level3">
+<h3 class="anchored" data-anchor-id="include-variance">Include Variance</h3>
+<p>As described in the original paper by Prada et al.&nbsp;(2018), the signal´s variance can be used as a proxy for neuronal excitability<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. To enable variance computation of the signal for your analysis, click the checkbox next to “include variance”. A new widget will appear and allow you to specify the <code>Variance</code> value (default: 15). This is the window size that will be used to compute the variance of the signal intensity for each analysis ROI with a sliding window approach.</p>
+</section>
+<section id="analyze-interval" class="level3">
+<h3 class="anchored" data-anchor-id="analyze-interval">Analyze Interval</h3>
+<p>If you are interested in analyzing only a specific interval of your recording, this feature is for you. Simply enable it by clicking the checkbox and another widget will appear, allowing you to use two sliders that specify start &amp; end frame of the interval you´d like to analyze (inclusive ends, e.g.&nbsp;<code>12 - 55</code> means that you will analyze the interval starting at frame 12 and ending at frame 55, with both frames 12 &amp; 55 included).</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If you´re using this feature in combination with enabled batch mode processing, please be aware that you are not able to configure the interval for each individual recording, but that the same frame interval will be used for all recordings in this batch!</p>
+</div>
+</div>
+</section>
+<section id="configure-octaves" class="level3">
+<h3 class="anchored" data-anchor-id="configure-octaves">Configure Octaves</h3>
+<p>You can enable this feature again by clicking the checkbox next to it, which will cause another widget to appear, allowing you to specify the <code>Min. Octaves</code>. As described above, NA³ uses the <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.find_peaks_cwt.html">find_peaks_cwt</a> function implemented in SciPy. You can use this optional <code>Min. Octaves</code> setting to change the value that NA³ will pass to this function as <code>min_length</code>. However, this is not a direct mapping, but <code>min_length</code> will be computed from the <code>Min. Octaves</code> value you specified, in dependence of the length (i.e.&nbsp;number of frames) of the respective recording. The exact computation is as follows, where:</p>
+<ul>
+<li><code>self.mean_intensity_over_time.shape[0]</code> = Number of frames in the recording (potentially limited by analysis interval)</li>
+<li><code>min_octave_span</code> = the value you set via <code>Min. Octaves</code></li>
+</ul>
+<div id="3fc94aae-75d1-4b91-aaae-7cf32cd8e0be" class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>widths <span class="op">=</span> np.logspace(np.log10(<span class="dv">1</span>), np.log10(<span class="va">self</span>.mean_intensity_over_time.shape[<span class="dv">0</span>]), <span class="dv">100</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>min_length <span class="op">=</span> octaves_ridge_needs_to_spann <span class="op">/</span> np.log2(widths[<span class="dv">1</span>] <span class="op">/</span> widths[<span class="dv">0</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In general, we don´t recommend changing this value unless you are highly familiar with NA³ and have utilized all other configuration options already.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="result-settings" class="level2">
+<h2 class="anchored" data-anchor-id="result-settings">Result settings</h2>
+<p>These settings allow you to specify whether you want NA³ to create result files for your current analysis (e.g.&nbsp;to avoid creation of result files while you´re still testing different setting configurations or are testing different processing modes). Creation of all result files is enabled by default.</p>
+<section id="save-overview-plot" class="level3">
+<h3 class="anchored" data-anchor-id="save-overview-plot">Save Overview Plot</h3>
+<p>If you uncheck this box, the <code>overview.png</code> fill will not be created.</p>
+</section>
+<section id="save-detailed-results" class="level3">
+<h3 class="anchored" data-anchor-id="save-detailed-results">Save Detailed Results</h3>
+<p>If you uncheck this box, none of the other result files will be created, i.e.: - all_peak_results.csv - Amplitude_and_dF_over_F_results.csv - AUC_results.csv - Individual_traces_with_identified_events.pdf - logs.txt - ROI_label_IDs_overview.png - user_settings.json - Variance_area_results.csv</p>
+</section>
+</section>
+<section id="generated-results" class="level2">
+<h2 class="anchored" data-anchor-id="generated-results">Generated Results</h2>
+<p>NA³ generates several comprehensive result files for you (see list above). You will always find the results in the same directory in which the corresponding recording was located. That means, in case you´ve been using the batch processing mode, NA³ will create separate result folders in each recording subdirectory. The result folders will have the following naming conventions:</p>
+<ul>
+<li><code>datetime</code>_results_for_<code>recording_filename</code>, e.g.: 2024_12_17_13-48-54_results_for_spiking_neuron</li>
+</ul>
+<p>or</p>
+<ul>
+<li><code>datetime</code>_results_for_<code>recording_filename</code>_with_<code>focus_area_roi_filename</code>, e.g.: 2024_12_17_13-48-54_results_for_spiking_neuron_with_area_a</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If you are using more than one Focus Area ROI, NA³ will create a new results directory for each of them, to ensure you can easily differentiate between them.</p>
+</div>
+</div>
+<p>Let´s take a look at them in more details:</p>
+<section id="logs-user-settings" class="level3">
+<h3 class="anchored" data-anchor-id="logs-user-settings">Logs &amp; User Settings</h3>
+<p>Upfront we have two files that NA³ creates that are intended to ensure reproducibility, namely <code>user_settings.json</code> and <code>logs.txt</code>. While the human and machine readable JSON file makes sure you never forget to note down what the specific settings for this very analyses were, the Logs file saves some additional information regarding the processing and might be of value in case there is some troubleshooting or debugging that needs to happen.</p>
+</section>
+<section id="activity-overview" class="level3">
+<h3 class="anchored" data-anchor-id="activity-overview">Activity Overview</h3>
+<p>NA³ offers an elegant way to capture high-level activity patterns across all ROIs of your field of view at a glance. For this, the “Activity Overview” plot is generated, that can be saved both as a separate PNG image (<code>activity_overview.png</code>) and as part of the wholistic PDF (<code>Individual_traces_with_identified_events.pdf</code>). It will look something like this:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./media/activity_overview.png" class="img-fluid figure-img" width="600"></p>
+<figcaption>Representative Activity Overview Plot</figcaption>
+</figure>
+</div>
+<p>It will indicate the respective ROIs with the total detected peaks per ROI, after applying all thresholding and filtering criteria (e.g.&nbsp;Minimum Activity Count). The plots title also informs you about the total activity detected, i.e.&nbsp;the sum of all individually registered peaks across all ROIs within the field of view. In this example, the Grid method was used to automatically generate congruent squares covering most of the field of view (cropping boundaries are indicated by cyan border). The x- and y-axis labels provide a unique XY ID for each of the squares, which allows you to match the information presented in other plots or result files to a uniquely identifiable ROI.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="What are the unique IDs of my predefined ROIs?" data-collapsable="true">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+What are the unique IDs of my predefined ROIs?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>There is also a <code>ROI_label_IDs_overview.png</code> file that NA³ creates, which shows the ID of each ROI within it´s respective outline - which is specifically in case of predefined ROIs an important reference, since they cannot be defined using XY coordinates in a Grid. For reasons of better visibility &amp; readability, only the IDs of ROIs that remain after applying all fitering &amp; thresholding critera are shown in these overviews:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./media/ROI_label_IDs_overview.png" class="img-fluid figure-img" width="600"></p>
+<figcaption>Unique label IDs for predefined ROIs</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="activity-traces-with-identified-events" class="level3">
+<h3 class="anchored" data-anchor-id="activity-traces-with-identified-events">Activity Traces with Identified Events</h3>
+<p>For visual inspection, the PDF <code>Individual_traces_with_identified_events.pdf</code> gives you an even more detailed overview of your analysis results - and likely also allows you to assess it´s quality with the current settings. The first three pages of the PDF contain the following plots:</p>
+<ul>
+<li>The Activity Overview plot</li>
+<li>A brightness and contrast enhanced image of your field of view with only the ROIs superimposed (no activity counts)</li>
+<li>The ROI label ID Overview plot</li>
+</ul>
+<p>On all subsequent pages of this PDF will be one plot for each ROI with sufficient activity according to your settings. Each plot shows the extracted signal intensity trace (bit values on y-axis and frame number on x-axis) in gray and the estimated baseline in cyan. Identified peaks are marked with dots on the signal intensity trace, where a magenta coloration indicates that an area-under-curve (AUC) value was calculated for the respective event, while black coloration indicates that this was not possible (this is usually the case if the signal trace did not cross the estimated baseline on both sides of the peak, i.e.&nbsp;usually at the beginning or at the very end of the recording). Moreover, a yellow fill indicates the identified AUC, respectively.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./media/representative_signal_trace.png" class="img-fluid figure-img"></p>
+<figcaption>Representative signal trace plot with identified activity events</figcaption>
+</figure>
+</div>
+</section>
+<section id="csv-encoded-results" class="level3">
+<h3 class="anchored" data-anchor-id="csv-encoded-results">CSV-encoded Results</h3>
+<section id="all-peak-results" class="level4">
+<h4 class="anchored" data-anchor-id="all-peak-results">All Peak Results</h4>
+<p>This table comprises all computed characteristics for each identified activity peak across all ROIs. This information can be found in each column:</p>
+<ul>
+<li><code>ROI label ID</code>: The unique label ID that allows you to identify the ROI, e.g.&nbsp;“3/15” in Grid mode or “7” when using predefined ROIs, as described above.</li>
+<li><code>peak frame index</code>: The frame index at which the respective peak was identified.</li>
+<li><code>peak bit value</code>: The raw bit value of the signal trace at the indicated <code>peak frame index</code>. Remember: the computed signal trace represents the average intensity across all pixels within the given ROI.</li>
+<li><code>peak amplitude</code>: The absolute difference between the <code>peak bit value</code> and the value of the estimated baseline at the indicated <code>peak frame index</code>, calculated as: <code>peak bit value</code> - <code>bit value estimated baseline</code></li>
+<li><code>peak dF/F</code>: The relative difference between <code>peak bit value</code> and the value of the estimated baseline at the indicated <code>peak frame index</code>, calculated as: <code>peak amplitude</code> / <code>bit value estimated baseline</code></li>
+<li><code>peak AUC</code>: The value of the area-under-curve associated with this peak. See the warning below, however.</li>
+<li><code>peak classification</code>: A classification of whether the peak is <code>singular</code>, <code>clustered</code>, or <code>isolated</code>:</li>
+<li><ul>
+<li><code>isolated</code>: A peak for which no area-under-curve could be calculated. This is usually the case, if the signal trace did not cross the estimated baseline on both sides of the peak, i.e.&nbsp;usually at the beginning or at the very end of the recording.</li>
+<li><code>singular</code>: A peak for which an area-under-curve could be calculated that is solely associated with this singular peak, i.e.&nbsp;the signal trace crosses the baseline between this and any preceeding or following peaks.</li>
+<li><code>clustered</code>: A peak for which an area-under-curve could be calculated, but it is associated with multiple peaks, i.e.&nbsp;the signlar trace did <strong>not</strong> cross the baseline between this and a preceeding or following peak.</li>
+</ul></li>
+</ul>
+<div class="callout callout-style-default callout-warning callout-titled" title="AUCs of clustered peaks">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+AUCs of clustered peaks
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In case of <code>clustered</code> peaks, NA³ cannot clearly associate a given AUC value with a single peak, because the signal trace does not cross the estimated baseline between two (or more) peaks. Therefore, both peaks will be listed with the identical AUC value - which you may have to take into account when you perform statistical analysis of your data. We decided to include them, though, because these <code>clustered</code> peaks could also represent event trains, which might be interesting features to look at for some of you.</p>
+</div>
+</div>
+</section>
+<section id="area-under-curve-auc-results" class="level4">
+<h4 class="anchored" data-anchor-id="area-under-curve-auc-results">Area-under-Curve (AUC) Results</h4>
+<p>Essentially the same information about AUC values per peak, organized in a different format, though: wide instead of long.</p>
+</section>
+<section id="amplitude-and-dff-results" class="level4">
+<h4 class="anchored" data-anchor-id="amplitude-and-dff-results">Amplitude and dF/F Results</h4>
+<p>Essentially the same information about amplitude and dF/F values per peak, organized in a different format, though: wide instead of long.</p>
+</section>
+<section id="variance-results-optional" class="level4">
+<h4 class="anchored" data-anchor-id="variance-results-optional">Variance Results (optional)</h4>
+<p>Variance results will only be generated if you enabled the optional setting “Include Variance”. It comprises the computed variance area per ROI.</p>
+</section>
+</section>
+</section>
+<section id="wed-love-to-hear-your-feedback" class="level2">
+<h2 class="anchored" data-anchor-id="wed-love-to-hear-your-feedback">We´d love to hear your Feedback:</h2>
+<p>You are using NA³ for your research - or would like to do so, but there´s that one cool feature missing for you? That´s great! We´d love to hear your feedback, feature requests, or bug reports to keep improving NA³ - please use <a href="https://github.com/Indoc-Research/NeuralActivityCubic/issues/new">this form on GitHub</a> to submit it, we appreciate it a lot!</p>
+<p>Please feel free to also explore all other <a href="https://github.com/Indoc-Research/">Research Software</a> that our not-for-profit organization has developed, or learn more about us and what we do on our <a href="https://www.indocresearch.eu/">website</a>. If you are interested to partner with us for a similar collaboration on your Research Software, or to develop it with or for you from scratch, don´t hesitate and drop us an <a href="mailto:ddoll@indocresearch.org">email</a> - we´re always looking for new opportunities to catalyze science be delivering cutting-edge technology tailored to the specific research challenges of our collaborators!</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="data:image/png;base64,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" class="img-fluid figure-img"></p>
+<figcaption>Indoc Research Europe gGmbH</figcaption>
+</figure>
+</div>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Prada J, Sasi M, Martin C, Jablonka S, Dandekar T, Blum R (2018) An open source tool for automatic spatiotemporal assessment of calcium transients and local ‘signal-close-to-noise’ activity in calcium imaging data. PLoS computational biology 14(3): e1006054. https://doi.org/10.1371/journal.pcbi.1006054<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/ddoll\.github\.io\/NeuralActivityCubic");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/ddoll/NeuralActivityCubic/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer><script>videojs(video_shortcode_videojs_video1);</script>
+<script>videojs(video_shortcode_videojs_video2);</script>
+
+
+
+
+</body></html>
