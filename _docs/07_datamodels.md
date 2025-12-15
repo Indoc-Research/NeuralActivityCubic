@@ -207,7 +207,9 @@ Setup for testing:
 
 ``` python
 from fastcore.test import test_fail
+```
 
+``` python
 filepath = '../test_data/00/spiking_neuron.avi'
 
 correct_general_config = Config().to_dict()

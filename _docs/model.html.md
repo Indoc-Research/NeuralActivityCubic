@@ -226,18 +226,30 @@ logger.add_new_log('Loading data...')
 logger.add_new_log('Data successfully loaded.')
 ```
 
+<<<<<<< HEAD
     15-12-25 15:59:06.264866 (UTC): Starting simulated analysis...
     15-12-25 15:59:06.264905 (UTC): Loading data...
     15-12-25 15:59:06.264921 (UTC): Data successfully loaded.
+=======
+    15-12-25 13:42:43.082633 (UTC): Starting simulated analysis...
+    15-12-25 13:42:43.082804 (UTC): Loading data...
+    15-12-25 13:42:43.082851 (UTC): Data successfully loaded.
+>>>>>>> 0f1e066 (literate docs model v1)
 
 ``` python
 # Access what has been logged so far:
 logger.get_logs()
 ```
 
+<<<<<<< HEAD
     ['15-12-25 15:59:06.264866 (UTC): Starting simulated analysis...',
      '15-12-25 15:59:06.264905 (UTC): Loading data...',
      '15-12-25 15:59:06.264921 (UTC): Data successfully loaded.']
+=======
+    ['15-12-25 13:42:43.082633 (UTC): Starting simulated analysis...',
+     '15-12-25 13:42:43.082804 (UTC): Loading data...',
+     '15-12-25 13:42:43.082851 (UTC): Data successfully loaded.']
+>>>>>>> 0f1e066 (literate docs model v1)
 
 And if you´d like to save the logs, you can do so pretty easily as
 well - just be aware that it expects a `pathlib.Path` object that

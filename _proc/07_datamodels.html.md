@@ -199,10 +199,15 @@ Attributes:
 
 Setup for testing:
 
-::: {#7251f15fbfcaa240 .cell}
+::: {#d5865215-39af-4837-bf54-9435e9888528 .cell}
 ``` {.python .cell-code}
 from fastcore.test import test_fail
+```
+:::
 
+
+::: {#7251f15fbfcaa240 .cell}
+``` {.python .cell-code}
 filepath = '../test_data/00/spiking_neuron.avi'
 
 correct_general_config = Config().to_dict()

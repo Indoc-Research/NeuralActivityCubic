@@ -425,18 +425,30 @@ New to literate programming?
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>logger.add_new_log(<span class="st">'Loading data...'</span>)</span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>logger.add_new_log(<span class="st">'Data successfully loaded.'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
+<<<<<<< HEAD
 <pre><code>15-12-25 15:59:06.264866 (UTC): Starting simulated analysis...
 15-12-25 15:59:06.264905 (UTC): Loading data...
 15-12-25 15:59:06.264921 (UTC): Data successfully loaded.</code></pre>
+=======
+<pre><code>15-12-25 13:42:43.082633 (UTC): Starting simulated analysis...
+15-12-25 13:42:43.082804 (UTC): Loading data...
+15-12-25 13:42:43.082851 (UTC): Data successfully loaded.</code></pre>
+>>>>>>> 0f1e066 (literate docs model v1)
 </div>
 </div>
 <div id="cell-16" class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Access what has been logged so far:</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>logger.get_logs()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
+<<<<<<< HEAD
 <pre><code>['15-12-25 15:59:06.264866 (UTC): Starting simulated analysis...',
  '15-12-25 15:59:06.264905 (UTC): Loading data...',
  '15-12-25 15:59:06.264921 (UTC): Data successfully loaded.']</code></pre>
+=======
+<pre><code>['15-12-25 13:42:43.082633 (UTC): Starting simulated analysis...',
+ '15-12-25 13:42:43.082804 (UTC): Loading data...',
+ '15-12-25 13:42:43.082851 (UTC): Data successfully loaded.']</code></pre>
+>>>>>>> 0f1e066 (literate docs model v1)
 </div>
 </div>
 <p>And if you´d like to save the logs, you can do so pretty easily as well - just be aware that it expects a <code>pathlib.Path</code> object that defines the <strong>directory</strong> in which the logs.txt file should be saved! Once all logs are saved, you might want to clean it up before starting your next analysis:</p>

@@ -11,7 +11,7 @@ title: view
 
 ---
 
-[source](https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L20){target="_blank" style="float:right; font-size:smaller"}
+[source](https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L21){target="_blank" style="float:right; font-size:smaller"}
 
 ### change_widget_state
 
@@ -26,7 +26,7 @@ title: view
 
 ---
 
-[source](https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L43){target="_blank" style="float:right; font-size:smaller"}
+[source](https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L44){target="_blank" style="float:right; font-size:smaller"}
 
 ### UserInfoPanel
 
@@ -37,7 +37,7 @@ title: view
 
 ---
 
-[source](https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L98){target="_blank" style="float:right; font-size:smaller"}
+[source](https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L99){target="_blank" style="float:right; font-size:smaller"}
 
 ### SourceDataPanel
 
@@ -46,9 +46,11 @@ title: view
 *Initialize self.  See help(type(self)) for accurate signature.*
 
 
+`<<<<<<< HEAD`
+
 ---
 
-[source](https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L205){target="_blank" style="float:right; font-size:smaller"}
+[source](https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L344){target="_blank" style="float:right; font-size:smaller"}
 
 ### AnalysisSettingsPanel
 
@@ -57,9 +59,24 @@ title: view
 *Initialize self.  See help(type(self)) for accurate signature.*
 
 
+`=======`
+
 ---
 
-[source](https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L361){target="_blank" style="float:right; font-size:smaller"}
+[source](https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L344){target="_blank" style="float:right; font-size:smaller"}
+
+### AnalysisSettingsPanel
+
+>      AnalysisSettingsPanel ()
+
+*Initialize self.  See help(type(self)) for accurate signature.*
+
+
+`>>>>>>> THEIRS`
+
+---
+
+[source](https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L516){target="_blank" style="float:right; font-size:smaller"}
 
 ### MainScreen
 
@@ -70,7 +87,7 @@ title: view
 
 ---
 
-[source](https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L396){target="_blank" style="float:right; font-size:smaller"}
+[source](https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L551){target="_blank" style="float:right; font-size:smaller"}
 
 ### WidgetsInterface
 
@@ -81,7 +98,7 @@ title: view
 
 ---
 
-[source](https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L465){target="_blank" style="float:right; font-size:smaller"}
+[source](https://github.com/ddoll/NeuralActivityCubic/blob/main/neuralactivitycubic/view.py#L639){target="_blank" style="float:right; font-size:smaller"}
 
 ### SourceDataStructureWidget
 

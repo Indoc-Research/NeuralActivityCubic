@@ -165,9 +165,15 @@ logger.add_new_log('Data successfully loaded.')
 
 ::: {.cell-output .cell-output-stdout}
 ```
+<<<<<<< HEAD
 15-12-25 15:59:06.264866 (UTC): Starting simulated analysis...
 15-12-25 15:59:06.264905 (UTC): Loading data...
 15-12-25 15:59:06.264921 (UTC): Data successfully loaded.
+=======
+15-12-25 13:42:43.082633 (UTC): Starting simulated analysis...
+15-12-25 13:42:43.082804 (UTC): Loading data...
+15-12-25 13:42:43.082851 (UTC): Data successfully loaded.
+>>>>>>> 0f1e066 (literate docs model v1)
 ```
 :::
 :::
@@ -181,9 +187,15 @@ logger.get_logs()
 
 ::: {.cell-output .cell-output-display}
 ```
+<<<<<<< HEAD
 ['15-12-25 15:59:06.264866 (UTC): Starting simulated analysis...',
  '15-12-25 15:59:06.264905 (UTC): Loading data...',
  '15-12-25 15:59:06.264921 (UTC): Data successfully loaded.']
+=======
+['15-12-25 13:42:43.082633 (UTC): Starting simulated analysis...',
+ '15-12-25 13:42:43.082804 (UTC): Loading data...',
+ '15-12-25 13:42:43.082851 (UTC): Data successfully loaded.']
+>>>>>>> 0f1e066 (literate docs model v1)
 ```
 :::
 :::
