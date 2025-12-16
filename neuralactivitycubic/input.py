@@ -4,10 +4,10 @@
 
 # %% auto 0
 __all__ = ['FocusAreaPathRestrictions', 'Data', 'Recording', 'ROI', 'DataLoader', 'GridWrapperROILoader', 'RecordingLoader',
-           'AVILoader', 'NWBRecordingLoader', 'ROILoader', 'ImageJROILoader', 'NWBROILoader', 'DataLoaderFactory',
-           'RecordingLoaderFactory', 'ROILoaderFactory', 'get_filepaths_with_supported_extension_in_dirpath',
-           'RecLoaderROILoaderCombinator', 'test_unsupported_file_extension', 'test_successful_recording_loading',
-           'test_successful_roi_loading']
+           'AVILoader', 'TIFFLoader', 'NWBRecordingLoader', 'ROILoader', 'ImageJROILoader', 'NWBROILoader',
+           'DataLoaderFactory', 'RecordingLoaderFactory', 'ROILoaderFactory',
+           'get_filepaths_with_supported_extension_in_dirpath', 'RecLoaderROILoaderCombinator',
+           'test_unsupported_file_extension', 'test_successful_recording_loading', 'test_successful_roi_loading']
 
 # %% ../nbs/03_input.ipynb 3
 import imageio.v3 as iio
@@ -98,7 +98,16 @@ class ROI(Data):
 
     def _convert_to_valid_polygon(self) -> Polygon:
         roi_as_polygon = Polygon(self.boundary_row_col_coords)
-        assert roi_as_polygon.is_valid, f'Something went wrong when trying to create a Polygon out of your ROI: {self.filepath}.'
+        # There was an inconsistency discovered when trying to convert ROIs exported from ImageJ into valid Polygons in shapely.
+        # Sometimes, the same ROIs will export in a way that allows to create valid Polygons, and sometimes the same ROIs will be 
+        # exported in a way that they can´t be converted into valid Polygons. As of now (16.12.2025), the reason for this inconsistency
+        # remained unclear. Nonetheless, valid Polygons or not - they always lead to the identical results when used via na3 for processing.
+        # Thus, we decided to only log the result of this check, but no longer raise an error that aborts the processing.
+        if not roi_as_polygon.is_valid:
+            message = (f'Shapely could not create a valid Polygon out of your ROI: {self.filepath}. In our experience, this does not impact the results. '
+                       'However, we recommend you try to re-create the ROIs and re-run the processing with NA3. We noticed conversion inconsistencies '
+                       'particularly for ROIs exported from ImageJ2 / FIJI. Exporting them again typically resolves this warning.') 
+            print(message)
         return roi_as_polygon
 
 
@@ -190,13 +199,19 @@ class RecordingLoader(DataLoader):
     @abstractmethod
     def _get_all_frames(self) -> np.ndarray: 
         # To be implemented in individual subclasses
-        # Shape of returned numpy array: [frames, rows, cols, color_channels]
+        # Shape of returned numpy array: [frames, rows, cols] or [frames, rows, cols, color_channels]
         pass
 
 
     def _load_all_frames(self) -> np.ndarray: 
         all_frames = self._get_all_frames()
-        all_frames = self._validate_shape_and_convert_to_grayscale_if_possible(all_frames)
+        all_frames = self._ensure_array_is_4d(all_frames)
+        if self._check_if_multiple_color_channels_exist(all_frames):
+            if self._check_if_color_channels_are_redundant(all_frames):
+                all_frames = self._convert_to_grayscale(all_frames)
+            else:
+                raise ValueError('The color channels of the recording you attempted to load are incorrect. Currently, only single '
+                                 f'channel or redundant RGB (i.e. 1 or 3 color channels) are supported. However, your data has: {all_frames.shape[3]}.')
         return all_frames
 
 
@@ -206,22 +221,23 @@ class RecordingLoader(DataLoader):
         return recording
 
 
-    def _validate_shape_and_convert_to_grayscale_if_possible(self, zstack: np.ndarray) -> np.ndarray:
-        self._validate_correct_array_shape(zstack)
-        if zstack.shape[3] > 1:
-            if self._check_if_color_channels_are_redunant(zstack) == True:
-                zstack = self._convert_to_grayscale(zstack)
+    def _ensure_array_is_4d(self, zstack: np.ndarray) -> np.ndarray:
+        if len(zstack.shape) < 3:
+            raise ValueError('The shape of the zstack numpy array is not correct. It should be at least 3 dimensional [frames, rows, cols], '
+                             f'with an optional fourth dimension of color channels. However, the current shape is: {zstack.shape}.')
+        elif len(zstack.shape) == 3:
+            zstack = np.expand_dims(zstack, axis=3)
+        elif len(zstack.shape) > 4:
+            raise ValueError('The shape of the zstack numpy array is not correct. It can´t be more than 4 dimensional: '
+                             f'[frames, rows, cols, colors]. However, the current shape is: {zstack.shape}.')
         return zstack
+        
 
-
-    def _validate_correct_array_shape(self, zstack: np.ndarray) -> None:
-        assert len(zstack.shape) == 4, ('The shape of the zstack numpy array is not correct. It should be a 4 dimensional array, like '
-                                        f'[frames, rows, cols, color channels]. However, the current shape is: {zstack.shape}.')
-        assert zstack.shape[3] in [1, 3], ('The color channels of the recording you attempted to load are incorrect. Currently, only single '
-                                           f'channel or RGB (i.e. 1 or 3 color channels) are supported. However, your data has: {zstack.shape[3]}.')
+    def _check_if_multiple_color_channels_exist(self, zstack: np.ndarray) -> bool:
+        return zstack.shape[3] > 1
         
     
-    def _check_if_color_channels_are_redunant(self, zstack: np.ndarray) -> bool:
+    def _check_if_color_channels_are_redundant(self, zstack: np.ndarray) -> bool:
         reference_channel_idx = 0
         color_channels_are_equal = []
         for idx_of_channel_to_compare in range(1, zstack.shape[3]):
@@ -243,6 +259,12 @@ class AVILoader(RecordingLoader):
         return iio.imread(self.filepath)
 
 # %% ../nbs/03_input.ipynb 14
+class TIFFLoader(RecordingLoader):
+
+    def _get_all_frames(self) -> np.ndarray: 
+        return iio.imread(self.filepath)
+
+# %% ../nbs/03_input.ipynb 15
 class NWBRecordingLoader(RecordingLoader):
 
     def _get_all_frames(self) -> np.ndarray:
@@ -258,7 +280,7 @@ class NWBRecordingLoader(RecordingLoader):
             all_frames = all_frames[..., np.newaxis]        
         return all_frames
 
-# %% ../nbs/03_input.ipynb 15
+# %% ../nbs/03_input.ipynb 16
 class ROILoader(DataLoader):
 
     @abstractmethod
@@ -283,7 +305,7 @@ class ROILoader(DataLoader):
         boundary_row_col_coords.append(first_boundary_point_coords)
         return boundary_row_col_coords
 
-# %% ../nbs/03_input.ipynb 16
+# %% ../nbs/03_input.ipynb 17
 class ImageJROILoader(ROILoader):
 
     
@@ -310,7 +332,7 @@ class ImageJROILoader(ROILoader):
         boundary_row_col_coords = list(zip(row_coords, col_coords))
         return boundary_row_col_coords
 
-# %% ../nbs/03_input.ipynb 17
+# %% ../nbs/03_input.ipynb 18
 class NWBROILoader(ROILoader):
 
     def _get_boundary_row_col_coords_for_all_rois_in_source_data(self) -> List[List[Tuple[int, int]]]:
@@ -331,7 +353,7 @@ class NWBROILoader(ROILoader):
             all_rois.append(boundary_row_col_coords)
         return all_rois
 
-# %% ../nbs/03_input.ipynb 19
+# %% ../nbs/03_input.ipynb 20
 class DataLoaderFactory(ABC):
 
     @property
@@ -369,18 +391,19 @@ class DataLoaderFactory(ABC):
             raise NotImplementedError('It seems like there is no DataLoader implemented for the specific filetype you´re trying to load - sorry!')
         return matching_loader
 
-# %% ../nbs/03_input.ipynb 20
+# %% ../nbs/03_input.ipynb 21
 class RecordingLoaderFactory(DataLoaderFactory):
 
     @property
     def supported_extensions_per_data_loader(self) -> Dict[RecordingLoader, List[str]]:
         supported_extensions_per_data_loader = {
             AVILoader: ['.avi'],
+            TIFFLoader: ['.tif', '.tiff'],
             NWBRecordingLoader: ['.nwb']
         }
         return supported_extensions_per_data_loader
 
-# %% ../nbs/03_input.ipynb 21
+# %% ../nbs/03_input.ipynb 22
 class ROILoaderFactory(DataLoaderFactory):
 
     @property
@@ -391,7 +414,7 @@ class ROILoaderFactory(DataLoaderFactory):
         }
         return supported_extensions_per_data_loader
 
-# %% ../nbs/03_input.ipynb 22
+# %% ../nbs/03_input.ipynb 23
 def get_filepaths_with_supported_extension_in_dirpath(dirpath: Path, all_supported_extensions: List[str], max_results: Optional[int]=None) -> List[Path]:
     all_filepaths_with_supported_extension = []
     for elem in dirpath.iterdir():
@@ -407,7 +430,7 @@ def get_filepaths_with_supported_extension_in_dirpath(dirpath: Path, all_support
         )
     return all_filepaths_with_supported_extension
 
-# %% ../nbs/03_input.ipynb 23
+# %% ../nbs/03_input.ipynb 24
 class RecLoaderROILoaderCombinator:
 
         
@@ -438,7 +461,7 @@ class RecLoaderROILoaderCombinator:
         all_roi_loaders = [roi_loader_factory.get_loader(filepath) for filepath in all_roi_filepaths]
         return all_roi_loaders
 
-# %% ../nbs/03_input.ipynb 25
+# %% ../nbs/03_input.ipynb 26
 def test_unsupported_file_extension(loader_factory: DataLoaderFactory, filepath: Path) -> bool:
     try:
         loader_factory.get_loader(filepath)
@@ -447,13 +470,13 @@ def test_unsupported_file_extension(loader_factory: DataLoaderFactory, filepath:
     else:
         return False
 
-# %% ../nbs/03_input.ipynb 26
+# %% ../nbs/03_input.ipynb 27
 def test_successful_recording_loading(filepath: Path) -> bool:
     recording_loader_factory = RecordingLoaderFactory()
     recording_loader = recording_loader_factory.get_loader(filepath)
     return isinstance(recording_loader.load_and_parse_file_content(), Recording)
 
-# %% ../nbs/03_input.ipynb 27
+# %% ../nbs/03_input.ipynb 28
 def test_successful_roi_loading(filepath: Path) -> bool:
     roi_loader_factory = ROILoaderFactory()
     roi_loader = roi_loader_factory.get_loader(filepath)
