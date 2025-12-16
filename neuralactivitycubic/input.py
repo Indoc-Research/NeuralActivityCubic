@@ -234,11 +234,7 @@ class RecordingLoader(DataLoader):
         
 
     def _check_if_multiple_color_channels_exist(self, zstack: np.ndarray) -> bool:
-        if zstack.shape[3] > 1:
-            multiple_color_channels = True
-        else:
-            multiple_color_channels = False
-        return multiple_color_channels
+        return zstack.shape[3] > 1
         
     
     def _check_if_color_channels_are_redunant(self, zstack: np.ndarray) -> bool:
