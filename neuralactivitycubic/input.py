@@ -211,7 +211,7 @@ class RecordingLoader(DataLoader):
                 all_frames = self._convert_to_grayscale(all_frames)
             else:
                 raise ValueError('The color channels of the recording you attempted to load are incorrect. Currently, only single '
-                                 f'channel or redundant RGB (i.e. 1 or 3 color channels) are supported. However, your data has: {zstack.shape[3]}.')
+                                 f'channel or redundant RGB (i.e. 1 or 3 color channels) are supported. However, your data has: {all_frames.shape[3]}.')
         return all_frames
 
 
