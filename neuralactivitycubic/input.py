@@ -418,9 +418,8 @@ class ROILoaderFactory(DataLoaderFactory):
 def get_filepaths_with_supported_extension_in_dirpath(dirpath: Path, all_supported_extensions: List[str], max_results: Optional[int]=None) -> List[Path]:
     all_filepaths_with_supported_extension = []
     for elem in dirpath.iterdir():
-        if elem.is_file() == True:
-            if elem.suffix in all_supported_extensions:
-                all_filepaths_with_supported_extension.append(elem)
+        if elem.is_file() and elem.suffix in all_supported_extensions and not elem.name.startswith(('.', '._')):
+            all_filepaths_with_supported_extension.append(elem)
     if type(max_results) == int:
         assert len(all_filepaths_with_supported_extension) <= max_results, (
             f'There are more than {max_results} file(s) of supported type in {dirpath}, '
