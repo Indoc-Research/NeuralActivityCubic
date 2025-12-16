@@ -2,8 +2,8 @@
 
 d = { 'settings': { 'branch': 'main',
                 'doc_baseurl': '/NeuralActivityCubic',
-                'doc_host': 'https://ddoll.github.io',
-                'git_url': 'https://github.com/ddoll/NeuralActivityCubic',
+                'doc_host': 'https://indoc-research.github.io',
+                'git_url': 'https://github.com/Indoc-Research/NeuralActivityCubic',
                 'lib_path': 'neuralactivitycubic'},
   'syms': { 'neuralactivitycubic.analysis': { 'neuralactivitycubic.analysis.AnalysisROI': ( 'analysis.html#analysisroi',
                                                                                             'neuralactivitycubic/analysis.py'),
