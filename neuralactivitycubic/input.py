@@ -103,7 +103,7 @@ class ROI(Data):
         # exported in a way that they can´t be converted into valid Polygons. As of now (16.12.2025), the reason for this inconsistency
         # remained unclear. Nonetheless, valid Polygons or not - they always lead to the identical results when used via na3 for processing.
         # Thus, we decided to only log the result of this check, but no longer raise an error that aborts the processing.
-        if roi_as_polygon.is_valid == False:
+        if not roi_as_polygon.is_valid:
             message = (f'Shapely could not create a valid Polygon out of your ROI: {self.filepath}. In our experience, this does not impact the results. '
                        'However, we recommend you try to re-create the ROIs and re-run the processing with NA3. We noticed conversion inconsistencies '
                        'particularly for ROIs exported from ImageJ2 / FIJI. Exporting them again typically resolves this warning.') 
@@ -206,8 +206,8 @@ class RecordingLoader(DataLoader):
     def _load_all_frames(self) -> np.ndarray: 
         all_frames = self._get_all_frames()
         all_frames = self._ensure_array_is_4d(all_frames)
-        if self._check_if_multiple_color_channels_exist(all_frames) == True:
-            if self._check_if_color_channels_are_redunant(all_frames) == True:
+        if self._check_if_multiple_color_channels_exist(all_frames):
+            if self._check_if_color_channels_are_redundant(all_frames):
                 all_frames = self._convert_to_grayscale(all_frames)
             else:
                 raise ValueError('The color channels of the recording you attempted to load are incorrect. Currently, only single '
@@ -237,7 +237,7 @@ class RecordingLoader(DataLoader):
         return zstack.shape[3] > 1
         
     
-    def _check_if_color_channels_are_redunant(self, zstack: np.ndarray) -> bool:
+    def _check_if_color_channels_are_redundant(self, zstack: np.ndarray) -> bool:
         reference_channel_idx = 0
         color_channels_are_equal = []
         for idx_of_channel_to_compare in range(1, zstack.shape[3]):
