@@ -98,7 +98,16 @@ class ROI(Data):
 
     def _convert_to_valid_polygon(self) -> Polygon:
         roi_as_polygon = Polygon(self.boundary_row_col_coords)
-        assert roi_as_polygon.is_valid, f'Something went wrong when trying to create a Polygon out of your ROI: {self.filepath}.'
+        # There was an inconsistency discovered when trying to convert ROIs exported from ImageJ into valid Polygons in shapely.
+        # Sometimes, the same ROIs will export in a way that allows to create valid Polygons, and sometimes the same ROIs will be 
+        # exported in a way that they can´t be converted into valid Polygons. As of now (16.12.2025), the reason for this inconsistency
+        # remained unclear. Nonetheless, valid Polygons or not - they always lead to the identical results when used via na3 for processing.
+        # Thus, we decided to only log the result of this check, but no longer raise an error that aborts the processing.
+        if roi_as_polygon.is_valid == False:
+            message = (f'Shapely could not create a valid Polygon out of your ROI: {self.filepath}. In our experience, this does not impact the results. '
+                       'However, we recommend you try to re-create the ROIs and re-run the processing with NA3. We noticed conversion inconsistencies '
+                       'particularly for ROIs exported from ImageJ2 / FIJI. Exporting them again typically resolves this warning.') 
+            print(message)
         return roi_as_polygon
 
 
