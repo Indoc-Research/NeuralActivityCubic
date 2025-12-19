@@ -1,0 +1,1737 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Defines data and processing structures.">
+
+<title>model – neuralactivitycubic</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-000f0825b9c55ed21d14970d810c14a9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="model – neuralactivitycubic">
+<meta property="og:description" content="Defines data and processing structures.">
+<meta property="og:site_name" content="neuralactivitycubic">
+<meta name="twitter:title" content="model – neuralactivitycubic">
+<meta name="twitter:description" content="Defines data and processing structures.">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">neuralactivitycubic</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./controller.html">API</a></li><li class="breadcrumb-item"><a href="./model.html">model</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome to NeuralActivityCubic</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">User Guides</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./using_the_gui.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Using NA³ via the GUI</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">API</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./controller.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">controller</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./view.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">view</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./model.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./input.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">input</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./processing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">processing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./results.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">results</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#welcome-to-the-model-module-of-neuralactivitycubic" id="toc-welcome-to-the-model-module-of-neuralactivitycubic" class="nav-link active" data-scroll-target="#welcome-to-the-model-module-of-neuralactivitycubic">🚀 Welcome to the <code>Model</code> module of neuralactivitycubic!</a>
+  <ul class="collapse">
+  <li><a href="#what-is-the-model" id="toc-what-is-the-model" class="nav-link" data-scroll-target="#what-is-the-model">🧠 What is the <code>Model</code>?</a></li>
+  <li><a href="#literate-programming-in-action" id="toc-literate-programming-in-action" class="nav-link" data-scroll-target="#literate-programming-in-action">🧩 Literate Programming in Action</a></li>
+  <li><a href="#import-all-dependencies" id="toc-import-all-dependencies" class="nav-link" data-scroll-target="#import-all-dependencies">🛠️ Import all dependencies</a></li>
+  </ul></li>
+  <li><a href="#start-of-the-source-code" id="toc-start-of-the-source-code" class="nav-link" data-scroll-target="#start-of-the-source-code">📘 Start of the <em>source code</em></a>
+  <ul class="collapse">
+  <li><a href="#logger" id="toc-logger" class="nav-link" data-scroll-target="#logger">Logger</a></li>
+  <li><a href="#model" id="toc-model" class="nav-link" data-scroll-target="#model">Model</a></li>
+  <li><a href="#model.create_analysis_jobs" id="toc-model.create_analysis_jobs" class="nav-link" data-scroll-target="#model.create_analysis_jobs">Model.create_analysis_jobs</a></li>
+  <li><a href="#model.run_analysis" id="toc-model.run_analysis" class="nav-link" data-scroll-target="#model.run_analysis">Model.run_analysis</a></li>
+  <li><a href="#model.setup_connection_to_update_infos_in_view" id="toc-model.setup_connection_to_update_infos_in_view" class="nav-link" data-scroll-target="#model.setup_connection_to_update_infos_in_view">Model.setup_connection_to_update_infos_in_view</a></li>
+  <li><a href="#model.setup_connection_to_display_results" id="toc-model.setup_connection_to_display_results" class="nav-link" data-scroll-target="#model.setup_connection_to_display_results">Model.setup_connection_to_display_results</a></li>
+  <li><a href="#model.preview_window_size" id="toc-model.preview_window_size" class="nav-link" data-scroll-target="#model.preview_window_size">Model.preview_window_size</a></li>
+  <li><a href="#model.add_info_to_logs" id="toc-model.add_info_to_logs" class="nav-link" data-scroll-target="#model.add_info_to_logs">Model.add_info_to_logs</a></li>
+  </ul></li>
+  <li><a href="#testing-testing-testing-.." id="toc-testing-testing-testing-.." class="nav-link" data-scroll-target="#testing-testing-testing-..">🧪 Testing, testing, testing ..</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Indoc-Research/NeuralActivityCubic/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="model.html.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./controller.html">API</a></li><li class="breadcrumb-item"><a href="./model.html">model</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">model</h1>
+</div>
+
+<div>
+  <div class="description">
+    Defines data and processing structures.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="welcome-to-the-model-module-of-neuralactivitycubic" class="level2">
+<h2 class="anchored" data-anchor-id="welcome-to-the-model-module-of-neuralactivitycubic">🚀 Welcome to the <a href="https://indoc-research.github.io/NeuralActivityCubic/model.html#model"><code>Model</code></a> module of neuralactivitycubic!</h2>
+<p>If you’re here, chances are you’re interested in understanding or extending the <a href="https://indoc-research.github.io/NeuralActivityCubic/model.html#model"><code>Model</code></a> class that sits at the heart of neuralactivitycubic. Whether you’re a researcher, a contributor, or just curious, this notebook is for you!</p>
+<p>Before we dive into the code, let’s take a moment to talk about how this piece fits into the big picture.</p>
+<section id="what-is-the-model" class="level3">
+<h3 class="anchored" data-anchor-id="what-is-the-model">🧠 What is the <a href="https://indoc-research.github.io/NeuralActivityCubic/model.html#model"><code>Model</code></a>?</h3>
+<p>Think of the <a href="https://indoc-research.github.io/NeuralActivityCubic/model.html#model"><code>Model</code></a> as the brain of neuralactivitycubic. It’s the hub that:</p>
+<ul>
+<li><p>Manages and validates configuration settings</p></li>
+<li><p>Creates analysis jobs based on user input or directory structures</p></li>
+<li><p>Executes the core analysis pipeline</p></li>
+<li><p>Communicates with the graphical user interface (GUI), if used</p></li>
+<li><p>Saves logs, plots, and results for each analysis</p></li>
+</ul>
+<p>It can run standalone or be accessed via the GUI. It handles batch jobs, logs everything, and orchestrates the creation of structured outputs, including NWB files. Crucially, though, as the <em>brain</em> of neuralactivitycubic, it essentially sends the commands to the other, downstream modules, which in turn implement the logic that will be executed. Like, for instance, the <a href="https://indoc-research.github.io/NeuralActivityCubic/model.html#model"><code>Model</code></a> leverages the <a href="https://indoc-research.github.io/NeuralActivityCubic/input.html#recordingloader"><code>RecordingLoader</code></a> that is implemented in the input module for loading of your recording data when creating the analysis jobs, and so on. Thus, the <a href="https://indoc-research.github.io/NeuralActivityCubic/model.html#model"><code>Model</code></a> also represents the highest level of abstraction in neuralactivitycubic and enables you to run a wholistic analysis with only a few commands.</p>
+<p>Here’s what a minimal programmatic workflow might look like:</p>
+<div id="cell-4" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> neuralactivitycubic.model <span class="im">import</span> Model</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> Model(<span class="st">'path/to/my/recording.avi'</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>model.create_analysis_jobs()</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>model.run_analysis()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Boom, that´s it! Your data is analyzed, and results are saved. We made this even more accessible for you, by the way, in the api module. If you´re planning to use neuralactivitycubic programmatically, we highly recommend you check it out.</p>
+</section>
+<section id="literate-programming-in-action" class="level3">
+<h3 class="anchored" data-anchor-id="literate-programming-in-action">🧩 Literate Programming in Action</h3>
+<p>Also, before we start with the actual source code of this module, we also added some quick notes for those of you that are new to the concept of <em>Literate Programming</em>, which we are using throughout neuralactivitycubic. Why? Our goal is to make the logic transparent and easy to understand - because research software deserves to be as readable as the papers that use it! Therefore, all notebooks of neuralactivitycubic interleave documentation, explanations, usage examples, and tests with the actual source code. We hope you like it!</p>
+<div class="callout callout-style-simple callout-tip callout-titled" title="New to literate programming?">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>New to literate programming?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We´re using a literate programming framework called <a href="https://nbdev.fast.ai/">nbdev</a> for the development, testing, documentation, and dissemination of <code>neuralactivitycubic</code>. We believe the concept of rich annotations and usage examples directly intermixed with the source code (read more about the concept of literate programming for instance <a href="https://blog.esciencecenter.nl/literate-programming-in-science-1669094541a7">here</a>) holds great value and potential, especially in the context of research software, as it makes it easier for others to understand, (re-)use, and ideally even to adapt or contribute to the code. That being said, some things in here might look a bit confusing to you - conversely especially if you are an experienced developer used to “regular” source code.</p>
+<p>For instance, you´ll regularly find the implementation of a class, like the <a href="https://indoc-research.github.io/NeuralActivityCubic/model.html#model"><code>Model</code></a> here, interrupted by markdown text and maybe even some addtional code cells that serve as usage examples or even represent the implementation of tests, only for the subsequent class methods to continue in code cells below, literally patched to the class using the <code>@patch</code> decorator. Just be aware that this may not meet your expectations of what conventional source code typically looks like and maybe you can discover some valuable takeaway for you along the way, too!</p>
+<p>One final note before you head on, though: we are ourselves still experimenting a lot with this concept and how it can be used to best effect and are more than happy to engage in discussion or to hear your feedback on this topic. Feel free to drop us a message via GitHub!</p>
+</div>
+</div>
+</div>
+</section>
+<section id="import-all-dependencies" class="level3">
+<h3 class="anchored" data-anchor-id="import-all-dependencies">🛠️ Import all dependencies</h3>
+<p>Everybody needs some help - and we´re standing on the shoulders of some giants here. Let´s start by importing all dependencies we need to make neuralactivitycubic work:</p>
+<div id="cell-9" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># External functional dependencies:</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> datetime, timezone</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.pyplot <span class="im">import</span> show</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ipywidgets <span class="im">as</span> w</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> multiprocessing</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastcore.basics <span class="im">import</span> patch</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gc</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># External dependencies for type hints:</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Callable</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.figure <span class="im">import</span> Figure</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.axes._axes <span class="im">import</span> Axes</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Internal dependencies</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> neuralactivitycubic.datamodels <span class="im">import</span> Config</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> neuralactivitycubic.processing <span class="im">import</span> AnalysisJob</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> neuralactivitycubic.<span class="bu">input</span> <span class="im">import</span> RecordingLoaderFactory, ROILoaderFactory, RecordingLoader, ROILoader, get_filepaths_with_supported_extension_in_dirpath, FocusAreaPathRestrictions</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+</section>
+<section id="start-of-the-source-code" class="level2">
+<h2 class="anchored" data-anchor-id="start-of-the-source-code">📘 Start of the <em>source code</em></h2>
+<p>Ready? Grab a coffee and enjoy the tour through the module! Let’s jump into the first class, the <a href="https://indoc-research.github.io/NeuralActivityCubic/model.html#logger"><code>Logger</code></a>:</p>
+<p>Before any jobs are created or analysis is run, we need a reliable way to record what happens and when - and that´s what the <a href="https://indoc-research.github.io/NeuralActivityCubic/model.html#logger"><code>Logger</code></a> does. It logs messages with precise UTC timestamps and can:</p>
+<ul>
+<li><p>Store messages in memory for programmatic access</p></li>
+<li><p>Print logs to the console (or GUI)</p></li>
+<li><p>Save logs to disk in a simple text file</p></li>
+<li><p>Clear logs when switching contexts or rerunning jobs</p></li>
+</ul>
+<hr>
+<p><a href="https://github.com/Indoc-Research/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L30" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="logger" class="level3">
+<h3 class="anchored" data-anchor-id="logger">Logger</h3>
+<blockquote class="blockquote">
+<pre><code> Logger ()</code></pre>
+</blockquote>
+<p><em>A simple logging utility class that captures log messages with UTC timestamps, allows retrieval and clearing of logs, and supports saving them to a file.</em></p>
+<div id="cell-13" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Logger:</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">    A simple logging utility class that captures log messages with UTC timestamps,</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">    allows retrieval and clearing of logs, and supports saving them to a file.</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.logs <span class="op">=</span> []</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> add_new_log(<span class="va">self</span>, message: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">        Add a new log message with a UTC timestamp prefix. </span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">        The timestamp is formatted as 'dd-mm-yy HH:MM:SS.ffffff (UTC)'.</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        time_prefix_in_utc <span class="op">=</span> datetime.now(timezone.utc).strftime(<span class="st">'</span><span class="sc">%d</span><span class="st">-%m-%y %H:%M:%S.</span><span class="sc">%f</span><span class="st">'</span>)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.logs.append(<span class="ss">f'</span><span class="sc">{</span>time_prefix_in_utc<span class="sc">}</span><span class="ss"> (UTC): </span><span class="sc">{</span>message<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f'</span><span class="sc">{</span>time_prefix_in_utc<span class="sc">}</span><span class="ss"> (UTC): </span><span class="sc">{</span>message<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> get_logs(<span class="va">self</span>) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">str</span>]:</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.logs</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> clear_logs(<span class="va">self</span>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.logs <span class="op">=</span> []</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> save_current_logs(<span class="va">self</span>, save_dir: Path) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>        filepath <span class="op">=</span> save_dir.joinpath(<span class="st">'logs.txt'</span>)</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> <span class="bu">open</span>(filepath , <span class="st">'w+'</span>) <span class="im">as</span> logs_file:</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> log_message <span class="kw">in</span> <span class="va">self</span>.logs:</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>                logs_file.write(<span class="ss">f'</span><span class="sc">{</span>log_message<span class="sc">}</span><span class="ch">\n</span><span class="ss">'</span>)</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f'Logs saved to </span><span class="sc">{</span>filepath<span class="sc">}</span><span class="ss">'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>Its usage is simple, but invaluable for debugging and traceability. Here´s a short example of how to interact with the <a href="https://indoc-research.github.io/NeuralActivityCubic/model.html#logger"><code>Logger</code></a>:</p>
+<div id="cell-15" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a logger instance</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>logger <span class="op">=</span> Logger()</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate logging workflow</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>logger.add_new_log(<span class="st">'Starting simulated analysis...'</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>logger.add_new_log(<span class="st">'Loading data...'</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>logger.add_new_log(<span class="st">'Data successfully loaded.'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>19-12-25 09:33:25.201192 (UTC): Starting simulated analysis...
+19-12-25 09:33:25.201293 (UTC): Loading data...
+19-12-25 09:33:25.201356 (UTC): Data successfully loaded.</code></pre>
+</div>
+</div>
+<div id="cell-16" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Access what has been logged so far:</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>logger.get_logs()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>['19-12-25 09:33:25.201192 (UTC): Starting simulated analysis...',
+ '19-12-25 09:33:25.201293 (UTC): Loading data...',
+ '19-12-25 09:33:25.201356 (UTC): Data successfully loaded.']</code></pre>
+</div>
+</div>
+<p>And if you´d like to save the logs, you can do so pretty easily as well - just be aware that it expects a <code>pathlib.Path</code> object that defines the <strong>directory</strong> in which the logs.txt file should be saved! Once all logs are saved, you might want to clean it up before starting your next analysis:</p>
+<div id="cell-18" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a Path:</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>destination_directory <span class="op">=</span> Path(<span class="st">'path/to/my/directory/of/choice'</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Pass the Path to the Logger to save the logs.txt</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>logger.save_current_logs(destination_directory)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="cell-19" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean up all previously logged messages and your off to a fresh start:</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>logger.clear_logs()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>You have some trust issues? You can actually check that the list of logged messages is actually empty by calling the <code>get_logs()</code> method again:</p>
+<div id="cell-21" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Confirm the logs were actually cleaned:</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>logger.get_logs()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>[]</code></pre>
+</div>
+</div>
+<p>Awesome — that’s exactly the behavior we expected! 🎯</p>
+<p>Sure, this might be a simple example, but it’s a perfect introduction to the idea of testing your code. If you know what your code <em>should</em> do — and maybe just as importantly, what it <em>shouldn’t</em> do — you can write a test to check for that.</p>
+<p>Even better: those tests are just regular Python code. That means they can be executed automatically, for example, every time you make changes — helping you catch bugs early and ensure nothing breaks by accident.</p>
+<p>And since we’re using the literate programming framework <code>nbdev</code>, we can write these tests right here, directly next to the source code they validate. That’s not just tidy — it’s powerful.</p>
+<p>So let’s put that into practice and write a test for the <a href="https://indoc-research.github.io/NeuralActivityCubic/model.html#logger"><code>Logger</code></a> class that automates the check we just did manually: confirming that all log messages are properly cleared when calling <code>clear_logs()</code>.</p>
+<div class="callout callout-style-simple callout-tip callout-titled" title="How does testing in nbdev work?">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>How does testing in nbdev work?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The literate programming framework we are using here, called nbdev, essentially uses any <code>assert</code> statements you define in the notebook for testing (see for instance <a href="https://nbdev.fast.ai/tutorials/best_practices.html#consider-turning-code-examples-into-tests-by-adding-assertions">here</a> in their official documentation on how they envision <em>literate</em> test implementation.</p>
+<p>To add some more background, an <code>assert</code> statement only passes if it´s <code>True</code>, otherwise it raises an <code>AssertionError</code>. For instance:</p>
+<blockquote class="blockquote">
+<p>assert 1 == 1</p>
+</blockquote>
+<p>would pass, while:</p>
+<blockquote class="blockquote">
+<p>assert 1 == 2</p>
+</blockquote>
+<p>would raise an <code>AssertionError</code> and nbdev´s automated testing pipelines would catch and raise that error, notifying you that something is wrong with your code.</p>
+<p>For this reason, if we´re defining custom functions for the testing, we always need to make sure they return <code>True</code> when the check passes, such that the corresponding <code>assert</code> that calls the function also passes.</p>
+</div>
+</div>
+</div>
+<div id="cell-24" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_log_clean_up():</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    logger <span class="op">=</span> Logger()</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    logger.add_new_log(<span class="st">'test'</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    logger.clear_logs()</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    logs_count <span class="op">=</span> <span class="bu">len</span>(logger.get_logs())</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> logs_count <span class="op">==</span> <span class="dv">0</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="cell-25" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> test_log_clean_up()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>And just like that — we’ve got automated tests running! 🎉</p>
+<p>Every time we push a new version of the code to GitHub, this test (along with all the others we’ve written) runs automatically. If something breaks or behaves unexpectedly, we find out right away and can fix it before it becomes a problem.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Think about how powerful that is: we don’t have to wait for a sharp-eyed user to notice something’s off, track us down, and explain the issue. We catch bugs early — long before they can silently affect someone’s work.</p>
+<p>In the context of research software, that’s not just convenient — it’s critical. A bug that slips through unnoticed could end up influencing someone’s results, and possibly even get baked into a publication. That’s a scenario none of us want.</p>
+<p>Testing is always important — but in science and research, the stakes are higher. That’s why we take it seriously.</p>
+</div>
+</div>
+<p>Next up is the <a href="https://indoc-research.github.io/NeuralActivityCubic/model.html#model"><code>Model</code></a>, which sits right at the core of <code>neuralactivitycubic</code>:</p>
+<hr>
+<p><a href="https://github.com/Indoc-Research/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L64" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="model" class="level3">
+<h3 class="anchored" data-anchor-id="model">Model</h3>
+<blockquote class="blockquote">
+<pre><code> Model (config:neuralactivitycubic.datamodels.Config|str)</code></pre>
+</blockquote>
+<p><em>Initialize self. See help(type(self)) for accurate signature.</em></p>
+<div id="cell-29" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Model:</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                 config: Config <span class="op">|</span> <span class="bu">str</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>                ) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.num_processes <span class="op">=</span> multiprocessing.cpu_count()</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.analysis_job_queue <span class="op">=</span> []</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.result_directories <span class="op">=</span> []</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.logs <span class="op">=</span> Logger()</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">isinstance</span>(config, <span class="bu">str</span>):</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>            config <span class="op">=</span> Config(data_source_path<span class="op">=</span>config)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.config <span class="op">=</span> config</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.nwb_metadata <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.gui_enabled <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.callback_view_update_infos <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.callback_view_show_output_screen <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.view_output <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.pixel_conversion <span class="op">=</span> <span class="va">None</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>This constructor sets up everything needed to use na3 in either programmatic, batch, or GUI mode.</p>
+<ul>
+<li><p>The config parameter can either be a <a href="https://indoc-research.github.io/NeuralActivityCubic/datamodels.html#config"><code>Config</code></a> object or just a path string to the data source. If it’s a string, the constructor wraps it in a <a href="https://indoc-research.github.io/NeuralActivityCubic/datamodels.html#config"><code>Config</code></a>.</p></li>
+<li><p>A <a href="https://indoc-research.github.io/NeuralActivityCubic/model.html#logger"><code>Logger</code></a> is created to track what’s happening and report status.</p></li>
+<li><p>GUI-related hooks are initialized but left inactive until explicitly connected.</p></li>
+</ul>
+<p>This object can now create and run jobs—but wait, what’s a job in this context? That’s what we’ll get into next 👇</p>
+<p>Once the <a href="https://indoc-research.github.io/NeuralActivityCubic/model.html#model"><code>Model</code></a> is initialized, the first thing you do is call <code>create_analysis_jobs()</code>. This method determines what data should be analyzed and sets up jobs accordingly.</p>
+<p>It supports both single-file and batch-directory analysis and uses a set of private helpers to figure out how to match recordings, ROI masks, and focus area files.</p>
+<p>Let’s take a look:</p>
+<hr>
+<p><a href="https://github.com/Indoc-Research/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L85" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="model.create_analysis_jobs" class="level3">
+<h3 class="anchored" data-anchor-id="model.create_analysis_jobs">Model.create_analysis_jobs</h3>
+<blockquote class="blockquote">
+<pre><code> Model.create_analysis_jobs ()</code></pre>
+</blockquote>
+<div id="cell-33" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_analysis_jobs(<span class="va">self</span>: Model</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>                        ) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>._ensure_data_from_previous_jobs_was_removed()</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.add_info_to_logs(<span class="st">'Basic configurations for data import validated. Starting creation of analysis job(s)...'</span>, <span class="va">True</span>)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="va">self</span>.config.batch_mode:</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>        all_subdir_paths_with_rec_file <span class="op">=</span> <span class="va">self</span>._get_all_subdir_paths_with_rec_file(<span class="va">self</span>.config.data_source_path)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>        all_subdir_paths_with_rec_file.sort()</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> idx, subdir_path <span class="kw">in</span> <span class="bu">enumerate</span>(all_subdir_paths_with_rec_file):</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="va">self</span>.config.results_filepath:</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>                result_path <span class="op">=</span> <span class="va">self</span>.config.results_filepath <span class="op">/</span> subdir_path.name</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>                result_path <span class="op">=</span> subdir_path</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>._create_analysis_jobs_for_single_rec(subdir_path, result_path)</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._create_analysis_jobs_for_single_rec()</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.add_info_to_logs(<span class="st">'All job creation(s) completed.'</span>, <span class="va">True</span>, <span class="fl">100.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>This method acts like a scout: it ventures into the provided folder(s), searches for files that NA³ knows how to handle, and sets up one or more analysis jobs based on what it finds.</p>
+<p>Whether it creates one job or many depends on the configuration you’ve selected. The only setup that guarantees a single job is the following:</p>
+<pre><code>batch mode: OFF
+focus area: OFF
+ROI mode: Grid</code></pre>
+<p>For any other combination, the number of analysis jobs depends entirely on how your source data is structured—e.g.&nbsp;how many recordings are detected, how many ROI masks are found, or how many focus area regions exist.</p>
+<p>The actual logic for locating those files and assembling jobs doesn’t live directly in <code>create_analysis_jobs()</code> — instead, it’s delegated to a series of helper methods. These methods do the real legwork and are marked as private by convention, meaning they’re not intended to be called from outside the Model class. Each isolates a specific aspect of the analysis job creation, like locating recordings or mapping ROI files, making it easier to extend or debug individual steps.</p>
+<p>For your convenience, we’ve bundled all of them together in the next code block so you can collapse them as a group, skim through them if you like, and then jump back into the higher-level functionality.</p>
+<div id="cell-35" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _ensure_data_from_previous_jobs_was_removed(<span class="va">self</span>: Model</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>                                               ) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.add_info_to_logs(<span class="st">'Loading of new source data. All previously created jobs &amp; logs will be deleted.'</span>, <span class="va">True</span>)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.analysis_job_queue <span class="op">=</span> []</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.logs.clear_logs()</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _get_all_subdir_paths_with_rec_file(<span class="va">self</span>: Model, </span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>                                        top_level_dir_path: Path</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>                                       ) <span class="op">-&gt;</span> <span class="bu">list</span>[Path]:</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>    rec_loader_factory <span class="op">=</span> RecordingLoaderFactory()</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>    supported_extensions_for_recordings <span class="op">=</span> rec_loader_factory.all_supported_extensions</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>    all_subdir_paths_that_contain_a_supported_recording_file <span class="op">=</span> []</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> elem <span class="kw">in</span> top_level_dir_path.iterdir():</span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> elem.name.startswith(<span class="st">'.'</span>):</span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> elem.is_dir():</span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>                supported_recording_filepaths <span class="op">=</span> [elem_2 <span class="cf">for</span> elem_2 <span class="kw">in</span> elem.iterdir() <span class="cf">if</span> elem_2.suffix <span class="kw">in</span> supported_extensions_for_recordings]</span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="bu">len</span>(supported_recording_filepaths) <span class="op">&gt;</span> <span class="dv">0</span>:</span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>                    all_subdir_paths_that_contain_a_supported_recording_file.append(elem)</span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> all_subdir_paths_that_contain_a_supported_recording_file</span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _create_analysis_jobs_for_single_rec(<span class="va">self</span>: Model, </span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>                                         recording_path: Path <span class="op">=</span> <span class="va">None</span>,</span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>                                         result_path: Path <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>                                        ) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> recording_path <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.config.recording_filepath:</span>
+<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a>            recording_path <span class="op">=</span> <span class="va">self</span>.config.recording_filepath</span>
+<span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a>            recording_path <span class="op">=</span> <span class="va">self</span>.config.data_source_path</span>
+<span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.add_info_to_logs(<span class="ss">f'Starting with Job creation(s) for </span><span class="sc">{</span><span class="bu">str</span>(recording_path)<span class="sc">}</span><span class="ss">'</span>, <span class="va">True</span>)</span>
+<span id="cb20-37"><a href="#cb20-37" aria-hidden="true" tabindex="-1"></a>    recording_loader <span class="op">=</span> <span class="va">self</span>._get_recording_loader(recording_path)</span>
+<span id="cb20-38"><a href="#cb20-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-39"><a href="#cb20-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-40"><a href="#cb20-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="va">self</span>.config.roi_filepath:</span>
+<span id="cb20-41"><a href="#cb20-41" aria-hidden="true" tabindex="-1"></a>        roi_filepath <span class="op">=</span> <span class="va">self</span>.config.roi_filepath</span>
+<span id="cb20-42"><a href="#cb20-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb20-43"><a href="#cb20-43" aria-hidden="true" tabindex="-1"></a>        roi_filepath <span class="op">=</span> recording_loader.filepath.parent</span>
+<span id="cb20-44"><a href="#cb20-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-45"><a href="#cb20-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="va">self</span>.config.roi_mode <span class="op">==</span> <span class="st">'file'</span>:</span>
+<span id="cb20-46"><a href="#cb20-46" aria-hidden="true" tabindex="-1"></a>        roi_loaders <span class="op">=</span> <span class="va">self</span>._get_all_roi_loaders(roi_filepath)</span>
+<span id="cb20-47"><a href="#cb20-47" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb20-48"><a href="#cb20-48" aria-hidden="true" tabindex="-1"></a>        roi_loaders <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb20-49"><a href="#cb20-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-50"><a href="#cb20-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="va">self</span>.config.focus_area_filepath:</span>
+<span id="cb20-51"><a href="#cb20-51" aria-hidden="true" tabindex="-1"></a>        focus_area_filepath <span class="op">=</span> <span class="va">self</span>.config.focus_area_filepath</span>
+<span id="cb20-52"><a href="#cb20-52" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb20-53"><a href="#cb20-53" aria-hidden="true" tabindex="-1"></a>        focus_area_filepath <span class="op">=</span> recording_loader.filepath.parent</span>
+<span id="cb20-54"><a href="#cb20-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-55"><a href="#cb20-55" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> result_path <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb20-56"><a href="#cb20-56" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.config.results_filepath:</span>
+<span id="cb20-57"><a href="#cb20-57" aria-hidden="true" tabindex="-1"></a>            result_path <span class="op">=</span> <span class="va">self</span>.config.results_filepath</span>
+<span id="cb20-58"><a href="#cb20-58" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb20-59"><a href="#cb20-59" aria-hidden="true" tabindex="-1"></a>            result_path <span class="op">=</span> recording_loader.filepath.parent</span>
+<span id="cb20-60"><a href="#cb20-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-61"><a href="#cb20-61" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="va">self</span>.config.focus_area_enabled:</span>
+<span id="cb20-62"><a href="#cb20-62" aria-hidden="true" tabindex="-1"></a>        focus_area_dir_path <span class="op">=</span> <span class="va">self</span>._get_focus_area_dir_path(focus_area_filepath)</span>
+<span id="cb20-63"><a href="#cb20-63" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> focus_area_dir_path <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb20-64"><a href="#cb20-64" aria-hidden="true" tabindex="-1"></a>            analysis_job <span class="op">=</span> <span class="va">self</span>._create_single_analysis_job(recording_loader, roi_loaders, result_filepath<span class="op">=</span>result_path)</span>
+<span id="cb20-65"><a href="#cb20-65" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.analysis_job_queue.append(analysis_job)</span>
+<span id="cb20-66"><a href="#cb20-66" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.add_info_to_logs(<span class="ss">f'Successfully created a single job for </span><span class="sc">{</span>focus_area_filepath<span class="sc">}</span><span class="ss"> at queue position: #</span><span class="sc">{</span><span class="bu">len</span>(<span class="va">self</span>.analysis_job_queue)<span class="sc">}</span><span class="ss">.'</span>, <span class="va">True</span>)</span>
+<span id="cb20-67"><a href="#cb20-67" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb20-68"><a href="#cb20-68" aria-hidden="true" tabindex="-1"></a>            all_focus_area_loaders <span class="op">=</span> <span class="va">self</span>._get_all_roi_loaders(focus_area_dir_path)</span>
+<span id="cb20-69"><a href="#cb20-69" aria-hidden="true" tabindex="-1"></a>            <span class="cf">assert</span> <span class="bu">len</span>(all_focus_area_loaders) <span class="op">&gt;</span> <span class="dv">0</span>, <span class="ss">f'Focus Area analysis enabled, but no focus area ROIs could be found. Please revisit your source data and retry!'</span></span>
+<span id="cb20-70"><a href="#cb20-70" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> idx, focus_area_loader <span class="kw">in</span> <span class="bu">enumerate</span>(all_focus_area_loaders):</span>
+<span id="cb20-71"><a href="#cb20-71" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> result_path <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb20-72"><a href="#cb20-72" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span> <span class="va">self</span>.config.results_filepath:</span>
+<span id="cb20-73"><a href="#cb20-73" aria-hidden="true" tabindex="-1"></a>                        result_path <span class="op">=</span> <span class="va">self</span>.config.results_filepath <span class="op">/</span> focus_area_loader.filepath.stem</span>
+<span id="cb20-74"><a href="#cb20-74" aria-hidden="true" tabindex="-1"></a>                analysis_job_with_focus_area <span class="op">=</span> <span class="va">self</span>._create_single_analysis_job(recording_loader, roi_loaders, focus_area_loader, result_filepath<span class="op">=</span>result_path)</span>
+<span id="cb20-75"><a href="#cb20-75" aria-hidden="true" tabindex="-1"></a>                <span class="va">self</span>.analysis_job_queue.append(analysis_job_with_focus_area)</span>
+<span id="cb20-76"><a href="#cb20-76" aria-hidden="true" tabindex="-1"></a>                job_creation_message <span class="op">=</span> (<span class="ss">f'Successfully created </span><span class="sc">{</span>idx <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss"> out of </span><span class="sc">{</span><span class="bu">len</span>(all_focus_area_loaders)<span class="sc">}</span><span class="ss"> job(s) for </span><span class="sc">{</span>recording_path<span class="sc">}</span><span class="ss"> '</span></span>
+<span id="cb20-77"><a href="#cb20-77" aria-hidden="true" tabindex="-1"></a>                                        <span class="ss">f'at queue position: #</span><span class="sc">{</span><span class="bu">len</span>(<span class="va">self</span>.analysis_job_queue)<span class="sc">}</span><span class="ss">.'</span>)</span>
+<span id="cb20-78"><a href="#cb20-78" aria-hidden="true" tabindex="-1"></a>                <span class="va">self</span>.add_info_to_logs(job_creation_message, <span class="va">True</span>)</span>
+<span id="cb20-79"><a href="#cb20-79" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb20-80"><a href="#cb20-80" aria-hidden="true" tabindex="-1"></a>        analysis_job <span class="op">=</span> <span class="va">self</span>._create_single_analysis_job(recording_loader, roi_loaders, result_filepath<span class="op">=</span>result_path)</span>
+<span id="cb20-81"><a href="#cb20-81" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.analysis_job_queue.append(analysis_job)</span>
+<span id="cb20-82"><a href="#cb20-82" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.add_info_to_logs(<span class="ss">f'Successfully created a single job for </span><span class="sc">{</span>recording_path<span class="sc">}</span><span class="ss"> at queue position: #</span><span class="sc">{</span><span class="bu">len</span>(<span class="va">self</span>.analysis_job_queue)<span class="sc">}</span><span class="ss">.'</span>, <span class="va">True</span>)</span>
+<span id="cb20-83"><a href="#cb20-83" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.add_info_to_logs(<span class="ss">f'Finished Job creation(s) for </span><span class="sc">{</span>recording_path<span class="sc">}</span><span class="ss">!'</span>, <span class="va">True</span>)</span>
+<span id="cb20-84"><a href="#cb20-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-85"><a href="#cb20-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-86"><a href="#cb20-86" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb20-87"><a href="#cb20-87" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _get_recording_loader(<span class="va">self</span>: Model, </span>
+<span id="cb20-88"><a href="#cb20-88" aria-hidden="true" tabindex="-1"></a>                          source_path: Path</span>
+<span id="cb20-89"><a href="#cb20-89" aria-hidden="true" tabindex="-1"></a>                         ) <span class="op">-&gt;</span> RecordingLoader:</span>
+<span id="cb20-90"><a href="#cb20-90" aria-hidden="true" tabindex="-1"></a>    rec_loader_factory <span class="op">=</span> RecordingLoaderFactory()</span>
+<span id="cb20-91"><a href="#cb20-91" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> source_path.is_dir():</span>
+<span id="cb20-92"><a href="#cb20-92" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.add_info_to_logs(<span class="ss">f'Looking for a valid recording file in </span><span class="sc">{</span>source_path<span class="sc">}</span><span class="ss">...'</span>, <span class="va">True</span>)</span>
+<span id="cb20-93"><a href="#cb20-93" aria-hidden="true" tabindex="-1"></a>        valid_filepaths <span class="op">=</span> get_filepaths_with_supported_extension_in_dirpath(source_path, rec_loader_factory.all_supported_extensions, <span class="dv">1</span>)</span>
+<span id="cb20-94"><a href="#cb20-94" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">len</span>(valid_filepaths) <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb20-95"><a href="#cb20-95" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.add_info_to_logs(<span class="ss">f'Could not find any recording files of supported type at </span><span class="sc">{</span>source_path<span class="sc">}</span><span class="ss">!'</span>, <span class="va">True</span>)</span>
+<span id="cb20-96"><a href="#cb20-96" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> <span class="bu">len</span>(valid_filepaths) <span class="op">&gt;</span>  <span class="dv">1</span>:</span>
+<span id="cb20-97"><a href="#cb20-97" aria-hidden="true" tabindex="-1"></a>            filepath <span class="op">=</span> valid_filepaths[<span class="dv">0</span>]</span>
+<span id="cb20-98"><a href="#cb20-98" aria-hidden="true" tabindex="-1"></a>            too_many_files_message <span class="op">=</span> (<span class="ss">f'Found more than a single recording file of supported type at </span><span class="sc">{</span>source_path<span class="sc">}</span><span class="ss">, i.e.: </span><span class="sc">{</span>valid_filepaths<span class="sc">}</span><span class="ss">. '</span></span>
+<span id="cb20-99"><a href="#cb20-99" aria-hidden="true" tabindex="-1"></a>                                      <span class="ss">f'However, only a single file was expected. NA3 continues with </span><span class="sc">{</span>filepath<span class="sc">}</span><span class="ss"> and will ignore the other files.'</span>)</span>
+<span id="cb20-100"><a href="#cb20-100" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.add_info_to_logs(too_many_files_message, <span class="va">True</span>)</span>
+<span id="cb20-101"><a href="#cb20-101" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb20-102"><a href="#cb20-102" aria-hidden="true" tabindex="-1"></a>            filepath <span class="op">=</span> valid_filepaths[<span class="dv">0</span>]</span>
+<span id="cb20-103"><a href="#cb20-103" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.add_info_to_logs(<span class="ss">f'Found recording file of supported type at: </span><span class="sc">{</span>filepath<span class="sc">}</span><span class="ss">.'</span>, <span class="va">True</span>)</span>
+<span id="cb20-104"><a href="#cb20-104" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb20-105"><a href="#cb20-105" aria-hidden="true" tabindex="-1"></a>        filepath <span class="op">=</span> source_path</span>
+<span id="cb20-106"><a href="#cb20-106" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.add_info_to_logs(<span class="ss">f'Found recording file of supported type at: </span><span class="sc">{</span>filepath<span class="sc">}</span><span class="ss">.'</span>, <span class="va">True</span>)</span>
+<span id="cb20-107"><a href="#cb20-107" aria-hidden="true" tabindex="-1"></a>    recording_loader <span class="op">=</span> rec_loader_factory.get_loader(filepath)</span>
+<span id="cb20-108"><a href="#cb20-108" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> recording_loader</span>
+<span id="cb20-109"><a href="#cb20-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-110"><a href="#cb20-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-111"><a href="#cb20-111" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb20-112"><a href="#cb20-112" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _get_all_roi_loaders(<span class="va">self</span>: Model, </span>
+<span id="cb20-113"><a href="#cb20-113" aria-hidden="true" tabindex="-1"></a>                         data_source_path: Path</span>
+<span id="cb20-114"><a href="#cb20-114" aria-hidden="true" tabindex="-1"></a>                        ) <span class="op">-&gt;</span> <span class="bu">list</span>[ROILoader]:</span>
+<span id="cb20-115"><a href="#cb20-115" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> data_source_path.is_dir(), <span class="ss">f'You must provide a directory as source data when using ROI mode or enabling Focus Areas. Please revisit your input data and retry.'</span></span>
+<span id="cb20-116"><a href="#cb20-116" aria-hidden="true" tabindex="-1"></a>    roi_loader_factory <span class="op">=</span> ROILoaderFactory()</span>
+<span id="cb20-117"><a href="#cb20-117" aria-hidden="true" tabindex="-1"></a>    all_filepaths_with_supported_filetype_extensions <span class="op">=</span> get_filepaths_with_supported_extension_in_dirpath(data_source_path, roi_loader_factory.all_supported_extensions)</span>
+<span id="cb20-118"><a href="#cb20-118" aria-hidden="true" tabindex="-1"></a>    all_roi_loaders <span class="op">=</span> [roi_loader_factory.get_loader(roi_filepath) <span class="cf">for</span> roi_filepath <span class="kw">in</span> all_filepaths_with_supported_filetype_extensions]</span>
+<span id="cb20-119"><a href="#cb20-119" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> all_roi_loaders</span>
+<span id="cb20-120"><a href="#cb20-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-121"><a href="#cb20-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-122"><a href="#cb20-122" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb20-123"><a href="#cb20-123" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _get_focus_area_dir_path(<span class="va">self</span>: Model, </span>
+<span id="cb20-124"><a href="#cb20-124" aria-hidden="true" tabindex="-1"></a>                             source_path: Path</span>
+<span id="cb20-125"><a href="#cb20-125" aria-hidden="true" tabindex="-1"></a>                            ) <span class="op">-&gt;</span> Path:</span>
+<span id="cb20-126"><a href="#cb20-126" aria-hidden="true" tabindex="-1"></a>    focus_area_path_restrictions <span class="op">=</span> FocusAreaPathRestrictions()</span>
+<span id="cb20-127"><a href="#cb20-127" aria-hidden="true" tabindex="-1"></a>    supported_dir_names <span class="op">=</span> focus_area_path_restrictions.supported_dir_names</span>
+<span id="cb20-128"><a href="#cb20-128" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> source_path.is_dir():</span>
+<span id="cb20-129"><a href="#cb20-129" aria-hidden="true" tabindex="-1"></a>        source_dir_path <span class="op">=</span> source_path</span>
+<span id="cb20-130"><a href="#cb20-130" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb20-131"><a href="#cb20-131" aria-hidden="true" tabindex="-1"></a>        source_dir_path <span class="op">=</span> source_path.parent</span>
+<span id="cb20-132"><a href="#cb20-132" aria-hidden="true" tabindex="-1"></a>    dirs_with_valid_name <span class="op">=</span> [elem <span class="cf">for</span> elem <span class="kw">in</span> source_dir_path.iterdir() <span class="cf">if</span> (elem.name <span class="kw">in</span> supported_dir_names) <span class="op">&amp;</span> (elem.is_dir() <span class="op">==</span> <span class="va">True</span>)]</span>
+<span id="cb20-133"><a href="#cb20-133" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(dirs_with_valid_name) <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb20-134"><a href="#cb20-134" aria-hidden="true" tabindex="-1"></a>        no_dir_found_message <span class="op">=</span> (<span class="ss">f'You enabled Focus Area but a correspondingly named directory could not be found in </span><span class="sc">{</span>source_dir_path<span class="sc">}</span><span class="ss">. '</span></span>
+<span id="cb20-135"><a href="#cb20-135" aria-hidden="true" tabindex="-1"></a>                                <span class="ss">f'Please use one of the following for the name of the directory that contains the Focus Area ROIs: </span><span class="sc">{</span>supported_dir_names<span class="sc">}</span><span class="ss">. '</span></span>
+<span id="cb20-136"><a href="#cb20-136" aria-hidden="true" tabindex="-1"></a>                                <span class="st">'In absence of such a directory, analysis is continued without using the Focus Area mode for this data.'</span>)</span>
+<span id="cb20-137"><a href="#cb20-137" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.add_info_to_logs(no_dir_found_message, <span class="va">True</span>)</span>
+<span id="cb20-138"><a href="#cb20-138" aria-hidden="true" tabindex="-1"></a>        focus_area_dir_path <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb20-139"><a href="#cb20-139" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> <span class="bu">len</span>(dirs_with_valid_name) <span class="op">&gt;</span> <span class="dv">1</span>:</span>
+<span id="cb20-140"><a href="#cb20-140" aria-hidden="true" tabindex="-1"></a>        too_many_dirs <span class="op">=</span> (<span class="ss">f'More than a single Focus Area directory was found in the following parent directory: </span><span class="sc">{</span>source_dir_path<span class="sc">}</span><span class="ss">, i.e.: '</span></span>
+<span id="cb20-141"><a href="#cb20-141" aria-hidden="true" tabindex="-1"></a>                         <span class="ss">f'</span><span class="sc">{</span>dirs_with_valid_name<span class="sc">}</span><span class="ss">. However, only the use of a single one that contains all your Focus Area ROIS is '</span></span>
+<span id="cb20-142"><a href="#cb20-142" aria-hidden="true" tabindex="-1"></a>                         <span class="ss">f'currently supported. </span><span class="sc">{</span>dirs_with_valid_name[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> will be used for this analysis, while the other(s): </span><span class="sc">{</span>dirs_with_valid_name[<span class="dv">1</span>:]<span class="sc">}</span><span class="ss"> '</span></span>
+<span id="cb20-143"><a href="#cb20-143" aria-hidden="true" tabindex="-1"></a>                         <span class="st">'will be ignored to continue processing.'</span>)</span>
+<span id="cb20-144"><a href="#cb20-144" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.add_info_to_logs(too_many_dirs, <span class="va">True</span>)</span>
+<span id="cb20-145"><a href="#cb20-145" aria-hidden="true" tabindex="-1"></a>        focus_area_dir_path <span class="op">=</span> dirs_with_valid_name[<span class="dv">0</span>]</span>
+<span id="cb20-146"><a href="#cb20-146" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb20-147"><a href="#cb20-147" aria-hidden="true" tabindex="-1"></a>        focus_area_dir_path <span class="op">=</span> dirs_with_valid_name[<span class="dv">0</span>]</span>
+<span id="cb20-148"><a href="#cb20-148" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> focus_area_dir_path</span>
+<span id="cb20-149"><a href="#cb20-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-150"><a href="#cb20-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-151"><a href="#cb20-151" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb20-152"><a href="#cb20-152" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _create_single_analysis_job(<span class="va">self</span>: Model,</span>
+<span id="cb20-153"><a href="#cb20-153" aria-hidden="true" tabindex="-1"></a>                                recording_loader: RecordingLoader,</span>
+<span id="cb20-154"><a href="#cb20-154" aria-hidden="true" tabindex="-1"></a>                                roi_loaders: <span class="bu">list</span>[ROILoader] <span class="op">|</span> <span class="va">None</span>,</span>
+<span id="cb20-155"><a href="#cb20-155" aria-hidden="true" tabindex="-1"></a>                                focus_area_loader: ROILoader <span class="op">=</span> <span class="va">None</span>,</span>
+<span id="cb20-156"><a href="#cb20-156" aria-hidden="true" tabindex="-1"></a>                                result_filepath: Path <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb20-157"><a href="#cb20-157" aria-hidden="true" tabindex="-1"></a>                               ) <span class="op">-&gt;</span> AnalysisJob:</span>
+<span id="cb20-158"><a href="#cb20-158" aria-hidden="true" tabindex="-1"></a>    data_loaders <span class="op">=</span> {<span class="st">'recording'</span>: recording_loader}</span>
+<span id="cb20-159"><a href="#cb20-159" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> roi_loaders <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb20-160"><a href="#cb20-160" aria-hidden="true" tabindex="-1"></a>        data_loaders[<span class="st">'rois'</span>] <span class="op">=</span> roi_loaders</span>
+<span id="cb20-161"><a href="#cb20-161" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> focus_area_loader <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb20-162"><a href="#cb20-162" aria-hidden="true" tabindex="-1"></a>        data_loaders[<span class="st">'focus_area'</span>] <span class="op">=</span> focus_area_loader</span>
+<span id="cb20-163"><a href="#cb20-163" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> AnalysisJob(<span class="va">self</span>.num_processes, data_loaders, result_filepath)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>Once the analysis jobs have been created, it’s time to actually process them! ✨</p>
+<p>To kick off the entire analysis pipeline, you simply call the other main method of the <a href="https://indoc-research.github.io/NeuralActivityCubic/model.html#model"><code>Model</code></a>:</p>
+<blockquote class="blockquote">
+<p>run_analysis()</p>
+</blockquote>
+<p>This method takes care of everything:</p>
+<ul>
+<li><p>executing each analysis job in turn,</p></li>
+<li><p>logging the progress and any issues along the way,</p></li>
+<li><p>generating results and saving them to disk,</p></li>
+<li><p>and even updating the GUI if you’re running in interactive mode.</p></li>
+</ul>
+<hr>
+<p><a href="https://github.com/Indoc-Research/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L269" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="model.run_analysis" class="level3">
+<h3 class="anchored" data-anchor-id="model.run_analysis">Model.run_analysis</h3>
+<blockquote class="blockquote">
+<pre><code> Model.run_analysis ()</code></pre>
+</blockquote>
+<div id="cell-38" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> run_analysis(<span class="va">self</span>: Model</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>                ) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>._display_configs()</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.add_info_to_logs(<span class="st">'Starting analysis...'</span>, <span class="va">True</span>)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> job_idx <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(<span class="va">self</span>.analysis_job_queue)):</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>        analysis_job <span class="op">=</span> <span class="va">self</span>.analysis_job_queue.pop(<span class="dv">0</span>)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.add_info_to_logs(<span class="ss">f'Starting to process analysis job with index #</span><span class="sc">{</span>job_idx<span class="sc">}</span><span class="ss">.'</span>)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>        analysis_job.run_analysis(<span class="va">self</span>.config)</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.add_info_to_logs(<span class="ss">f'Analysis successfully completed. Continue with creation of results.. '</span>)</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>        analysis_job.create_results(<span class="va">self</span>.config, <span class="va">self</span>.nwb_metadata)</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.add_info_to_logs(<span class="ss">f'Results successfully created at: </span><span class="sc">{</span>analysis_job<span class="sc">.</span>results_dir_path<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.gui_enabled:</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.callback_view_show_output_screen()</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>            <span class="cf">with</span> <span class="va">self</span>.view_output:</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>                activity_overview_fig <span class="op">=</span> analysis_job.activity_overview_plot[<span class="dv">0</span>]</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>                activity_overview_fig.set_figheight(<span class="dv">400</span> <span class="op">*</span> <span class="va">self</span>.pixel_conversion)</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>                activity_overview_fig.tight_layout()</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>                show(activity_overview_fig)</span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._save_user_settings_as_json(analysis_job)</span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.result_directories.append(analysis_job.results_dir_path)</span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.add_info_to_logs(<span class="st">'Updating all log files to contain all logs as final step. All valid logs files will end with this message.'</span>)</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.logs.save_current_logs(analysis_job.results_dir_path)</span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>        gc.collect()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Analysis jobs are currently processed sequentially—one after another. However, each job itself is internally parallelized: the ROI traces are processed using all available CPU cores.</p>
+<p>That means there’s definitely room for future optimization at the job level. So if you’re feeling adventurous and want to dive into parallel job execution… we’d love to see your pull request! 🔧🚀</p>
+</div>
+</div>
+<p>The private helper methods that <a href="https://indoc-research.github.io/NeuralActivityCubic/api.html#run_analysis"><code>run_analysis()</code></a> uses are significantly less complex. As before, they’re grouped below for convenience to enable optional collapsing. 👇</p>
+<div id="cell-41" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _display_configs(<span class="va">self</span>: Model</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                    ) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.add_info_to_logs(<span class="st">'Configurations for Analysis Settings and Result Creation validated successfully.'</span>, <span class="va">True</span>)</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.add_info_to_logs(<span class="ss">f'Analysis Settings are:'</span>)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> line <span class="kw">in</span> <span class="va">self</span>.config.display_all_attributes():</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.add_info_to_logs(line)</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _save_user_settings_as_json(<span class="va">self</span>: Model, </span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>                                analysis_job: AnalysisJob</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>                               ) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>    filepath <span class="op">=</span> analysis_job.results_dir_path.joinpath(<span class="st">'user_settings.json'</span>)</span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.config.recording_filepath <span class="op">=</span> analysis_job.recording.filepath</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> analysis_job.focus_area_enabled:</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.config.focus_area_filepath <span class="op">=</span> analysis_job.focus_area.filepath</span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.config.focus_area_filepath <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> analysis_job.rois_source <span class="op">==</span> <span class="st">'file'</span>:</span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.config.roi_filepath <span class="op">=</span> [roi.filepath <span class="cf">for</span> roi <span class="kw">in</span> analysis_job.all_rois]</span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(filepath, <span class="st">'w+'</span>) <span class="im">as</span> user_settings_json:</span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>        user_settings_json.write(<span class="va">self</span>.config.to_json())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>The <a href="https://indoc-research.github.io/NeuralActivityCubic/model.html#model"><code>Model</code></a> is also designed to cooperate closely with na3’s graphical user interface (GUI) — without ever depending on it directly. This is thanks to a clear separation of concerns, following the Model-View-Controller (MVC) design pattern.</p>
+<p>The idea is simple:</p>
+<ul>
+<li><p>The <a href="https://indoc-research.github.io/NeuralActivityCubic/model.html#model"><code>Model</code></a> knows how to run analyses</p></li>
+<li><p>The <code>View</code> handles the display and user interaction</p></li>
+<li><p>The controller (in this case, the <a href="https://indoc-research.github.io/NeuralActivityCubic/controller.html#app"><code>App</code></a> class) wires the two together</p></li>
+</ul>
+<p>To support this structure, the Model exposes two public methods that let the controller hook up GUI elements like progress messages and result previews. Let’s look at them:</p>
+<hr>
+<p><a href="https://github.com/Indoc-Research/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L321" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="model.setup_connection_to_update_infos_in_view" class="level3">
+<h3 class="anchored" data-anchor-id="model.setup_connection_to_update_infos_in_view">Model.setup_connection_to_update_infos_in_view</h3>
+<blockquote class="blockquote">
+<pre><code> Model.setup_connection_to_update_infos_in_view (update_infos:Callable)</code></pre>
+</blockquote>
+<p><em>Allows to configure the widget in the GUI that is used to display the logs.</em></p>
+<div id="cell-44" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> setup_connection_to_update_infos_in_view(<span class="va">self</span>: Model, </span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>                                             update_infos: Callable</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>                                            ) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">""" Allows to configure the widget in the GUI that is used to display the logs. """</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.callback_view_update_infos <span class="op">=</span> update_infos</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.gui_enabled <span class="op">=</span> <span class="va">True</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>This method registers a callback that will be used to send updates (logs or progress percentages) from the model to the GUI’s log display widget. Once this is connected, log messages generated during analysis can be sent live to the GUI’s log panel.</p>
+<hr>
+<p><a href="https://github.com/Indoc-Research/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L330" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="model.setup_connection_to_display_results" class="level3">
+<h3 class="anchored" data-anchor-id="model.setup_connection_to_display_results">Model.setup_connection_to_display_results</h3>
+<blockquote class="blockquote">
+<pre><code> Model.setup_connection_to_display_results (show_output_screen:Callable,
+                                            output:ipywidgets.widgets.widg
+                                            et_output.Output,
+                                            pixel_conversion:float)</code></pre>
+</blockquote>
+<p><em>Allows to configure the widget in the GUI that is used to display images, plots, and figures.</em></p>
+<div id="cell-47" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> setup_connection_to_display_results(<span class="va">self</span>: Model, </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>                                        show_output_screen: Callable, </span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>                                        output: w.Output, </span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>                                        pixel_conversion: <span class="bu">float</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>                                       ) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">""" Allows to configure the widget in the GUI that is used to display images, plots, and figures. """</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.callback_view_show_output_screen <span class="op">=</span> show_output_screen</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.view_output <span class="op">=</span> output</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.pixel_conversion <span class="op">=</span> pixel_conversion</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.gui_enabled <span class="op">=</span> <span class="va">True</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>This second method connects the model to GUI elements responsible for showing figures and images — specifically the results of an analysis job. Once wired up, na3 can render the activity overview plots or other visualizations directly into the notebook interface. This makes for a much smoother and more intuitive analysis experience — especially for exploratory workflows.</p>
+<p>The next method was also designed to smoothen your experience with na3´s GUI while trying to figure out which grid size you should use:</p>
+<hr>
+<p><a href="https://github.com/Indoc-Research/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L343" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="model.preview_window_size" class="level3">
+<h3 class="anchored" data-anchor-id="model.preview_window_size">Model.preview_window_size</h3>
+<blockquote class="blockquote">
+<pre><code> Model.preview_window_size (grid_size)</code></pre>
+</blockquote>
+<div id="cell-51" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> preview_window_size(<span class="va">self</span>: Model, </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>                        grid_size</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>                       ) <span class="op">-&gt;</span> <span class="bu">tuple</span>[Figure, Axes]:</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    job_for_preview <span class="op">=</span> <span class="va">self</span>.analysis_job_queue[<span class="dv">0</span>]</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    preview_fig, preview_ax <span class="op">=</span> job_for_preview.preview_window_size(grid_size)</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> preview_fig, preview_ax</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>This method shows you how the selected grid_size will divide your image into analysis windows. It uses the first job in the queue (since you haven’t run any yet) and overlays the grid onto the corresponding image. It integrates directly with the GUI output, so users can click a button and immediately see how their current settings affect the analysis layout.</p>
+<p>At the very beginning of this notebook, we introduced the humble <a href="https://indoc-research.github.io/NeuralActivityCubic/model.html#logger"><code>Logger</code></a> — a simple but powerful tool for capturing status updates throughout the analysis pipeline.</p>
+<p>Well, guess what: we’re coming full circle now. The <a href="https://indoc-research.github.io/NeuralActivityCubic/model.html#model"><code>Model</code></a> uses its own method, <code>add_info_to_logs()</code>, to centralize how messages are handled — whether you’re running headless, in a notebook, or in the GUI.</p>
+<hr>
+<p><a href="https://github.com/Indoc-Research/NeuralActivityCubic/blob/main/neuralactivitycubic/model.py#L352" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="model.add_info_to_logs" class="level3">
+<h3 class="anchored" data-anchor-id="model.add_info_to_logs">Model.add_info_to_logs</h3>
+<blockquote class="blockquote">
+<pre><code> Model.add_info_to_logs (message:str, display_in_gui:bool=False,
+                         progress_in_percent:float|None=None)</code></pre>
+</blockquote>
+<div id="cell-55" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_info_to_logs(<span class="va">self</span>: Model, </span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>                     message: <span class="bu">str</span>, </span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>                     display_in_gui: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>, </span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>                     progress_in_percent: <span class="bu">float</span> <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>                    ) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.logs.add_new_log(message)</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (display_in_gui <span class="op">==</span> <span class="va">True</span>) <span class="kw">and</span> (<span class="va">self</span>.gui_enabled <span class="op">==</span> <span class="va">True</span>): </span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.callback_view_update_infos(message, progress_in_percent)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>This method serves as a bridge between the raw logging system and the user interface. It logs the message internally, prints it to the console, and (if GUI mode is active) pushes the update to the GUI via the connected callback.</p>
+<p>It’s small, but it plays a central role in making sure everything you do with NA³ is traceable, debuggable, and visible — no matter how you interact with the tool.</p>
+<p>So if you’re seeing beautifully time-stamped updates in the GUI while a job runs, now you know who’s responsible! 🙌</p>
+<p>And that concludes our tour through the source code of the <a href="https://indoc-research.github.io/NeuralActivityCubic/model.html#model"><code>Model</code></a> — the central brain of na3!</p>
+</section>
+</section>
+<section id="testing-testing-testing-.." class="level2">
+<h2 class="anchored" data-anchor-id="testing-testing-testing-..">🧪 Testing, testing, testing ..</h2>
+<p>We emphasized above already how important testing of your research software code is. Therefore, we also have some more tests implemented in here that test some of the <a href="https://indoc-research.github.io/NeuralActivityCubic/model.html#model"><code>Model</code></a>s behavior</p>
+<div id="cell-59" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shutil <span class="im">import</span> rmtree</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> re <span class="im">import</span> <span class="bu">compile</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pandas.testing <span class="im">import</span> assert_frame_equal</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> neuralactivitycubic.view <span class="im">import</span> WidgetsInterface</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="cell-60" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>test_filepath <span class="op">=</span> Path(<span class="st">'../test_data/00'</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>test00_filepath <span class="op">=</span> Path(<span class="st">'../test_data/00'</span>)</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>test01_filepath <span class="op">=</span> Path(<span class="st">'../test_data/01'</span>)</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>parent_test_filepath <span class="op">=</span> Path(<span class="st">'../test_data'</span>)</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>example_results_dir <span class="op">=</span> Path(<span class="st">'../test_data/00/example_test_results_for_spiking_neuron'</span>)</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>results_filepath <span class="op">=</span> Path(<span class="st">'../test_data/00/results_directory'</span>)</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="co"># we have to split results by own directories due to concurrency issues</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>results_case01_filepath <span class="op">=</span> Path(<span class="st">'../test_data/results/case_01/'</span>)</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>results_case02_filepath <span class="op">=</span> Path(<span class="st">'../test_data/results/case_02/'</span>)</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>results_case03_filepath <span class="op">=</span> Path(<span class="st">'../test_data/results/case_03/'</span>)</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>results_case04_filepath <span class="op">=</span> Path(<span class="st">'../test_data/results/case_04/'</span>)</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>results_case05_filepath <span class="op">=</span> Path(<span class="st">'../test_data/results/case_05/'</span>)</span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>results_case06_filepath <span class="op">=</span> Path(<span class="st">'../test_data/results/case_06/'</span>)</span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_correct_model_run():</span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>    correct_config <span class="op">=</span> WidgetsInterface().export_user_settings()</span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>    correct_config.data_source_path <span class="op">=</span> test00_filepath <span class="op">/</span> <span class="st">'spiking_neuron.avi'</span></span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>    correct_config.save_single_trace_results <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> Model(correct_config)</span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>    model.create_analysis_jobs()</span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>    model.run_analysis()</span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> model.result_directories</span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_correct_model_run_with_custom_results_dir():</span>
+<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a>    correct_config <span class="op">=</span> WidgetsInterface().export_user_settings()</span>
+<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a>    correct_config.data_source_path <span class="op">=</span> test00_filepath <span class="op">/</span> <span class="st">'spiking_neuron.avi'</span></span>
+<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a>    correct_config.results_filepath <span class="op">=</span> results_filepath</span>
+<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> Model(correct_config)</span>
+<span id="cb33-30"><a href="#cb33-30" aria-hidden="true" tabindex="-1"></a>    model.create_analysis_jobs()</span>
+<span id="cb33-31"><a href="#cb33-31" aria-hidden="true" tabindex="-1"></a>    model.run_analysis()</span>
+<span id="cb33-32"><a href="#cb33-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> correct_config.results_filepath</span>
+<span id="cb33-33"><a href="#cb33-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-34"><a href="#cb33-34" aria-hidden="true" tabindex="-1"></a><span class="co"># tests with different modes of running analysis</span></span>
+<span id="cb33-35"><a href="#cb33-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-36"><a href="#cb33-36" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_run_grid_focus_mode():</span>
+<span id="cb33-37"><a href="#cb33-37" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb33-38"><a href="#cb33-38" aria-hidden="true" tabindex="-1"></a><span class="co">    Test run_analysis function with focus area enabled.</span></span>
+<span id="cb33-39"><a href="#cb33-39" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb33-40"><a href="#cb33-40" aria-hidden="true" tabindex="-1"></a>    grid_focus_mode_config <span class="op">=</span> WidgetsInterface().export_user_settings()</span>
+<span id="cb33-41"><a href="#cb33-41" aria-hidden="true" tabindex="-1"></a>    grid_focus_mode_config.data_source_path <span class="op">=</span> test01_filepath</span>
+<span id="cb33-42"><a href="#cb33-42" aria-hidden="true" tabindex="-1"></a>    grid_focus_mode_config.focus_area_enabled <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb33-43"><a href="#cb33-43" aria-hidden="true" tabindex="-1"></a>    grid_focus_mode_config.results_filepath <span class="op">=</span> results_case01_filepath</span>
+<span id="cb33-44"><a href="#cb33-44" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> Model(grid_focus_mode_config)</span>
+<span id="cb33-45"><a href="#cb33-45" aria-hidden="true" tabindex="-1"></a>    model.create_analysis_jobs()</span>
+<span id="cb33-46"><a href="#cb33-46" aria-hidden="true" tabindex="-1"></a>    model.run_analysis()</span>
+<span id="cb33-47"><a href="#cb33-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-48"><a href="#cb33-48" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> grid_focus_mode_config.results_filepath</span>
+<span id="cb33-49"><a href="#cb33-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-50"><a href="#cb33-50" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_run_file_focus_mode():</span>
+<span id="cb33-51"><a href="#cb33-51" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb33-52"><a href="#cb33-52" aria-hidden="true" tabindex="-1"></a><span class="co">    Test run_analysis function with focus area enabled.</span></span>
+<span id="cb33-53"><a href="#cb33-53" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb33-54"><a href="#cb33-54" aria-hidden="true" tabindex="-1"></a>    file_focus_mode_config <span class="op">=</span> WidgetsInterface().export_user_settings()</span>
+<span id="cb33-55"><a href="#cb33-55" aria-hidden="true" tabindex="-1"></a>    file_focus_mode_config.data_source_path <span class="op">=</span> test01_filepath</span>
+<span id="cb33-56"><a href="#cb33-56" aria-hidden="true" tabindex="-1"></a>    file_focus_mode_config.focus_area_enabled <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb33-57"><a href="#cb33-57" aria-hidden="true" tabindex="-1"></a>    file_focus_mode_config.roi_mode <span class="op">=</span> <span class="st">'file'</span></span>
+<span id="cb33-58"><a href="#cb33-58" aria-hidden="true" tabindex="-1"></a>    file_focus_mode_config.results_filepath <span class="op">=</span> results_case01_filepath</span>
+<span id="cb33-59"><a href="#cb33-59" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> Model(file_focus_mode_config)</span>
+<span id="cb33-60"><a href="#cb33-60" aria-hidden="true" tabindex="-1"></a>    model.create_analysis_jobs()</span>
+<span id="cb33-61"><a href="#cb33-61" aria-hidden="true" tabindex="-1"></a>    model.run_analysis()</span>
+<span id="cb33-62"><a href="#cb33-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-63"><a href="#cb33-63" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> file_focus_mode_config.results_filepath</span>
+<span id="cb33-64"><a href="#cb33-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-65"><a href="#cb33-65" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_run_grid_batch_mode():</span>
+<span id="cb33-66"><a href="#cb33-66" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb33-67"><a href="#cb33-67" aria-hidden="true" tabindex="-1"></a><span class="co">    Test run_analysis function with batch mode enabled.</span></span>
+<span id="cb33-68"><a href="#cb33-68" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb33-69"><a href="#cb33-69" aria-hidden="true" tabindex="-1"></a>    grid_batch_mode_config <span class="op">=</span> WidgetsInterface().export_user_settings()</span>
+<span id="cb33-70"><a href="#cb33-70" aria-hidden="true" tabindex="-1"></a>    grid_batch_mode_config.data_source_path <span class="op">=</span> parent_test_filepath</span>
+<span id="cb33-71"><a href="#cb33-71" aria-hidden="true" tabindex="-1"></a>    grid_batch_mode_config.batch_mode <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb33-72"><a href="#cb33-72" aria-hidden="true" tabindex="-1"></a>    grid_batch_mode_config.results_filepath <span class="op">=</span> results_case02_filepath</span>
+<span id="cb33-73"><a href="#cb33-73" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> Model(grid_batch_mode_config)</span>
+<span id="cb33-74"><a href="#cb33-74" aria-hidden="true" tabindex="-1"></a>    model.create_analysis_jobs()</span>
+<span id="cb33-75"><a href="#cb33-75" aria-hidden="true" tabindex="-1"></a>    model.run_analysis()</span>
+<span id="cb33-76"><a href="#cb33-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-77"><a href="#cb33-77" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> grid_batch_mode_config.results_filepath</span>
+<span id="cb33-78"><a href="#cb33-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-79"><a href="#cb33-79" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_run_file_batch_mode():</span>
+<span id="cb33-80"><a href="#cb33-80" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb33-81"><a href="#cb33-81" aria-hidden="true" tabindex="-1"></a><span class="co">    Test run_analysis function with batch mode enabled.</span></span>
+<span id="cb33-82"><a href="#cb33-82" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb33-83"><a href="#cb33-83" aria-hidden="true" tabindex="-1"></a>    file_batch_mode_config <span class="op">=</span> WidgetsInterface().export_user_settings()</span>
+<span id="cb33-84"><a href="#cb33-84" aria-hidden="true" tabindex="-1"></a>    file_batch_mode_config.data_source_path <span class="op">=</span> parent_test_filepath</span>
+<span id="cb33-85"><a href="#cb33-85" aria-hidden="true" tabindex="-1"></a>    file_batch_mode_config.batch_mode <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb33-86"><a href="#cb33-86" aria-hidden="true" tabindex="-1"></a>    file_batch_mode_config.roi_mode <span class="op">=</span> <span class="st">'file'</span></span>
+<span id="cb33-87"><a href="#cb33-87" aria-hidden="true" tabindex="-1"></a>    file_batch_mode_config.results_filepath <span class="op">=</span> results_case02_filepath</span>
+<span id="cb33-88"><a href="#cb33-88" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> Model(file_batch_mode_config)</span>
+<span id="cb33-89"><a href="#cb33-89" aria-hidden="true" tabindex="-1"></a>    model.create_analysis_jobs()</span>
+<span id="cb33-90"><a href="#cb33-90" aria-hidden="true" tabindex="-1"></a>    model.run_analysis()</span>
+<span id="cb33-91"><a href="#cb33-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-92"><a href="#cb33-92" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> file_batch_mode_config.results_filepath</span>
+<span id="cb33-93"><a href="#cb33-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-94"><a href="#cb33-94" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_run_grid_focus_batch_mode():</span>
+<span id="cb33-95"><a href="#cb33-95" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb33-96"><a href="#cb33-96" aria-hidden="true" tabindex="-1"></a><span class="co">    Test run_analysis function with focus and batch mode enabled.</span></span>
+<span id="cb33-97"><a href="#cb33-97" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb33-98"><a href="#cb33-98" aria-hidden="true" tabindex="-1"></a>    grid_focus_batch_mode_config <span class="op">=</span> WidgetsInterface().export_user_settings()</span>
+<span id="cb33-99"><a href="#cb33-99" aria-hidden="true" tabindex="-1"></a>    grid_focus_batch_mode_config.data_source_path <span class="op">=</span> parent_test_filepath</span>
+<span id="cb33-100"><a href="#cb33-100" aria-hidden="true" tabindex="-1"></a>    grid_focus_batch_mode_config.batch_mode <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb33-101"><a href="#cb33-101" aria-hidden="true" tabindex="-1"></a>    grid_focus_batch_mode_config.focus_area_enabled <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb33-102"><a href="#cb33-102" aria-hidden="true" tabindex="-1"></a>    grid_focus_batch_mode_config.results_filepath <span class="op">=</span> results_case03_filepath</span>
+<span id="cb33-103"><a href="#cb33-103" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> Model(grid_focus_batch_mode_config)</span>
+<span id="cb33-104"><a href="#cb33-104" aria-hidden="true" tabindex="-1"></a>    model.create_analysis_jobs()</span>
+<span id="cb33-105"><a href="#cb33-105" aria-hidden="true" tabindex="-1"></a>    model.run_analysis()</span>
+<span id="cb33-106"><a href="#cb33-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-107"><a href="#cb33-107" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> grid_focus_batch_mode_config.results_filepath</span>
+<span id="cb33-108"><a href="#cb33-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-109"><a href="#cb33-109" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_run_file_focus_batch_mode():</span>
+<span id="cb33-110"><a href="#cb33-110" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb33-111"><a href="#cb33-111" aria-hidden="true" tabindex="-1"></a><span class="co">    Test run_analysis function with focus and batch mode enabled.</span></span>
+<span id="cb33-112"><a href="#cb33-112" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb33-113"><a href="#cb33-113" aria-hidden="true" tabindex="-1"></a>    file_focus_batch_mode_config <span class="op">=</span> WidgetsInterface().export_user_settings()</span>
+<span id="cb33-114"><a href="#cb33-114" aria-hidden="true" tabindex="-1"></a>    file_focus_batch_mode_config.data_source_path <span class="op">=</span> parent_test_filepath</span>
+<span id="cb33-115"><a href="#cb33-115" aria-hidden="true" tabindex="-1"></a>    file_focus_batch_mode_config.batch_mode <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb33-116"><a href="#cb33-116" aria-hidden="true" tabindex="-1"></a>    file_focus_batch_mode_config.focus_area_enabled <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb33-117"><a href="#cb33-117" aria-hidden="true" tabindex="-1"></a>    file_focus_batch_mode_config.roi_mode <span class="op">=</span> <span class="st">'file'</span></span>
+<span id="cb33-118"><a href="#cb33-118" aria-hidden="true" tabindex="-1"></a>    file_focus_batch_mode_config.results_filepath <span class="op">=</span> results_case03_filepath</span>
+<span id="cb33-119"><a href="#cb33-119" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> Model(file_focus_batch_mode_config)</span>
+<span id="cb33-120"><a href="#cb33-120" aria-hidden="true" tabindex="-1"></a>    model.create_analysis_jobs()</span>
+<span id="cb33-121"><a href="#cb33-121" aria-hidden="true" tabindex="-1"></a>    model.run_analysis()</span>
+<span id="cb33-122"><a href="#cb33-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-123"><a href="#cb33-123" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> file_focus_batch_mode_config.results_filepath</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="cell-61" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _test_csv_files(relative_filepath_to_csv: <span class="bu">str</span>, results_dir: Path) <span class="op">-&gt;</span> <span class="bu">bool</span>:</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    filepath <span class="op">=</span> results_dir <span class="op">/</span> relative_filepath_to_csv</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># confirm results have been created:</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> filepath.is_file():</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">False</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># confirm computational consistency of results, while allowing minor numerical tolerance</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>    df_test <span class="op">=</span> pd.read_csv(filepath)</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>    df_validation <span class="op">=</span> pd.read_csv(example_results_dir <span class="op">/</span> relative_filepath_to_csv)</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> assert_frame_equal(df_test, df_validation) <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">False</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">True</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_all_peak_results(results_dir):</span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _test_csv_files(<span class="st">'all_peak_results.csv'</span>, results_dir)</span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_amplitude_and_df_over_f_results(results_dir):</span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _test_csv_files(<span class="st">'Amplitude_and_dF_over_F_results.csv'</span>, results_dir)</span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_auc_results(results_dir):</span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _test_csv_files(<span class="st">'AUC_results.csv'</span>, results_dir)</span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_variance_area_results(results_dir):</span>
+<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _test_csv_files(<span class="st">'Variance_area_results.csv'</span>, results_dir)</span>
+<span id="cb34-25"><a href="#cb34-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-26"><a href="#cb34-26" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_representative_single_trace_results(results_dir):</span>
+<span id="cb34-27"><a href="#cb34-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _test_csv_files(<span class="st">'single_traces/data_of_ROI_7-10.csv'</span>, results_dir)</span>
+<span id="cb34-28"><a href="#cb34-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-29"><a href="#cb34-29" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_activity_overview_png(results_dir):</span>
+<span id="cb34-30"><a href="#cb34-30" aria-hidden="true" tabindex="-1"></a>    filepath <span class="op">=</span> results_dir <span class="op">/</span> <span class="st">'activity_overview.png'</span></span>
+<span id="cb34-31"><a href="#cb34-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> filepath.is_file()</span>
+<span id="cb34-32"><a href="#cb34-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-33"><a href="#cb34-33" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_roi_label_ids_overview_png(results_dir):</span>
+<span id="cb34-34"><a href="#cb34-34" aria-hidden="true" tabindex="-1"></a>    filepath <span class="op">=</span> results_dir <span class="op">/</span> <span class="st">'ROI_label_IDs_overview.png'</span></span>
+<span id="cb34-35"><a href="#cb34-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> filepath.is_file()</span>
+<span id="cb34-36"><a href="#cb34-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-37"><a href="#cb34-37" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_individual_traces_with_identified_events_pdf(results_dir):</span>
+<span id="cb34-38"><a href="#cb34-38" aria-hidden="true" tabindex="-1"></a>    filepath <span class="op">=</span> results_dir <span class="op">/</span> <span class="st">'Individual_traces_with_identified_events.pdf'</span></span>
+<span id="cb34-39"><a href="#cb34-39" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> filepath.is_file()</span>
+<span id="cb34-40"><a href="#cb34-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-41"><a href="#cb34-41" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_logs_txt(results_dir):</span>
+<span id="cb34-42"><a href="#cb34-42" aria-hidden="true" tabindex="-1"></a>    filepath <span class="op">=</span> results_dir <span class="op">/</span> <span class="st">'logs.txt'</span></span>
+<span id="cb34-43"><a href="#cb34-43" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> filepath.is_file()</span>
+<span id="cb34-44"><a href="#cb34-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-45"><a href="#cb34-45" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_user_settings_json(results_dir):</span>
+<span id="cb34-46"><a href="#cb34-46" aria-hidden="true" tabindex="-1"></a>    filepath <span class="op">=</span> results_dir <span class="op">/</span> <span class="st">'user_settings.json'</span></span>
+<span id="cb34-47"><a href="#cb34-47" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> filepath.is_file()</span>
+<span id="cb34-48"><a href="#cb34-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-49"><a href="#cb34-49" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_nwb_export(results_dir):</span>
+<span id="cb34-50"><a href="#cb34-50" aria-hidden="true" tabindex="-1"></a>    filepath <span class="op">=</span> results_dir <span class="op">/</span> <span class="st">'autogenerated_nwb_file.nwb'</span></span>
+<span id="cb34-51"><a href="#cb34-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-52"><a href="#cb34-52" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_all_correct_files_created(results_dir: Path, test_csv: <span class="bu">bool</span> <span class="op">=</span> <span class="va">True</span>, single_trace: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>) <span class="op">-&gt;</span> <span class="bu">bool</span>:</span>
+<span id="cb34-53"><a href="#cb34-53" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb34-54"><a href="#cb34-54" aria-hidden="true" tabindex="-1"></a><span class="co">    Check if all expected files have been created in the results directory.</span></span>
+<span id="cb34-55"><a href="#cb34-55" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb34-56"><a href="#cb34-56" aria-hidden="true" tabindex="-1"></a>    <span class="co"># confirm all csv files have been created and are correct:</span></span>
+<span id="cb34-57"><a href="#cb34-57" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> test_csv:</span>
+<span id="cb34-58"><a href="#cb34-58" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> test_all_peak_results(results_dir), <span class="st">'There is an issue with the "all_peak_results.csv" file!'</span></span>
+<span id="cb34-59"><a href="#cb34-59" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> test_amplitude_and_df_over_f_results(results_dir)</span>
+<span id="cb34-60"><a href="#cb34-60" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> test_auc_results(results_dir)</span>
+<span id="cb34-61"><a href="#cb34-61" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> test_variance_area_results(results_dir)</span>
+<span id="cb34-62"><a href="#cb34-62" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> single_trace:</span>
+<span id="cb34-63"><a href="#cb34-63" aria-hidden="true" tabindex="-1"></a>            <span class="cf">assert</span> test_representative_single_trace_results(results_dir)</span>
+<span id="cb34-64"><a href="#cb34-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-65"><a href="#cb34-65" aria-hidden="true" tabindex="-1"></a>    <span class="co"># confirm all other result files have been created:</span></span>
+<span id="cb34-66"><a href="#cb34-66" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> test_activity_overview_png(results_dir)</span>
+<span id="cb34-67"><a href="#cb34-67" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> test_roi_label_ids_overview_png(results_dir)</span>
+<span id="cb34-68"><a href="#cb34-68" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> test_logs_txt(results_dir)</span>
+<span id="cb34-69"><a href="#cb34-69" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> test_user_settings_json(results_dir)</span>
+<span id="cb34-70"><a href="#cb34-70" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> single_trace:</span>
+<span id="cb34-71"><a href="#cb34-71" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> test_individual_traces_with_identified_events_pdf(results_dir)</span>
+<span id="cb34-72"><a href="#cb34-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-73"><a href="#cb34-73" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="va">True</span></span>
+<span id="cb34-74"><a href="#cb34-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-75"><a href="#cb34-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-76"><a href="#cb34-76" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> find_directories_after_test(base_path):</span>
+<span id="cb34-77"><a href="#cb34-77" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb34-78"><a href="#cb34-78" aria-hidden="true" tabindex="-1"></a><span class="co">    Find directories after test with timestamps.</span></span>
+<span id="cb34-79"><a href="#cb34-79" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb34-80"><a href="#cb34-80" aria-hidden="true" tabindex="-1"></a>    pattern <span class="op">=</span> <span class="bu">compile</span>(<span class="vs">r'</span><span class="dv">\d</span><span class="op">{4}</span><span class="vs">_</span><span class="dv">\d</span><span class="op">{2}</span><span class="vs">_</span><span class="dv">\d</span><span class="op">{2}</span><span class="vs">_</span><span class="dv">\d</span><span class="op">{2}</span><span class="vs">-</span><span class="dv">\d</span><span class="op">{2}</span><span class="vs">-</span><span class="dv">\d</span><span class="op">{2}</span><span class="vs">_</span><span class="dv">.</span><span class="op">+</span><span class="vs">'</span>)</span>
+<span id="cb34-81"><a href="#cb34-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-82"><a href="#cb34-82" aria-hidden="true" tabindex="-1"></a>    matching_dirs <span class="op">=</span> [</span>
+<span id="cb34-83"><a href="#cb34-83" aria-hidden="true" tabindex="-1"></a>        <span class="bu">str</span>(base_path) <span class="op">+</span> d <span class="cf">for</span> d <span class="kw">in</span> os.listdir(base_path)</span>
+<span id="cb34-84"><a href="#cb34-84" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> os.path.isdir(os.path.join(base_path, d)) <span class="kw">and</span> pattern.fullmatch(d)</span>
+<span id="cb34-85"><a href="#cb34-85" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb34-86"><a href="#cb34-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-87"><a href="#cb34-87" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> matching_dirs</span>
+<span id="cb34-88"><a href="#cb34-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-89"><a href="#cb34-89" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> delete_directories_after_test(paths_list):</span>
+<span id="cb34-90"><a href="#cb34-90" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb34-91"><a href="#cb34-91" aria-hidden="true" tabindex="-1"></a><span class="co">    Delete directories after test.</span></span>
+<span id="cb34-92"><a href="#cb34-92" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb34-93"><a href="#cb34-93" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> res_dir <span class="kw">in</span> find_directories_after_test(paths_list):</span>
+<span id="cb34-94"><a href="#cb34-94" aria-hidden="true" tabindex="-1"></a>        rmtree(res_dir)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Run tests:</p>
+<div id="cell-63" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># confirm that model can be executed:</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>result_directories <span class="op">=</span> test_correct_model_run()</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> directory <span class="kw">in</span> result_directories:</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> directory.exists()</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> test_all_correct_files_created(directory)</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># cleanup</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>    rmtree(directory)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="cell-64" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># confirm that model can be executed with custom result directory:</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>results_directory <span class="op">=</span> test_correct_model_run_with_custom_results_dir()</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> results_directory.exists()</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="co"># only one directory with analysis files should be created, as there are only one focus area:</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(<span class="bu">list</span>(results_directory.iterdir())) <span class="op">==</span> <span class="dv">1</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> directory <span class="kw">in</span> results_directory.iterdir():</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> test_all_correct_files_created(directory)</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a><span class="co"># cleanup</span></span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>rmtree(results_directory)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="cell-65" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># confirm that model can be executed with focus mode:</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>results_directory <span class="op">=</span> test_run_grid_focus_mode()</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> results_directory.exists()</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="co"># only one directory should be created, as there are only one focus area:</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(<span class="bu">list</span>(results_directory.iterdir())) <span class="op">==</span> <span class="dv">2</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> directory <span class="kw">in</span> results_directory.iterdir():</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> test_all_correct_files_created(directory, test_csv<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a><span class="co"># cleanup</span></span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>rmtree(results_directory)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="cell-66" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># confirm that model can be executed with batch mode:</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>results_directory <span class="op">=</span> test_run_grid_batch_mode()</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> results_directory.exists()</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(<span class="bu">list</span>(results_directory.iterdir())) <span class="op">==</span> <span class="dv">3</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> directory <span class="kw">in</span> results_directory.iterdir():</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> subdirectory <span class="kw">in</span> directory.iterdir():</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> test_all_correct_files_created(subdirectory, test_csv<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a><span class="co"># cleanup</span></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>rmtree(results_directory)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="cell-67" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># confirm that model can be executed with batch and focus mode:</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>results_directory <span class="op">=</span> test_run_grid_focus_batch_mode()</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> results_directory.exists()</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(<span class="bu">list</span>(results_directory.iterdir())) <span class="op">==</span> <span class="dv">3</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> directory <span class="kw">in</span> results_directory.iterdir():</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># test case with multiple focus areas</span></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">'01'</span> <span class="kw">in</span> directory.name:</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> <span class="bu">len</span>(<span class="bu">list</span>(directory.iterdir())) <span class="op">==</span> <span class="dv">2</span></span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> subdirectory <span class="kw">in</span> directory.iterdir():</span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> test_all_correct_files_created(subdirectory, test_csv<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a><span class="co"># cleanup</span></span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>rmtree(results_directory)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="cell-68" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># confirm that model can be executed with focus mode:</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>results_directory <span class="op">=</span> test_run_file_focus_mode()</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> results_directory.exists()</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="co"># only one directory should be created, as there are only one focus area:</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(<span class="bu">list</span>(results_directory.iterdir())) <span class="op">==</span> <span class="dv">2</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> directory <span class="kw">in</span> results_directory.iterdir():</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> test_all_correct_files_created(directory, test_csv<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a><span class="co"># cleanup</span></span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>rmtree(results_directory)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="cell-69" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># confirm that model can be executed with batch mode:</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>results_directory <span class="op">=</span> test_run_file_batch_mode()</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> results_directory.exists()</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(<span class="bu">list</span>(results_directory.iterdir())) <span class="op">==</span> <span class="dv">3</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> directory <span class="kw">in</span> results_directory.iterdir():</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> subdirectory <span class="kw">in</span> directory.iterdir():</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> test_all_correct_files_created(subdirectory, test_csv<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a><span class="co"># cleanup</span></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>rmtree(results_directory)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="cell-70" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># confirm that model can be executed with batch and focus mode:</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>results_directory <span class="op">=</span> test_run_file_focus_batch_mode()</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> results_directory.exists()</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(<span class="bu">list</span>(results_directory.iterdir())) <span class="op">==</span> <span class="dv">3</span></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> directory <span class="kw">in</span> results_directory.iterdir():</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># test case with multiple focus areas</span></span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">'01'</span> <span class="kw">in</span> directory.name:</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> <span class="bu">len</span>(<span class="bu">list</span>(directory.iterdir())) <span class="op">==</span> <span class="dv">2</span></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> subdirectory <span class="kw">in</span> directory.iterdir():</span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> test_all_correct_files_created(subdirectory, test_csv<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a><span class="co"># cleanup</span></span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>rmtree(results_directory)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/indoc-research\.github\.io\/NeuralActivityCubic");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Indoc-Research/NeuralActivityCubic/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
