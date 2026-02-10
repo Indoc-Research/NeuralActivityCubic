@@ -5,7 +5,7 @@
 # %% auto #0
 __all__ = ['BaselineEstimatorFactory', 'AnalysisROI']
 
-# %% ../nbs/05_analysis.ipynb
+# %% ../nbs/05_analysis.ipynb #526a2988
 from .input import ROI
 from .datamodels import Peak
 import numpy as np
@@ -18,7 +18,7 @@ from skimage.measure import grid_points_in_poly
 
 from typing import Callable
 
-# %% ../nbs/05_analysis.ipynb
+# %% ../nbs/05_analysis.ipynb #172206ab
 class BaselineEstimatorFactory:
         
     @property
@@ -33,7 +33,7 @@ class BaselineEstimatorFactory:
         baseline_estimation_method = self.supported_baseline_estimation_methods[algorithm_acronym]
         return baseline_estimation_method
 
-# %% ../nbs/05_analysis.ipynb
+# %% ../nbs/05_analysis.ipynb #8065ef8a
 class AnalysisROI:
     
     def __init__(self, roi: ROI, row_col_offset: tuple[int, int], zstack: np.ndarray):

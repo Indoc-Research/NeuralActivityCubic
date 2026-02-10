@@ -5,7 +5,7 @@
 # %% auto #0
 __all__ = ['Logger', 'Model']
 
-# %% ../nbs/02_model.ipynb
+# %% ../nbs/02_model.ipynb #48793e1d
 # External functional dependencies:
 from pathlib import Path
 from datetime import datetime, timezone
@@ -26,7 +26,7 @@ from .processing import AnalysisJob
 from .input import RecordingLoaderFactory, ROILoaderFactory, RecordingLoader, ROILoader, get_filepaths_with_supported_extension_in_dirpath, FocusAreaPathRestrictions
 
 
-# %% ../nbs/02_model.ipynb
+# %% ../nbs/02_model.ipynb #94f5920b
 class Logger:
 
     """
@@ -60,7 +60,7 @@ class Logger:
         print(f'Logs saved to {filepath}')
 
 
-# %% ../nbs/02_model.ipynb
+# %% ../nbs/02_model.ipynb #e0ba1a22
 class Model:
 
     def __init__(self, 
@@ -80,7 +80,7 @@ class Model:
         self.view_output = None
         self.pixel_conversion = None
 
-# %% ../nbs/02_model.ipynb
+# %% ../nbs/02_model.ipynb #4fdf64f1
 @patch
 def create_analysis_jobs(self: Model
                         ) -> None:
@@ -99,7 +99,7 @@ def create_analysis_jobs(self: Model
         self._create_analysis_jobs_for_single_rec()
     self.add_info_to_logs('All job creation(s) completed.', True, 100.0)
 
-# %% ../nbs/02_model.ipynb
+# %% ../nbs/02_model.ipynb #312db61e
 @patch
 def _ensure_data_from_previous_jobs_was_removed(self: Model
                                                ) -> None:
@@ -264,7 +264,7 @@ def _create_single_analysis_job(self: Model,
         data_loaders['focus_area'] = focus_area_loader
     return AnalysisJob(self.num_processes, data_loaders, result_filepath)
 
-# %% ../nbs/02_model.ipynb
+# %% ../nbs/02_model.ipynb #107f0772
 @patch
 def run_analysis(self: Model
                 ) -> None:
@@ -291,7 +291,7 @@ def run_analysis(self: Model
     else:
         gc.collect()
 
-# %% ../nbs/02_model.ipynb
+# %% ../nbs/02_model.ipynb #b3d0b7ac
 @patch
 def _display_configs(self: Model
                     ) -> None:
@@ -316,7 +316,7 @@ def _save_user_settings_as_json(self: Model,
     with open(filepath, 'w+') as user_settings_json:
         user_settings_json.write(self.config.to_json())
 
-# %% ../nbs/02_model.ipynb
+# %% ../nbs/02_model.ipynb #9cd7c6ee
 @patch
 def setup_connection_to_update_infos_in_view(self: Model, 
                                              update_infos: Callable
@@ -325,7 +325,7 @@ def setup_connection_to_update_infos_in_view(self: Model,
     self.callback_view_update_infos = update_infos
     self.gui_enabled = True 
 
-# %% ../nbs/02_model.ipynb
+# %% ../nbs/02_model.ipynb #f91480b9
 @patch
 def setup_connection_to_display_results(self: Model, 
                                         show_output_screen: Callable, 
@@ -338,7 +338,7 @@ def setup_connection_to_display_results(self: Model,
     self.pixel_conversion = pixel_conversion
     self.gui_enabled = True
 
-# %% ../nbs/02_model.ipynb
+# %% ../nbs/02_model.ipynb #853f4d14
 @patch
 def preview_window_size(self: Model, 
                         grid_size
@@ -347,7 +347,7 @@ def preview_window_size(self: Model,
     preview_fig, preview_ax = job_for_preview.preview_window_size(grid_size)
     return preview_fig, preview_ax
 
-# %% ../nbs/02_model.ipynb
+# %% ../nbs/02_model.ipynb #b872d697
 @patch
 def add_info_to_logs(self: Model, 
                      message: str, 

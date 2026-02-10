@@ -5,7 +5,7 @@
 # %% auto #0
 __all__ = ['process_analysis_rois', 'AnalysisJob']
 
-# %% ../nbs/04_processing.ipynb
+# %% ../nbs/04_processing.ipynb #598009be
 import multiprocessing
 import numpy as np
 import pandas as pd
@@ -30,13 +30,13 @@ from pynwb.ophys import (
 )
 from typing import Any
 
-# %% ../nbs/04_processing.ipynb
+# %% ../nbs/04_processing.ipynb #6887f1f2
 from .input import DataLoader, ROI, GridWrapperROILoader
 from .datamodels import Config
 from .analysis import AnalysisROI
 from . import results, __version__
 
-# %% ../nbs/04_processing.ipynb
+# %% ../nbs/04_processing.ipynb #f09cf21c
 def process_analysis_rois(analysis_roi: AnalysisROI, config: Config) -> AnalysisROI:
     analysis_roi.compute_mean_intensity_timeseries(config.use_frame_range, config.start_frame_idx, config.end_frame_idx)
     if np.mean(analysis_roi.mean_intensity_over_time) >= config.mean_signal_threshold:
@@ -47,7 +47,7 @@ def process_analysis_rois(analysis_roi: AnalysisROI, config: Config) -> Analysis
         analysis_roi.compute_variance_area(config.variance_window_size)
     return analysis_roi
 
-# %% ../nbs/04_processing.ipynb
+# %% ../nbs/04_processing.ipynb #3a3b55f0
 class AnalysisJob:
 
     def __init__(self, 

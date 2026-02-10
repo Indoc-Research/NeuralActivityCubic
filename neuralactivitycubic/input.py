@@ -9,7 +9,7 @@ __all__ = ['FocusAreaPathRestrictions', 'Data', 'Recording', 'ROI', 'DataLoader'
            'get_filepaths_with_supported_extension_in_dirpath', 'RecLoaderROILoaderCombinator',
            'test_unsupported_file_extension', 'test_successful_recording_loading', 'test_successful_roi_loading']
 
-# %% ../nbs/03_input.ipynb
+# %% ../nbs/03_input.ipynb #35c4e427
 import imageio.v3 as iio
 from pathlib import Path
 import numpy as np
@@ -22,7 +22,7 @@ from pynwb import NWBHDF5IO
 from abc import ABC, abstractmethod
 from typing import List, Dict, Tuple, Union, Optional, Any
 
-# %% ../nbs/03_input.ipynb
+# %% ../nbs/03_input.ipynb #12f380b9
 class FocusAreaPathRestrictions:
     
     @property
@@ -31,7 +31,7 @@ class FocusAreaPathRestrictions:
                                 'Focus_Area', 'Focus_Areas', 'Focus-Area', 'Focus-Areas', 'Focus Area', 'Focus Areas']
         return supported_dir_names
 
-# %% ../nbs/03_input.ipynb
+# %% ../nbs/03_input.ipynb #a358c976
 class Data(ABC):
 
     @abstractmethod
@@ -42,7 +42,7 @@ class Data(ABC):
         self.filepath = filepath
         self._parse_loaded_data(loaded_data)
 
-# %% ../nbs/03_input.ipynb
+# %% ../nbs/03_input.ipynb #dc2ebbd7
 class Recording(Data):
 
     def _parse_loaded_data(self, loaded_data: np.ndarray) -> None:
@@ -88,7 +88,7 @@ class Recording(Data):
         raw_image[raw_image >= max_bit_value] = max_bit_value
         return raw_image
 
-# %% ../nbs/03_input.ipynb
+# %% ../nbs/03_input.ipynb #388ff9e0
 class ROI(Data):
 
     def _parse_loaded_data(self, loaded_data: List[Tuple[int, int]]) -> None:
@@ -122,7 +122,7 @@ class ROI(Data):
         weights = np.ones(row_idxs.shape[0], dtype='int64')
         self.pixel_mask = np.stack((row_idxs, col_idxs, weights), axis = 1)
 
-# %% ../nbs/03_input.ipynb
+# %% ../nbs/03_input.ipynb #bf249817
 class DataLoader(ABC):
 
     @abstractmethod
@@ -133,7 +133,7 @@ class DataLoader(ABC):
     def __init__(self, filepath: Path) -> None:
         self.filepath = filepath
 
-# %% ../nbs/03_input.ipynb
+# %% ../nbs/03_input.ipynb #2cb1eed4
 class GridWrapperROILoader(DataLoader):
 
     def set_configs_for_grid_creation(self, image_width: int, image_height: int, window_size: int) -> None:
@@ -192,7 +192,7 @@ class GridWrapperROILoader(DataLoader):
         lower_left_corner = (upper_left_corner_row_idx + self.window_size, upper_left_corner_col_idx)
         return [upper_left_corner, lower_left_corner, lower_right_corner, upper_right_corner, upper_left_corner]
 
-# %% ../nbs/03_input.ipynb
+# %% ../nbs/03_input.ipynb #7742fc0f
 class RecordingLoader(DataLoader):
 
 
@@ -252,19 +252,19 @@ class RecordingLoader(DataLoader):
     def _convert_to_grayscale(self, zstack: np.ndarray) -> np.ndarray:
         return zstack[:, :, :, 0:1]
 
-# %% ../nbs/03_input.ipynb
+# %% ../nbs/03_input.ipynb #977ab212
 class AVILoader(RecordingLoader):
 
     def _get_all_frames(self) -> np.ndarray: 
         return iio.imread(self.filepath)
 
-# %% ../nbs/03_input.ipynb
+# %% ../nbs/03_input.ipynb #cc606be3
 class TIFFLoader(RecordingLoader):
 
     def _get_all_frames(self) -> np.ndarray: 
         return iio.imread(self.filepath)
 
-# %% ../nbs/03_input.ipynb
+# %% ../nbs/03_input.ipynb #1380c001
 class NWBRecordingLoader(RecordingLoader):
 
     def _get_all_frames(self) -> np.ndarray:
@@ -280,7 +280,7 @@ class NWBRecordingLoader(RecordingLoader):
             all_frames = all_frames[..., np.newaxis]        
         return all_frames
 
-# %% ../nbs/03_input.ipynb
+# %% ../nbs/03_input.ipynb #88d8b69a
 class ROILoader(DataLoader):
 
     @abstractmethod
@@ -305,7 +305,7 @@ class ROILoader(DataLoader):
         boundary_row_col_coords.append(first_boundary_point_coords)
         return boundary_row_col_coords
 
-# %% ../nbs/03_input.ipynb
+# %% ../nbs/03_input.ipynb #c55c78f4
 class ImageJROILoader(ROILoader):
 
     
@@ -332,7 +332,7 @@ class ImageJROILoader(ROILoader):
         boundary_row_col_coords = list(zip(row_coords, col_coords))
         return boundary_row_col_coords
 
-# %% ../nbs/03_input.ipynb
+# %% ../nbs/03_input.ipynb #2c685e4d
 class NWBROILoader(ROILoader):
 
     def _get_boundary_row_col_coords_for_all_rois_in_source_data(self) -> List[List[Tuple[int, int]]]:
@@ -353,7 +353,7 @@ class NWBROILoader(ROILoader):
             all_rois.append(boundary_row_col_coords)
         return all_rois
 
-# %% ../nbs/03_input.ipynb
+# %% ../nbs/03_input.ipynb #7c8d6ef5
 class DataLoaderFactory(ABC):
 
     @property
@@ -391,7 +391,7 @@ class DataLoaderFactory(ABC):
             raise NotImplementedError('It seems like there is no DataLoader implemented for the specific filetype you´re trying to load - sorry!')
         return matching_loader
 
-# %% ../nbs/03_input.ipynb
+# %% ../nbs/03_input.ipynb #9b02ce02
 class RecordingLoaderFactory(DataLoaderFactory):
 
     @property
@@ -403,7 +403,7 @@ class RecordingLoaderFactory(DataLoaderFactory):
         }
         return supported_extensions_per_data_loader
 
-# %% ../nbs/03_input.ipynb
+# %% ../nbs/03_input.ipynb #a5223c67
 class ROILoaderFactory(DataLoaderFactory):
 
     @property
@@ -414,7 +414,7 @@ class ROILoaderFactory(DataLoaderFactory):
         }
         return supported_extensions_per_data_loader
 
-# %% ../nbs/03_input.ipynb
+# %% ../nbs/03_input.ipynb #5afd1897
 def get_filepaths_with_supported_extension_in_dirpath(dirpath: Path, all_supported_extensions: List[str], max_results: Optional[int]=None) -> List[Path]:
     all_filepaths_with_supported_extension = []
     for elem in dirpath.iterdir():
@@ -429,7 +429,7 @@ def get_filepaths_with_supported_extension_in_dirpath(dirpath: Path, all_support
         )
     return all_filepaths_with_supported_extension
 
-# %% ../nbs/03_input.ipynb
+# %% ../nbs/03_input.ipynb #44c5230f
 class RecLoaderROILoaderCombinator:
 
         
@@ -460,7 +460,7 @@ class RecLoaderROILoaderCombinator:
         all_roi_loaders = [roi_loader_factory.get_loader(filepath) for filepath in all_roi_filepaths]
         return all_roi_loaders
 
-# %% ../nbs/03_input.ipynb
+# %% ../nbs/03_input.ipynb #01c2bffb
 def test_unsupported_file_extension(loader_factory: DataLoaderFactory, filepath: Path) -> bool:
     try:
         loader_factory.get_loader(filepath)
@@ -469,13 +469,13 @@ def test_unsupported_file_extension(loader_factory: DataLoaderFactory, filepath:
     else:
         return False
 
-# %% ../nbs/03_input.ipynb
+# %% ../nbs/03_input.ipynb #54d98ebf
 def test_successful_recording_loading(filepath: Path) -> bool:
     recording_loader_factory = RecordingLoaderFactory()
     recording_loader = recording_loader_factory.get_loader(filepath)
     return isinstance(recording_loader.load_and_parse_file_content(), Recording)
 
-# %% ../nbs/03_input.ipynb
+# %% ../nbs/03_input.ipynb #ad1af9c6
 def test_successful_roi_loading(filepath: Path) -> bool:
     roi_loader_factory = ROILoaderFactory()
     roi_loader = roi_loader_factory.get_loader(filepath)

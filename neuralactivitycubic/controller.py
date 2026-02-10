@@ -5,16 +5,16 @@
 # %% auto #0
 __all__ = ['App', 'open_gui']
 
-# %% ../nbs/00_controller.ipynb
+# %% ../nbs/00_controller.ipynb #33be402b
 import matplotlib.pyplot as plt
 from IPython.display import display
 
-# %% ../nbs/00_controller.ipynb
+# %% ../nbs/00_controller.ipynb #402835d3
 from .model import Model
 from .view import WidgetsInterface
 from . import results
 
-# %% ../nbs/00_controller.ipynb
+# %% ../nbs/00_controller.ipynb #c92685e2
 class App:
 
     def __init__(self):
@@ -86,7 +86,7 @@ class App:
             preview_fig.tight_layout()
             plt.show(preview_fig)
 
-# %% ../nbs/00_controller.ipynb
+# %% ../nbs/00_controller.ipynb #72043f1e
 def open_gui():
     """Start the interactive widgets interface for NeuralActivityCubic"""
     na3 = App()
